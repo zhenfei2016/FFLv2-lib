@@ -6,7 +6,7 @@
  *
  *  FFL_Pipeline.cpp 
  *  Created by zhufeifei(34008081@qq.com) on 2017/12/02 
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
  *
  *  流水线实例，可以包含n多的节点 ，然后启动，结束流水线
  *
@@ -18,7 +18,7 @@
 #include <pipeline/FFL_PipelineConnector.hpp>
 
 namespace FFL{
-	Pipeline::Pipeline(const char* scrip)
+	Pipeline::Pipeline(const char* scrip):mTrackStorage(NULL)
 	{
 		FFL_LOG_DEBUG("Pipeline::Pipeline %p", this);
 		mNodeManager = new PipelineNodeManager(this);		
@@ -509,5 +509,15 @@ namespace FFL{
 	bool Pipeline::isLooping()
 	{
 		return mFlags.hasFlags(LOOPING);
+	}
+
+	//
+	//   设置获取track存储器，保证在启动前设置，运行中设置可能出现未知问题
+	//
+	void Pipeline::setTrackStorage(PipelineTrackStorage* storage) {
+		mTrackStorage = storage;
+	}
+	PipelineTrackStorage* Pipeline::getTrackStorage() const{
+		return mTrackStorage;
 	}
 }

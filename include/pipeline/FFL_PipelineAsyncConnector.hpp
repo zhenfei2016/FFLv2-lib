@@ -6,7 +6,7 @@
  *
  *  FFL_PipelineAsyncConnector.hpp
  *  Created by zhufeifei(34008081@qq.com) on 2017/12/10
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
  *
  *  node异步连接器,进行消息处理中消息的缓存异步处理
  *

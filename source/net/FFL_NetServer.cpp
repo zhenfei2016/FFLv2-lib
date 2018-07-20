@@ -6,7 +6,7 @@
 *
 *  FFL_NetServer.cpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/07/14
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  网路服务器基类
 *
 */

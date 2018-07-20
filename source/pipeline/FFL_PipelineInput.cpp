@@ -6,7 +6,7 @@
  *
  *  FFL_PipelineInput.cpp
  *  Created by zhufeifei(34008081@qq.com) on 2017/12/10 
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
  *
  *  node的输入接口
  *
@@ -18,6 +18,8 @@
 #include <utils/FFL_Handler.hpp>
 #include <pipeline/FFL_PipelineConnector.hpp>
 #include <pipeline/FFL_PipelineInputHandler.hpp>
+#include <pipeline/FFL_Pipeline.hpp>
+#include <pipeline/FFL_PipelineNode.hpp>
 #include "PipelineLooper.hpp"
 #include "PipelineMessageTrackFile.hpp"
 
@@ -267,7 +269,12 @@ namespace FFL {
 			//
 			String info;
 			msg->trackInfo(info);
-			postTraceinfo(info);
+
+			PipelineTrackStorage* trackStrage= mPipelineNode->getPipeline()->getTrackStorage();
+			if (trackStrage) {
+				trackStrage->write(info.c_str());
+			}
+			//postTraceinfo(info);
 			msg->trackIdReset(trackId);
 		}
 

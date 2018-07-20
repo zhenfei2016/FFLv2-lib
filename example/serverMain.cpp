@@ -114,6 +114,9 @@ int serverMain() {
 	FFL::HttpConnectMgr mgr;
 	mgr.setHandler(new HttpClient());
 
+	char buf[1024] = {};
+	FFL_socketLocalAddr(buf, 1023);
+
 	FFL::TcpServer server(NULL,5000);
 	server.setConnectManager(&mgr);
 	server.start();

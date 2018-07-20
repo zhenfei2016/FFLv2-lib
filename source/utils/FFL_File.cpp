@@ -6,7 +6,7 @@
 *
 *  FFL_File.cpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/06/20
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  文件操作类
 *
 */
@@ -14,6 +14,8 @@
 #include <utils/FFL_File.hpp>
 #ifdef _WIN32
 #include <windows.h>
+#include <Shlwapi.h>
+#pragma comment(lib,"shlwapi.lib")
 #else
 #include <unistd.h>
 #include <sys/uio.h>
@@ -95,17 +97,28 @@ int readFile(FileHandle* fd, uint8_t* buf, int32_t size) {
 //
 #define FILE_FLAGS O_WRONLY | O_CREAT | O_TRUNC
 //
+//追加方式  O_APPEND
+//
+
+//
 //创建文件的权限，用户读、写、执行、组读、执行、其他用户读、执行
 //
 #define FILE_MODE S_IRWXU | S_IXGRP | S_IROTH | S_IXOTH
 
 FileHandle* createFile(const char* path, OpenFileMode mode) {
-	FileHandle* handle = new FileHandle();
-    if(mode==MODE_OPEN){
-       handle->fd= ::open(path, O_WRONLY);
-    }else{
-       handle->fd= ::open(path, FILE_FLAGS,FILE_MODE);
+	int fd = -1;
+    if(mode==MODE_OPEN){	
+		fd = ::open(path, O_WRONLY | O_CREAT);
+    }else if (mode == MODE_APPEND) {
+		fd = ::open(path, O_WRONLY | O_APPEND);
+	} else {	  
+        fd= ::open(path,O_WRONLY | O_CREAT | O_TRUNC,777);
     }
+	if (fd < 0) {
+		return NULL;
+	}
+	FileHandle* handle= new FileHandle();
+	handle->fd = fd;
     return handle;
 }
 void closeFile(FileHandle* fd) {
@@ -113,7 +126,7 @@ void closeFile(FileHandle* fd) {
 }
 
 int writeFile(FileHandle* fd,void* data,int32_t size) {
-    if (fd) {
+    if (fd && fd->fd>=0) {
        int ret = write(fd->fd, data, size);
        if (ret < 0){}
 
@@ -122,10 +135,9 @@ int writeFile(FileHandle* fd,void* data,int32_t size) {
     return 0;
 }
 int readFile(FileHandle* fd, uint8_t* buf, int32_t size) {
-    if (fd) {
+    if (fd  && fd->fd >= 0) {
        int ret = read(fd->fd, buf, size);
        if (ret < 0){}
-
        return ret;
     }
     return 0;
@@ -264,7 +276,14 @@ namespace FFL {
 	//  文件是否创建了
 	//
 	bool fileIsExist(const char* path) {
-		return true;
+
+#ifdef WIN32
+		return  ::PathFileExistsA(path)?true:false;
+#else
+		struct stat st;
+		return (stat(path, &st) == 0);
+#endif
+	
 	}
 		
 }

@@ -6,7 +6,7 @@
 *
 *  FFL_Platform   
 *  Created by zhufeifei(34008081@qq.com) on 2017/07/12
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  根据编译器定义的编译变量，确定编译的目标平台
 *
 */

@@ -6,7 +6,7 @@
 *
 *  FFL_Time   
 *  Created by zhufeifei(34008081@qq.com) on 2018/06/10 
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  时间获取相关的封装函数
 *
 */
@@ -37,7 +37,7 @@ extern "C" {
 	void FFL_getNowString(char* s);
 
 	/*
-	*  毫米转化为string，
+	*  毫秒转化为string， s:需要保证足够存储转化出来的时间字符串
 	*/
 	void FFL_usToString(int64_t timeUs, char* s);
 #ifdef  __cplusplus

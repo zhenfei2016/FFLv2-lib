@@ -6,7 +6,7 @@
 *
 *  FFL_List.hpp
 *  Created by zhufeifei(34008081@qq.com) on 三月 2018.
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  String封装，先直接用std库， 换一个名称方便以后的替换
 *
@@ -27,10 +27,6 @@ namespace FFL {
 	//  格式化字符串
 	//
 	void formatString(String& str, const char *fmt, ...);
-	//
-	//  分割字符串
-	//
-	//FFL::Vector<String> StringSplit(const String& str, const String& flag);
 }
 
 

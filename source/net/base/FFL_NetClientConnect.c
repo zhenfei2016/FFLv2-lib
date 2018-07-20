@@ -6,7 +6,7 @@
  *
  *  FFL_NetClient.c
  *  Created by zhufeifei(34008081@qq.com) on 2017/8/12.
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
   *  连接指定服务器，参考android adb代码
  *
  */
@@ -24,6 +24,14 @@ SOCKET_STATUS FFL_socketNetworkClientTimeout(const char *host, int port, int typ
     struct hostent *hp;
     struct sockaddr_in addr;
     int s;
+
+	//gethostname(hostname, 100);   //获得主机的名称
+	//getaddrinfo(hostname, NULL, &hints, &res);   //利用主机名称获取本地地址
+	//char buff[100];
+	//DWORD bufflen = 100;
+	////将本地地址转换成字符串显示
+	//struct sockaddr_in* pSockaddr = (sockaddr_in*)res->ai_addr;
+	//char *pIP = inet_ntoa(pSockaddr->sin_addr);
 
     hp = gethostbyname(host);
 	if (hp == 0) {

@@ -6,7 +6,7 @@
 *
 *  FFL_ByteStream   
 *  Created by zhufeifei(34008081@qq.com) on 2018/05/1
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  字节流操作，读写
 */
 #ifndef _FFL_BYTE_STREAM_HPP_

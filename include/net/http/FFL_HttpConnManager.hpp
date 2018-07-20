@@ -16,19 +16,51 @@
 
 #include <net/FFL_NetConnectManager.hpp>
 #include <net/http/FFL_HttpConnHandle.hpp>
+#include <utils/FFL_Map.hpp>
+#include <thread/FFL_Mutex.hpp>
+
 namespace FFL {
 	class HttpConnectMgr : public NetConnectManager {
 	public:
 		HttpConnectMgr();
 		~HttpConnectMgr();
 
-		void setHandler(sp<HttpConnectHandler> handler);
-
+		//
+		//  创建，删除http连接
+		//
 		virtual NetConnect* createConnect(NetFD fd, NetServer* srv);
 		virtual void destroyConnect(NetFD fd);
+
+		//
+		//  设置http处理句柄
+		//
+		void setHandler(sp<HttpConnectHandler> handler);
+	public:
+		//
+		//  注册处理指定http ，请求的处理句柄
+		//
+		void registerApi(const String& pathAndQuery, sp<HttpApiHandler> handler);
+		sp<HttpApiHandler> unregisterApi(const String& pathAndQuery);
+		sp<HttpApiHandler> getRegisterApi(const String& pathAndQuery);
+
+	protected:
+		//
+		//   网络请求处理回调
+		//   conn:网络连接
+		//   request:网络请求
+		//
+		friend class DefHttpConnectHandler;
+		void receiveRequest(HttpConnect* conn, HttpRequest* request);
 	private:
+		//
+		//  默认的handler;
+		//
+		sp<HttpConnectHandler> mDefHandler;
 
 		sp<HttpConnectHandler> mHandler;
+
+		CMutex mApisLock;
+		std::map<String, wp<HttpApiHandler> > mApis;
 	};
 }
 

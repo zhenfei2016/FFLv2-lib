@@ -43,5 +43,27 @@ namespace FFL{
 		return arr;
 	}
 
+	String stringTrimLeft(const String& str, uint8_t ch) {
+		String ret = str;
+		while (!ret.empty() && ret.at(0) == ch) {
+			ret.erase(ret.begin());
+		}
+		return ret;
+	}
+	String stringTrimRight(const String& str, uint8_t ch){
+		String ret = str;
+		while (!ret.empty() && ret.at(ret.length() - 1) == ch) {
+			ret.erase(ret.end() - 1);
+		}
+		return ret;
+	}
+
+	bool stringStartsWith(String& str, const String& prefix) {
+		return str.find(prefix) == 0;
+	}
+
+	bool stringEndsWith(String& str, const String& subfix) {
+		return str.find(subfix) == str.size() - subfix.size();
+	}
 }
 

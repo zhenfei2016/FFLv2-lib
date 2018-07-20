@@ -6,7 +6,7 @@
 *
 *  FFL_Time.c
 *  Created by zhufeifei(34008081@qq.com) on 2018/06/10
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  时间获取相关的封装函数
 *
 */
@@ -86,13 +86,13 @@ void FFL_usToString(int64_t timeUs, char* s) {
 	int us = mod % 1000;
 
 	if (hour > 0) {
-		sprintf(s, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
+		sprintf_s(s,128, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
 	}else if(mintue>0){
-		sprintf(s, "%2d:%02d:%03d:%03d", mintue, second, ms, us);
+		sprintf_s(s, 128, "%2d:%02d:%03d:%03d", mintue, second, ms, us);
 	}else if (second > 0) {
-		sprintf(s, "%2d:%03d:%03d", second, ms, us);
+		sprintf_s(s, 128, "%2d:%03d:%03d", second, ms, us);
 	}else{
 		// <1s
-		sprintf(s,"00:%03d:%03d",us / 1000, us % 1000);
+		sprintf_s(s, 128, "00:%03d:%03d",us / 1000, us % 1000);
 	}
 }

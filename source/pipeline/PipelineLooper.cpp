@@ -6,7 +6,7 @@
 *
 *  FFL_PipelineLooper.cpp
 *  Created by zhufeifei(34008081@qq.com) on 2017/12/16
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  pipeline消息系统的looper,处理pipelineMessage
 *

@@ -6,7 +6,7 @@
 *
 *  FFL_Version
 *  Created by zhufeifei(34008081@qq.com) on 2018/1/7.
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  版本相关信息 ,参考的ffmpeg中的宏定义，基本都是copy的
 *
 */

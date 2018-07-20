@@ -6,7 +6,7 @@
 *
 *  FFL_HttpConnect.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/07/15
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  一条http网络连接
 */

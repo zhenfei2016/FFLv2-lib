@@ -6,7 +6,7 @@
 *
 *  httpParserImpl.cpp   
 *  Created by zhufeifei(34008081@qq.com) on 2018/07/15
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  http分析实现类，封装了开源库http-parser-2.1
 */
@@ -68,7 +68,7 @@ namespace FFL{
 			// 找到http头结束位置，开始分析到头结束位置
 			//
 			if (size > 4) {
-				for (int32_t i = 0; i <= size - 4; i++) {
+				for (int32_t i = 0; i <= (int32_t)size - 4; i++) {
 					const uint8_t* src = data + i;
 					if (src[0] == KEYSET_CR &&src[1] == KEYSET_LF &&src[2] == KEYSET_CR &&src[3] == KEYSET_LF) {
 						nParsed = http_parser_execute(&mParser, &mSettings, (const char*)data, i + 4);

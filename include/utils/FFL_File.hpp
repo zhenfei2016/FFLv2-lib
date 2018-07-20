@@ -6,7 +6,7 @@
  *
  *  FFL_File.hpp
  *  Created by zhufeifei(34008081@qq.com) on 2018/06/20 
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
  *  文件操作类
  *
 */

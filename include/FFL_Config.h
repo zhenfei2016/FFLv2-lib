@@ -6,7 +6,7 @@
 *
 *  FFL_Config   
 *  Created by zhufeifei(34008081@qq.com) on 2017/07/10 
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  编译前生成的配置文件 ,不依赖其他文件的，
 */

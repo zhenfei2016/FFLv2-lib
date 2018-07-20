@@ -6,7 +6,7 @@
 *
 *  FFL_PipelineHandler.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/03/11
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 * pipeline系统的消息处理句柄基类
 *

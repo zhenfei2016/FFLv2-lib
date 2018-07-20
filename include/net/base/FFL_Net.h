@@ -54,7 +54,7 @@ extern "C" {
 	/* 
 	 *本地的服务器，监听连接 
 	 */
-	SOCKET_STATUS FFL_socketAnyAddrServer(int port, int type,int* fd);
+	SOCKET_STATUS FFL_socketAnyAddrServer(int port, int type,NetFD* fd);
 	#define FFL_socketAnyAddrTcpServer(port,fd) FFL_socketAnyAddrServer(port,SOCK_STREAM,fd)
 	#define FFL_socketAnyAddrUdpServer(port,fd) FFL_socketAnyAddrServer(port,SOCK_DGRAM,fd)
 
@@ -93,6 +93,18 @@ extern "C" {
 	 *  设置不延迟发送 (禁用粘包)
 	 */
 	SOCKET_STATUS FFL_socketSetNodelay(NetFD fd, int yes);
+	/*
+	* 分解host和port
+	* www.123.com:4000   
+	* host=www.123.com
+	* port=4000
+	*/
+	SOCKET_STATUS FFL_socketPaserHost(const char* hostport, char* host, int32_t* port);
+	/*
+	*  获取本地的地址，返回获取的数量
+	*  hostlist : 如果多个地址则使用;分割开
+	*/
+	int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize);
 #ifdef __cplusplus 
 }
 #endif

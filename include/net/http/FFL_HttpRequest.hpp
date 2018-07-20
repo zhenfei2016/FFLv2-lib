@@ -49,6 +49,9 @@ namespace FFL {
 		const HttpUrl& getUrl() const {
 			return mUrl;
 		} 
+
+		void getPath(String& path);
+		void getQuery(String& query);
 	public:
 		//
 		//  创建应答

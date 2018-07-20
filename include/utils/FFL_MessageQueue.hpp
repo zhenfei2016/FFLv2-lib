@@ -6,7 +6,7 @@
 *
 *  FFL_MessageQueue.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2017/11/26
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  保存消息的消息队列
 *
 */

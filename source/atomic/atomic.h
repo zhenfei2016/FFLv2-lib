@@ -6,7 +6,7 @@
 *
 *  atomic   
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/02 
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  atomic系列函数声明
 */
 #ifndef _INTERNAL_ATOMIC_H_

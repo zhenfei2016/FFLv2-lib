@@ -6,7 +6,7 @@
 *
 *  FFL_Ref
 *  Created by zhufeifei(34008081@qq.com) on 2017/07/10
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  引用计数内部用的atomic系列函数
 *
 */

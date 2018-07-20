@@ -38,25 +38,25 @@ inline void internalGetTimeString(char* s) {
 	time_t ts = gStartTime +(current / 1000000);
 	int tus=current % 1000000;
 
-	struct tm* t=0;
-	t= localtime(&ts);
+	struct tm t = {0};
+	localtime_s(&t,&ts);
 #ifdef FFL_TIME_USE_SHORT_STRING
-	sprintf(s,
+	sprintf_s(s, 128,
 		"%02d-%02d%02d%02d:%03d:%03d",
-		t->tm_mday,
-		t->tm_hour,
-		t->tm_min,
-		t->tm_sec,
+		t.tm_mday,
+		t.tm_hour,
+		t.tm_min,
+		t.tm_sec,
 		tus / 1000, tus % 1000);
 #else
 	sprintf(s,
 		"%4d%02d%02d%02d%02d%02d:%03d:%03d",
-		t->tm_year + 1900,
-		t->tm_mon + 1,
-		t->tm_mday,
-		t->tm_hour,
-		t->tm_min,
-		t->tm_sec,
+		t.tm_year + 1900,
+		t.tm_mon + 1,
+		t.tm_mday,
+		t.tm_hour,
+		t.tm_min,
+		t.tm_sec,
 		tus / 1000, tus % 1000);
 #endif
 	

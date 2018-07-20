@@ -6,7 +6,7 @@
 *
 *  FFL_PipelineEvent.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/05/01
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  pipeline中的事件处理系统
 *

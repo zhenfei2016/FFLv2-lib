@@ -6,7 +6,7 @@
  *
  *  FFL_Clock.hpp
  *  Created by zhufeifei(34008081@qq.com) on 2018/04/29
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
  *
  *  时钟类，可以获取当前时间，改变时钟速度，修改时钟原点偏移
  *

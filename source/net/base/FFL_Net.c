@@ -6,7 +6,7 @@
  *
  *  FFL_Net.c
  *  Created by zhufeifei(34008081@qq.com) on 2017/8/12.
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
  *  网络socket公用函数
  *
  */
@@ -47,7 +47,7 @@ void FFL_socketClose(NetFD fd) {
 /*
 *  accept一个客户端上来
 */
-SOCKET_STATUS FFL_socketAccept(int serverfd, NetFD* clientFd){
+SOCKET_STATUS FFL_socketAccept(NetFD serverfd, NetFD* clientFd){
 	int err = FFL_SOCKET_OK;
 	int socketErr = 0;
 	struct sockaddr_in addr;
@@ -204,8 +204,35 @@ SOCKET_STATUS FFL_socketSetNodelay(NetFD fd, int yes)
 #endif
 	return FFL_SOCKET_OK;
 }
+/*
+* 分解host和port
+* www.123.com:4000
+* host=www.123.com
+* port=4000
+*/
+SOCKET_STATUS FFL_socketPaserHost(const char* hostport, char* host, int32_t* port){
+	const char* src = hostport;
+	while (*src) {
+		if (*src == ':') {
+			*port = atoi(src + 1);			
+			break;
+		}
+		*host++ = *src++;
+	}
+	*host = 0;
+	return FFL_OK;
+}
 
-
+/*
+*  获取本地的地址，返回获取的数量
+*  hostlist : 如果多个地址则使用;分割开
+*/
+int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize) {
+	char hostname[128];
+	gethostname(hostname, sizeof(hostname));
+	return 1;
+	return 0;
+}
 //#if defined(MACOSX)
 //int get_local_ip(const char *eth_inf, char *ip);
 //#endif

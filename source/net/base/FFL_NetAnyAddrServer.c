@@ -6,7 +6,7 @@
  *
  *  FFL_NetAnyAddrServer.c
  *  Created by zhufeifei(34008081@qq.com) on 2017/8/12.
- *  https://github.com/zhenfei2016/FFL-v2.git
+ *  https://github.com/zhenfei2016/FFLv2-lib.git
  *  当前机子的所有网卡创建服务器，参考android adb代码
  *
  */

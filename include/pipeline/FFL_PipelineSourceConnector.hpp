@@ -6,7 +6,7 @@
 *
 *  FFL_PipelineSourceConnector.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/12/11
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  源连接器，用户其实node的处理，现在支持 
 *  timer类型 ，PipelineTimerSourceConnector  通过定时器触发的

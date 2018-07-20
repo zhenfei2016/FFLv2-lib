@@ -6,7 +6,7 @@
 *
 *  FFL_Pipeline.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2017/12/02 
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  流水线实例，可以包含n多的节点 ，然后启动，结束流水线
 *
@@ -30,6 +30,10 @@
 namespace FFL{
 	class PipelineNodeManager;
 	
+	class PipelineTrackStorage {
+	public:
+		virtual void write(const char* data)=0;
+	};
 
 	class Pipeline : public RefBase{
 	public:		
@@ -78,6 +82,14 @@ namespace FFL{
 		//  调用这个以后这个pipeline 就不能使用了
 		//
 		void exit();
+	public:
+		//
+		//   设置获取track存储器，保证在启动前设置，运行中设置可能出现未知问题
+		//
+		void setTrackStorage(PipelineTrackStorage* storage);
+		PipelineTrackStorage* getTrackStorage() const;
+	private:
+		PipelineTrackStorage* mTrackStorage;
 	private:
 		//
 		//  启动的处理逻辑，

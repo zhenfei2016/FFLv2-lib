@@ -234,6 +234,7 @@ SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 
 
 if (MSVC)
+    add_definitions("/wd4819")
     set(CompilerFlags
         CMAKE_CXX_FLAGS
         CMAKE_CXX_FLAGS_DEBUG
@@ -250,9 +251,9 @@ endif(MSVC)
 add_library( FFL STATIC ${LOCAL_SRC_FILES})
 
 IF(WIN32)
-INSTALL(TARGETS FFL RUNTIME DESTINATION  ${PROJECT_SOURCE_DIR}/../ide/mfc2015Player/bin
-        LIBRARY DESTINATION  ${PROJECT_SOURCE_DIR}/../ide/mfc2015Player/libs
-        ARCHIVE DESTINATION  ${PROJECT_SOURCE_DIR}/../ide/mfc2015Player/libs)
+INSTALL(TARGETS FFL RUNTIME DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/bin/
+        LIBRARY DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs
+        ARCHIVE DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs)
 ENDIF()
 
 

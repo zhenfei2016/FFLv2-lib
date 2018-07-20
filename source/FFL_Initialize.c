@@ -6,7 +6,7 @@
 *
 *  FFL_Initialize
 *  Created by zhufeifei(34008081@qq.com) on 2018/01/17
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  FFL 全局初始化，结束函数定义，实现
 *

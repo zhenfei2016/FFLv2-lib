@@ -6,7 +6,7 @@
 *
 *  FFL_threadpool.c
 *  Created by zhufeifei(34008081@qq.com) on 2017/08/12
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *  简单的线程池包装类
 *
 */

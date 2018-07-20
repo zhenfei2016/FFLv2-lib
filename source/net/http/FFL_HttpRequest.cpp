@@ -6,7 +6,7 @@
 *
 *  FFL_HttpRequest.cpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/07/15
-*  https://github.com/zhenfei2016/FFL-v2.git
+*  https://github.com/zhenfei2016/FFLv2-lib.git
 *
 *  http请求
 */
@@ -66,6 +66,12 @@ namespace FFL {
 	sp<HttpResponse>  HttpRequest::createResponse() {
 		HttpResponse* response = new HttpResponse(mConn);
 		return response;
+	}
+	void HttpRequest::getPath(String& path) {
+		path=mUrl.mPath;
+	}
+	void HttpRequest::getQuery(String& query) {
+		query = mUrl.mQuery;
 	}
 }
 
