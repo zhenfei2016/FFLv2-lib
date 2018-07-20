@@ -41,7 +41,7 @@ inline void internalGetTimeString(char* s) {
 	struct tm t = {0};
 	localtime_s(&t,&ts);
 #ifdef FFL_TIME_USE_SHORT_STRING
-	sprintf_s(s, 128,
+	sprintf(s,
 		"%02d-%02d%02d%02d:%03d:%03d",
 		t.tm_mday,
 		t.tm_hour,

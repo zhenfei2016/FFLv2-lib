@@ -86,13 +86,13 @@ void FFL_usToString(int64_t timeUs, char* s) {
 	int us = mod % 1000;
 
 	if (hour > 0) {
-		sprintf_s(s,128, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
+		sprintf(s, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
 	}else if(mintue>0){
-		sprintf_s(s, 128, "%2d:%02d:%03d:%03d", mintue, second, ms, us);
+		sprintf(s,  "%2d:%02d:%03d:%03d", mintue, second, ms, us);
 	}else if (second > 0) {
-		sprintf_s(s, 128, "%2d:%03d:%03d", second, ms, us);
+		sprintf(s,  "%2d:%03d:%03d", second, ms, us);
 	}else{
 		// <1s
-		sprintf_s(s, 128, "00:%03d:%03d",us / 1000, us % 1000);
+		sprintf(s,  "00:%03d:%03d",us / 1000, us % 1000);
 	}
 }

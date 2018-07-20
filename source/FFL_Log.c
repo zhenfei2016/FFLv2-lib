@@ -86,7 +86,7 @@ void FFL_LogHook(FFL_LogHookFun cb)
 #define MAX_LOG_LENGTH	2048
 static int defaultPrintLog(int level,const char* tag, const char *format, va_list vl)
 {
-	char str[MAX_LOG_LENGTH]="";		
+	char str[MAX_LOG_LENGTH] = {0};
 	char timeFormat[64] = { 0 };	
 	if (level > gLogMaxLevel) {
 		return 1;

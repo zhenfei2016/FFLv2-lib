@@ -11,8 +11,8 @@
 *  分析命令行帮助函数
 *
 */
-#ifndef _FFL_COMMANDLINE_HPP_
-#define _FFL_COMMANDLINE_HPP_
+#ifndef _FFL_COMMANDLINE_H_
+#define _FFL_COMMANDLINE_H_
 
 #include <FFL.h>
 #ifdef  __cplusplus
