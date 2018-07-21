@@ -111,6 +111,8 @@ namespace FFL {
 			}
 			else {
 				mHandler->onReceiveRequest(conn, request);
+				FFL_socketClose(conn->getFd());
+				//conn->close();
 			}
 		}
         FFL_LOG_DEBUG_TAG("http","complete(%" lld64 "): %s?%s  \r\n\r\n",

@@ -38,20 +38,36 @@ namespace FFL {
 	}
 
 	bool HttpResponse::writeJson(const String& json) {
-		String format;
-		format = "HTTP/1.1 200 OK \r\n"
-			"Content-Type: application/json;charset=utf-8\r\n"
-			"Content-Length:%d\r\n\r\n%s";
+		String header;
+		{
+			String format;
+			format = "HTTP/1.1 200 OK \r\n"
+				"Content-Type: application/json;charset=utf-8\r\n"
+				"Access-Control-Allow-Origin:*\r\n"
+				"Access-Control-Allow-Methods:GET, POST, PUT, DELETE\r\n"
+				"Access-Control-Allow-Headers:x-custom\r\n"
+				"Access-Control-Allow-Credentials:true\r\n"
+				"Content-Length:%d\r\n\r\n";			
+			formatString(header, format.c_str(), json.size());			
+		}
 
-		String content;
-		formatString(content, format.c_str(), json.size(), json.c_str());
-
+		int size=header.size();
+		String data;
+		data = header + json;		
 
 		FFL::IOWriter* writer = mConn->getWriter();
-
-
 		size_t nWrited = 0;
-		writer->write((void*)content.c_str(), content.size(), &nWrited);
+		const uint8_t* src =(const uint8_t*)data.c_str();
+		const uint8_t* end= src + data.size();
+		while (src<end){
+			size_t w = 0;
+			if (FFL_OK != writer->write((void*)src, end- src, &w)) {
+				FFL_LOG_ERROR("HttpResponse write failed. ");
+				break;
+			}
+			src += w;
+			nWrited += w;
+		}		
 		return nWrited>0;
 	}
     
