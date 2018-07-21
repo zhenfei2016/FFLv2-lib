@@ -34,6 +34,7 @@ namespace FFL {
 		HttpConnectMgr* mMgr;
 	};
 	HttpConnectMgr::HttpConnectMgr():mHandler(NULL){
+		mRequestId = 0;
 		mDefHandler = new DefHttpConnectHandler(this);
 	}
 	HttpConnectMgr::~HttpConnectMgr() {
