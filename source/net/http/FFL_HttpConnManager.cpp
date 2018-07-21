@@ -93,16 +93,27 @@ namespace FFL {
 		String query;
 		request->getQuery(query);
 
-		FFL::sp<HttpApiHandler> handler = getRegisterApi(path + query);
+        int64_t requestId=mRequestId++;
+        FFL_LOG_DEBUG_TAG("http","request(%" lld64  "): %s?%s",
+                          requestId,
+                          path.c_str(),query.c_str());
+        
+		FFL::sp<HttpApiHandler> handler = getRegisterApi(path + "?" + query);
 		if (!handler.isEmpty()) {
 			handler->onHttpQuery(conn, path, query);
 		}else {
 			if (mHandler.isEmpty()) {
-				conn->close();
+                FFL_LOG_DEBUG_TAG("http","not find handler  %s?%s  ",
+                                  path.c_str(),query.c_str());
+                sp<HttpResponse> res=conn->createResponse();
+                res->finish();
 			}
 			else {
 				mHandler->onReceiveRequest(conn, request);
 			}
-		}			
+		}
+        FFL_LOG_DEBUG_TAG("http","complete(%" lld64 "): %s?%s  \r\n\r\n",
+                          requestId,
+                          path.c_str(),query.c_str());
 	}
 }

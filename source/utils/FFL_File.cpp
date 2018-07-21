@@ -108,11 +108,11 @@ int readFile(FileHandle* fd, uint8_t* buf, int32_t size) {
 FileHandle* createFile(const char* path, OpenFileMode mode) {
 	int fd = -1;
     if(mode==MODE_OPEN){	
-		fd = ::open(path, O_WRONLY | O_CREAT);
+		fd = ::open(path, O_RDWR | O_CREAT);
     }else if (mode == MODE_APPEND) {
-		fd = ::open(path, O_WRONLY | O_APPEND);
+		fd = ::open(path, O_RDWR | O_APPEND);
 	} else {	  
-        fd= ::open(path,O_WRONLY | O_CREAT | O_TRUNC,777);
+        fd= ::open(path,O_RDWR | O_CREAT | O_TRUNC,777);
     }
 	if (fd < 0) {
 		return NULL;

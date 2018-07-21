@@ -70,4 +70,12 @@ namespace FFL {
 	bool HttpConnect::isClosed() {
 		return mClosed;
 	}
+    
+    sp<HttpResponse> HttpConnect::createResponse(){
+        return  new HttpResponse(this);
+    }
+    sp<HttpRequest> HttpConnect::createRequest(){
+    
+        return  new HttpRequest(this);
+    }
 }

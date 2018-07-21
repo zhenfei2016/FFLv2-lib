@@ -20,6 +20,8 @@
 #include <net/FFL_NetSocket.hpp>
 
 namespace FFL {
+    class HttpRequest;
+    class HttpResponse;
 	//
 	//  http连接
 	//
@@ -36,6 +38,9 @@ namespace FFL {
 
 		void close();
 		bool isClosed();
+        
+        sp<HttpResponse> createResponse();
+        sp<HttpRequest> createRequest();
 	public:
 		//
 		//  处理fd上数据的循环，返回是否继续处理

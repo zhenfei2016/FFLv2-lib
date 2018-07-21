@@ -32,6 +32,7 @@ namespace FFL {
 		mStatusCode = code;
 	}	
 
+   
 	bool HttpResponse::writeHeader(HttpHeader* header, const char* content) {
 		return true;
 	}
@@ -53,6 +54,25 @@ namespace FFL {
 		writer->write((void*)content.c_str(), content.size(), &nWrited);
 		return nWrited>0;
 	}
+    
+    void HttpResponse::finish(){
+        String content="Not Found";
+        
+        String format;
+        format = "HTTP/1.1 404 OK \r\n"
+        "Content-Type: text/plain;charset=utf-8\r\n"
+        "Content-Length:%d\r\n\r\n%s";
+        
+        String data;
+        formatString(data, format.c_str(), content.size(), content.c_str());
+        
+
+        
+        FFL::IOWriter* writer = mConn->getWriter();
+        size_t nWrited = 0;
+        writer->write((void*)data.c_str(), data.size(), &nWrited);
+        mConn->close();
+    }
 	//
 	//  创建应答
 	//

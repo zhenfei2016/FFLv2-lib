@@ -61,6 +61,8 @@ namespace FFL {
 
 		CMutex mApisLock;
 		std::map<String, wp<HttpApiHandler> > mApis;
+        
+        int64_t mRequestId;
 	};
 }
 

@@ -38,8 +38,7 @@ void internalGetTimeString(char* s) {
     int tus = current % 1000000;
 #ifdef FFL_TIME_USE_SHORT_STRING
 	sprintf(s,
-		"%02d-%02d%02d%02d:%03d:%03d",
-		t->tm_mday,
+		"%02d%02d%02d:%03d:%03d",
 		t->tm_hour,
 		t->tm_min,
 		t->tm_sec,

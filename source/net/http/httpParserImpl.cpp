@@ -132,7 +132,7 @@ namespace FFL{
 		HttpParserImpl* pThis = getThis(parser);
 		if (length > 0) {
 			pThis->mUrl.append(at, (int)length);
-			FFL_LOG_DEBUG("HttpParser: url=%s", pThis->mUrl.c_str());
+			//FFL_LOG_DEBUG("HttpParser: url=%s", pThis->mUrl.c_str());
 		}
 		return 0;
 	}
@@ -143,7 +143,7 @@ namespace FFL{
 				pThis->mTmpFieldName = "";
 			}
 			pThis->mTmpFieldName.append(at, (int)length);
-			FFL_LOG_DEBUG("HttpParser: FieldName=%s", pThis->mTmpFieldName.c_str());
+			//FFL_LOG_DEBUG("HttpParser: FieldName=%s", pThis->mTmpFieldName.c_str());
 		}
 		return 0;
 	}
@@ -154,7 +154,7 @@ namespace FFL{
 				pThis->mTmpFieldValue = "";
 			}
 			pThis->mTmpFieldValue.append(at, (int)length);
-			FFL_LOG_DEBUG("HttpParser: FieldValue=%s", pThis->mTmpFieldValue.c_str());
+			//FFL_LOG_DEBUG("HttpParser: FieldValue=%s", pThis->mTmpFieldValue.c_str());
 		}
 
 		if (pThis->mTmpFieldName.size() && pThis->mTmpFieldValue.size()) {
@@ -172,14 +172,14 @@ namespace FFL{
 		return 0;
 	}
 	int HttpParserImpl::onBody(http_parser* parser, const char* at, size_t length) {
-		HttpParserImpl* pThis = getThis(parser);
-		FFL_LOG_DEBUG("HttpParser: onBody");
+		//HttpParserImpl* pThis = getThis(parser);
+		//FFL_LOG_DEBUG("HttpParser: onBody");
 		return 0;
 	}
 	int HttpParserImpl::onMessageComplete(http_parser* parser) {
 		HttpParserImpl* pThis = getThis(parser);
 		pThis->mState = PARSE_COMPLETE;
-		FFL_LOG_DEBUG("HttpParser: onMessageComplete");
+		//FFL_LOG_DEBUG("HttpParser: onMessageComplete");
 		return 0;
 	}
 

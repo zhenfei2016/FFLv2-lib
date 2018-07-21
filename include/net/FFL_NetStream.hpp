@@ -22,7 +22,7 @@ namespace FFL {
 	class NetStreamReader : public ByteReader {
 	public:
 		NetStreamReader(CSocket* socket );
-		~NetStreamReader();
+        virtual ~NetStreamReader();
 	public:
 		//
 		//  获取数据指针

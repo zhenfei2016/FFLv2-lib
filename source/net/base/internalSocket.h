@@ -1,8 +1,8 @@
 #ifndef _FFL_SOCKET_DEF_H_
 #define _FFL_SOCKET_DEF_H_
 
-#include "FFL_platform.h"
-#include "FFL_config.h"
+#include "FFL_Platform.h"
+#include "FFL_Config.h"
 
 #ifdef WIN32
 

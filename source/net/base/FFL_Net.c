@@ -29,14 +29,14 @@ void FFL_socketUninit(){
 	}
 }
 
-static void fdCloseExec(NetFD fd)
-{
+//static void fdCloseExec(NetFD fd)
+//{
 //#ifndef WIN32
 //    int flags = fcntl(fd, F_GETFD);
 //    flags |= FD_CLOEXEC;
 //    fcntl(fd, F_SETFD, flags);
 //#endif
-}
+//}
 /*
 *  关闭socket
 */
