@@ -53,6 +53,9 @@ static void free_getopt_Option(struct option* opts) {
 int FFL_parseCommnadline(int argc,const char** argv,CmdOption* opts, int size, void* userdata) {
 	struct option* longOpt=alloc_getopt_Option(opts, size);
 	
+	char* params=0;
+	int   paramsLen = 0;
+
 	int cmdIndex = -1;
 	int optionIndex=-1;
 	int opt = -1;
@@ -66,7 +69,27 @@ int FFL_parseCommnadline(int argc,const char** argv,CmdOption* opts, int size, v
 		if (optionIndex != -1) {
 			cmdIndex = optionIndex;
 			if (opts[cmdIndex].fun) {
-				opts[cmdIndex].fun(optarg,userdata);
+				/*
+				*  参数拷贝一次，去掉最后边的回车换行
+				*/
+				paramsLen = 0;
+				params = 0;
+				if (optarg != NULL) {
+					paramsLen=strlen(optarg);				
+				}
+				if (paramsLen > 1) {
+					params = FFL_mallocz(paramsLen+1);
+					memcpy(params, optarg, paramsLen);
+					if (params[paramsLen-1] == '\n' || params[paramsLen-1] == '\r') {
+						params[paramsLen-1] = 0;
+					}
+				}
+
+				opts[cmdIndex].fun(params, userdata);
+
+				FFL_free(params);
+				params = 0;
+				paramsLen = 0;
 			}
 		}
 		optionIndex = -1;

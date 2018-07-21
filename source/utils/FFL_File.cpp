@@ -279,9 +279,15 @@ namespace FFL {
 
 #ifdef WIN32
 		return  ::PathFileExistsA(path)?true:false;
-#else
-		struct stat st;
-		return (stat(path, &st) == 0);
+#else		
+		//
+		//06     检查读写权限
+		//04     检查读权限
+		//02     检查写权限
+		//01     检查执行权限
+		//00     检查文件的存在性
+		//
+		return (access(path, 0) == 0);
 #endif
 	
 	}
