@@ -229,9 +229,18 @@ SOCKET_STATUS FFL_socketPaserHost(const char* hostport, char* host, int32_t* por
 */
 int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize) {
 	char hostname[128];
-	gethostname(hostname, sizeof(hostname));
+	struct hostent *hent;
+	struct in_addr* addr = 0;
+
+	gethostname(hostname, sizeof(hostname));	
+	hent = gethostbyname(hostname);
+	if (0 == hent){
+	    return 0;
+	}	
+	
+	addr = ((struct in_addr*)hent->h_addr);
+	strcpy (hostlist, inet_ntoa(*addr));
 	return 1;
-	return 0;
 }
 //#if defined(MACOSX)
 //int get_local_ip(const char *eth_inf, char *ip);

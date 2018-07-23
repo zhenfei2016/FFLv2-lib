@@ -21,6 +21,10 @@ namespace FFL {
 		CSocket(NetFD fd);
 		virtual ~CSocket();
 
+		void setFd(NetFD fd){
+			mFd=fd;
+		}
+
 		NetFD getFd() const		{
 			return mFd;
 		}

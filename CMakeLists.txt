@@ -77,18 +77,12 @@ ADD_SRC_FILE(FFL_threadpool.c)
 SET(LOCAL_SRC_DIR ./include/thread/)
 ADD_SRC_FILE(FFL_Mutex.hpp)
 ADD_SRC_FILE(FFL_Thread.hpp)
-ADD_SRC_FILE(FFL_Coroutine.hpp)
+
 
 
 SET(LOCAL_SRC_DIR ./source/thread/)
 ADD_SRC_FILE(FFL_Mutex.cpp)
 ADD_SRC_FILE(FFL_Thread.cpp)
-ADD_SRC_FILE(FFL_Coroutine.cpp)
-
-
-
-
-
 
 IF (WIN32)
 
@@ -234,8 +228,6 @@ SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 AUX_SOURCE_DIRECTORY(./source/net/http/http-parser-2.1/ DIR_SRCS)
 SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 
-
-
 if (MSVC)
     add_definitions("/wd4819")
     set(CompilerFlags
@@ -250,15 +242,41 @@ if (MSVC)
         string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
     endforeach()
 endif(MSVC)
-
+SET(CMAKE_BUILD_TYPE "Debug")
 add_library( FFL STATIC ${LOCAL_SRC_FILES})
+
+ 
+#printf("build-type:")
+#printf(${CMAKE_LIBRARY_ARCHITECTURE})
+#printf("sys-name:")
+#printf(${CMAKE_SYSTEM_NAME})
+#printf("cpu::")
+
+#if(CMAKE_BUILD_TYPE STREQUAL Debug )
+#printf("debug")
+#else()
+#printf("release")
+#endif()
 
 #IF(WIN32)
 INSTALL(TARGETS FFL RUNTIME DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/bin/
         LIBRARY DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs
         ARCHIVE DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs)
+
+INSTALL(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)")
+INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)
+
 #ENDIF()
 
+#execute_process(
+#COMMAND ${CMAKE_COMMAND} -E remove_directory ../../install/
+#COMMAND ${CMAKE_COMMAND} -E copy_directory ./include/ ../../install/include
+#)
+
+#add_custom_target
+#add_custom_command(TARGET test PRE_BUILD  COMMAND echo "hi prebuild"  )
+#add_custom_command(TARGET test PRE_LINK  COMMAND echo "hi prebuild"  )
+#add_custom_command(TARGET test POST_BUILD  COMMAND echo "hi prebuild"  )
 
 ADD_SUBDIRECTORY(example)
 
