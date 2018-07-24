@@ -228,6 +228,12 @@ SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 AUX_SOURCE_DIRECTORY(./source/net/http/http-parser-2.1/ DIR_SRCS)
 SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 
+#  输出路径 bin
+SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+#  输出路径 lib
+SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+
+
 if (MSVC)
     add_definitions("/wd4819")
     set(CompilerFlags
@@ -242,12 +248,11 @@ if (MSVC)
         string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
     endforeach()
 endif(MSVC)
-SET(CMAKE_BUILD_TYPE "Debug")
-add_library( FFL STATIC ${LOCAL_SRC_FILES})
 
+add_library( FFL STATIC ${LOCAL_SRC_FILES})
  
 #printf("build-type:")
-#printf(${CMAKE_LIBRARY_ARCHITECTURE})
+#printf(${CMAKE_INSTALL_CONFIG_NAME})
 #printf("sys-name:")
 #printf(${CMAKE_SYSTEM_NAME})
 #printf("cpu::")
@@ -259,20 +264,27 @@ add_library( FFL STATIC ${LOCAL_SRC_FILES})
 #endif()
 
 #IF(WIN32)
-INSTALL(TARGETS FFL RUNTIME DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/bin/
-        LIBRARY DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs
-        ARCHIVE DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs)
+#INSTALL(TARGETS FFL RUNTIME DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/bin/ 
+#        LIBRARY DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs
+#        ARCHIVE DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs)
 
-INSTALL(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)")
-INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)
-
+#INSTALL(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)")
+#INSTALL(DIRECTORY ${EXECUTABLE_OUTPUT_PATH} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/)
+#INSTALL(DIRECTORY ${LIBRARY_OUTPUT_PATH} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/)
+#INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)
 #ENDIF()
+
+#  拷贝输出文件到install目录 
+ADD_CUSTOM_TARGET(install_FFL 
+   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib
+   COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXECUTABLE_OUTPUT_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/libs/
+   COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBRARY_OUTPUT_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/libs/
+   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/include/ ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)
 
 #execute_process(
 #COMMAND ${CMAKE_COMMAND} -E remove_directory ../../install/
 #COMMAND ${CMAKE_COMMAND} -E copy_directory ./include/ ../../install/include
 #)
-
 #add_custom_target
 #add_custom_command(TARGET test PRE_BUILD  COMMAND echo "hi prebuild"  )
 #add_custom_command(TARGET test PRE_LINK  COMMAND echo "hi prebuild"  )
