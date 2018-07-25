@@ -80,7 +80,7 @@ extern "C" int main(int argc ,const char* argv[]) {
 	FFL_LOG_INFO("start server");
 	serverMain();
 	FFL_LOG_INFO("quit server");
-	FFL_malloc_memory_dump();
+	FFL_dumpMemoryLeak();
 	getchar();
 	return 0;
 }

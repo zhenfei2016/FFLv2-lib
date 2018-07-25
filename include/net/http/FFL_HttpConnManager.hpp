@@ -28,8 +28,8 @@ namespace FFL {
 		//
 		//  创建，删除http连接
 		//
-		virtual NetConnect* createConnect(NetFD fd, NetServer* srv);
-		virtual void destroyConnect(NetFD fd);
+		virtual NetConnect* onCreateConnect(NetFD fd, NetServer* srv);
+		virtual void onDestroyConnect(NetConnect* conn);
 
 		//
 		//  设置http处理句柄

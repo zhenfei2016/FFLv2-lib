@@ -18,6 +18,24 @@ namespace FFL {
 	}
 	NetConnectManager::~NetConnectManager(){
 	}
+	//
+	//  创建连接，删除连接
+	//
+	NetConnect* NetConnectManager::createConnect(NetFD fd, NetServer* srv) {
+		NetConnect*conn=onCreateConnect(fd, srv);
+		if (conn) {
+			addConnect(conn);
+		} else {
+			FFL_LOG_ERROR("Failed to NetConnectManager::createConnect fd=%d",fd);
+		}
+		return conn;
+	}
+	void NetConnectManager::destroyConnect(NetFD fd) {
+		NetConnect* conn=removeConnect(fd);
+		if (conn != NULL) {
+			onDestroyConnect(conn);
+		}
+	}
 	void NetConnectManager::addConnect(NetConnect* conn) {
 		if (conn == NULL) {
 			return;

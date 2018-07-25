@@ -14,7 +14,6 @@
 #define _FFL_NETCONNECT_MANAGER_HPP_
 
 #include <FFL.h>
-#include <ref/FFL_Ref.hpp>
 #include <thread/FFL_Mutex.hpp>
 
 namespace FFL {
@@ -25,10 +24,19 @@ namespace FFL {
 	public:
 		NetConnectManager();
 		virtual ~NetConnectManager();	
-	public:
-		virtual NetConnect* createConnect(NetFD fd, NetServer* srv)=0;
-		virtual void destroyConnect(NetFD fd)=0;
+
+		virtual NetConnect* onCreateConnect(NetFD fd, NetServer* srv) = 0;
+		virtual void onDestroyConnect(NetConnect* conn) = 0;
+
 	protected:
+		friend class NetServer;
+		friend class NetConnect;
+		//
+		//  创建连接，删除连接
+		//
+		NetConnect* createConnect(NetFD fd, NetServer* srv);
+		void destroyConnect(NetFD fd);	
+	private:
 		//
 		//  list中添加删除指定的conn
 		//
@@ -37,6 +45,23 @@ namespace FFL {
 	protected:
 		CMutex mConnLock;
 		List<NetConnect*> mConnects;
+	};
+
+
+	template<typename CONN>
+	class SimpleConnectManager : public NetConnectManager {
+	public:
+		SimpleConnectManager() {}
+		virtual ~SimpleConnectManager() {}
+	protected:
+		virtual NetConnect* onCreateConnect(NetFD fd, NetServer* srv) {
+			return new CONN(fd, srv);
+		}
+		virtual void onDestroyConnect(NetConnect* conn) {
+			if (conn) {
+				delete conn;
+			}
+		}
 	};
 }
 

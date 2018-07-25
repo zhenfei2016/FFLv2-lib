@@ -25,7 +25,7 @@ namespace FFL {
 	//
 	//  http连接
 	//
-	class HttpConnect : public NetConnect {
+	class HttpConnect : public TcpConnect {
 	public:
 		HttpConnect(NetFD fd, sp<HttpConnectHandler> handler);
 		~HttpConnect();
@@ -40,7 +40,7 @@ namespace FFL {
 		bool isClosed();
         
         sp<HttpResponse> createResponse();
-        sp<HttpRequest> createRequest();
+        sp<HttpRequest> createRequest();		
 	public:
 		//
 		//  处理fd上数据的循环，返回是否继续处理

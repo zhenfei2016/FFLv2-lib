@@ -55,7 +55,7 @@ namespace FFL {
 			const BufferVec* pBuf = bufVec + i;
 
 			if (FFL_OK !=
-				 (ret=FFL_socketWrite(mFd, pBuf->data, count, &nWrite))
+				 (ret=FFL_socketWrite(mFd, pBuf->data, pBuf->size, &nWrite))
 				){				
 				break;
 			}

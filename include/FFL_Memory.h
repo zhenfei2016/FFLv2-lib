@@ -24,53 +24,47 @@
 #ifdef  __cplusplus
 extern "C" {
 #endif
-
-#if CHECK_FOR_MEMORY_LEAKS
-
+	/*
+	 *  内存申请，释放
+	 */
 	void* FFL_malloc(size_t size);
 	void  FFL_free(void *mem);
-
-#else
-	inline static void *FFL_malloc(size_t size)
-	{
-		void *mem = malloc(size);
-		if (!mem)
-			return 0;
-		return mem;
-	}
-	inline static void FFL_free(void *mem)
-	{
-		if (mem)
-		{
-			free(mem);
-		}
-	}
-#endif
-
-	inline static void *FFL_mallocz(size_t size)
-	{
+	/*
+	 *  内存申请，并且清空
+	*/
+	inline static void *FFL_mallocz(size_t size){
 		void *mem = FFL_malloc(size);
 		if (mem)
 			memset(mem, 0, size);
 		return mem;
 	}
-	inline static void FFL_freep(void **mem)
-	{
+	inline static void FFL_freep(void **mem){
 		if (mem && *mem) {
 			FFL_free(*mem);
 			*mem = 0;
 		}
 	}
+
 	/*
 	 *   打印一下当前还没有释放的内存
-	 * */
-	void  FFL_malloc_memory_dump();
-	#define FFL_zerop(x) memset((x), 0, sizeof(*(x)))
-	#define FFL_zero_array(x,c) memset((x), 0, (sizeof(*(x))*(c)))
+	 */
+	void  FFL_dumpMemoryLeak();
+	/*
+	*  打印当前未释放的内存，到文件中
+	*/
+	void  FFL_dumpMemoryLeakFile(const char* path);
+	/*
+ 	 *  参考上一次释放的内存文件，打印对应的堆栈
+	 */
+	void  FFL_checkMemoryLeak(const char* path);
 
 	int FFL_outofmemory();
-
-
+	/*
+	 *   memory清零
+	 */
+	#define FFL_zerop(x) memset((x), 0, sizeof(*(x)))
+	#define FFL_zero_array(x,c) memset((x), 0, (sizeof(*(x))*(c)))
+	
 	#define CHECKED_MALLOC( var, size )\
 	do {\
 		var = FFL_malloc( size );\

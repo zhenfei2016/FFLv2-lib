@@ -42,14 +42,12 @@ namespace FFL {
 	void HttpConnectMgr::setHandler(sp<HttpConnectHandler> handler) {
 		mHandler = handler;
 	}
-	NetConnect* HttpConnectMgr::createConnect(NetFD fd, NetServer* srv) {
-		HttpConnect* conn= new  HttpConnect(fd, mDefHandler);
-		addConnect(conn);
+	NetConnect* HttpConnectMgr::onCreateConnect(NetFD fd, NetServer* srv) {
+		HttpConnect* conn= new  HttpConnect(fd, mDefHandler);		
 		return conn;
 	}
 
-	void HttpConnectMgr::destroyConnect(NetFD fd) {
-		NetConnect* conn = removeConnect(fd);
+	void HttpConnectMgr::onDestroyConnect(NetConnect* conn) {		
 		delete conn;
 	}
     //

@@ -18,7 +18,7 @@
 #include <net/FFL_NetStream.hpp>
 
 namespace FFL {
-	HttpConnect::HttpConnect(NetFD fd, sp<HttpConnectHandler> handler) :NetConnect(fd){
+	HttpConnect::HttpConnect(NetFD fd, sp<HttpConnectHandler> handler) :TcpConnect(fd){
 		mHandler = handler;
 		mClosed = false;
 
@@ -42,7 +42,7 @@ namespace FFL {
 				handler->onReceiveRequest(this, request.get());
 			}
 		}else {
-			getConnectManager()->destroyConnect(this->getFd());
+			realese();
 			return false;
 		}
 
@@ -75,7 +75,7 @@ namespace FFL {
         return  new HttpResponse(this);
     }
     sp<HttpRequest> HttpConnect::createRequest(){
-    
         return  new HttpRequest(this);
     }
+
 }

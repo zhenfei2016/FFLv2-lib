@@ -17,21 +17,8 @@
 
 
 namespace FFL {
-	class ConnectThread : public Thread {
-	public:
-		ConnectThread(NetConnect* conn) :mConn(conn) {
-		}
-		virtual bool threadLoop() {
-			bool ret= mConn->process();
-			return ret;
-		}
-
-		NetConnect* mConn;
-	};
-
 	NetConnect::NetConnect(NetFD fd) :mFd(fd) {
-		mConnMgr = NULL;
-		mProcessThread = new ConnectThread(this);
+		mConnMgr = NULL;		
 	}
 	NetConnect::~NetConnect() {		
 		FFL_LOG_INFO("remove conn fd=%d",mFd);
@@ -44,16 +31,52 @@ namespace FFL {
 	//  启动，停止connect
 	//
 	status_t NetConnect::start() {
+		return onStart();
+		
+	}
+	void NetConnect::stop() {
+		onStop();
+	}
+	//
+	//  关闭自己，调用后就不能使用这个实例了
+	//
+	status_t NetConnect::realese() {
+		NetConnectManager* mgr = getConnectManager();
+		if (mgr != NULL) {
+			mgr->destroyConnect(getFd());
+			return FFL_OK;
+		}
+
+		return FFL_FAILED;
+	}
+
+	NetFD NetConnect::getFd() const {
+		return mFd;
+	}
+
+	class ConnectThread : public Thread {
+	public:
+		ConnectThread(TcpConnect* conn) :mConn(conn) {
+		}
+		virtual bool threadLoop() {
+			bool ret = mConn->process();
+			return ret;
+		}
+
+		TcpConnect* mConn;
+	};
+
+	TcpConnect::TcpConnect(NetFD fd):NetConnect(fd) {
+		mProcessThread=new	ConnectThread(this);
+	}
+	TcpConnect::~TcpConnect() {
+
+	}
+	status_t TcpConnect::onStart() {
 		mProcessThread->run("conn");
 		return FFL_OK;
 	}
-	void NetConnect::stop() {
+	void TcpConnect::onStop() {
 		mProcessThread->requestExitAndWait();
-	}
-	//
-	//  处理fd上数据的循环，返回是否继续处理
-	//
-	bool NetConnect::process() {
-		return false;
 	}
 }
