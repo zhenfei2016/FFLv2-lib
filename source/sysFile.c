@@ -1,3 +1,15 @@
+/*
+*  This file is part of FFL project.
+*
+*  The MIT License (MIT)
+*  Copyright (C) 2017-2018 zhufeifei All rights reserved.
+*
+*  sysFile.c   
+*  Created by zhufeifei(34008081@qq.com) on 2018/07/26 
+*  https://github.com/zhenfei2016/FFL-v2.git
+*  文件操作，包装系统函数
+*
+*/
 #include "sysFile.h"
 
 #ifdef WIN32

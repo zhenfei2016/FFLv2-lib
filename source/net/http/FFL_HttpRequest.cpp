@@ -72,6 +72,6 @@ namespace FFL {
 	}
 	void HttpRequest::getQuery(String& query) {
 		query = mUrl.mQuery;
-	}
+	}	
 }
 

@@ -20,6 +20,9 @@ extern "C" {
 #endif
 	/*
 	 * 获取当前进程的路径，名称
+	 * processdir : 返回进程路径，必需不是空的
+	 * len ：buf的大小
+	 * processname ： 如果非空，则返回进程名称
 	 */
 	status_t FFL_getCurrentProcessPath(char* processdir, size_t len, char* processname);
 #ifdef  __cplusplus

@@ -21,6 +21,7 @@
 namespace FFL {
 	class HttpConnect;
 	class HttpRequest;
+	class File;
 	class HttpResponse : public RefBase{
 	public:
 		HttpResponse(HttpConnect* conn);
@@ -36,10 +37,21 @@ namespace FFL {
 		void finish();
 
 		sp<HttpRequest>  createRequest();
-	private:
+	protected:
 		int32_t mStatusCode;
 
 		HttpConnect* mConn;
+	};
+
+	class HttpHtmlResponse : public HttpResponse {
+	public:
+		HttpHtmlResponse(HttpConnect* conn);
+		virtual ~HttpHtmlResponse();
+
+		void htmlPath(const char* path);
+		void response();
+	private:
+		FFL::File* mHtmlFile;
 	};
 }
 

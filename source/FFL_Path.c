@@ -41,7 +41,9 @@ status_t FFL_getCurrentProcessPath(char* processdir, size_t len, char* processna
 	}
 
 	++pathEnd;
-	strcpy(processname, pathEnd);
+	if (processname) {
+		strcpy(processname, pathEnd);
+	}
 	*pathEnd = '\0';
 	return FFL_OK;
 	

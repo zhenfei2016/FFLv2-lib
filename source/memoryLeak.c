@@ -1,3 +1,15 @@
+/*
+*  This file is part of FFL project.
+*
+*  The MIT License (MIT)
+*  Copyright (C) 2017-2018 zhufeifei All rights reserved.
+*
+*  memoryLeak.c   
+*  Created by zhufeifei(34008081@qq.com) on 2018/07/26 
+*  https://github.com/zhenfei2016/FFL-v2.git
+*  用于检测内存泄漏等的一系列函数
+*
+*/
 #include "thread/FFL_Mutex.h"
 #include "sysFile.h"
 

@@ -14,6 +14,7 @@
 #include <net/http/FFL_HttpResponse.hpp>
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpConnect.hpp>
+#include <utils/FFL_File.hpp>
 
 namespace FFL {
 	const char* JSON_HEADER = "HTTP/1.1 200 OK \r\n"
@@ -97,4 +98,45 @@ namespace FFL {
 		return req;
 	}
 
+	HttpHtmlResponse::HttpHtmlResponse(HttpConnect* conn):HttpResponse(conn){
+		mHtmlFile = NULL;
+	}
+	HttpHtmlResponse::~HttpHtmlResponse() {
+		FFL_SafeFree(mHtmlFile);
+	}
+
+	void HttpHtmlResponse::htmlPath(const char* path) {
+		FFL_SafeFree(mHtmlFile);
+		mHtmlFile = new FFL::File();
+		mHtmlFile->open(path);
+	}
+	void HttpHtmlResponse::response() {
+		String format;
+		format = "HTTP/1.1 200 OK \r\n"
+			"Content-Type: text/html;charset=utf-8\r\n"
+			"Content-Length:%d\r\n\r\n";
+
+		String content ;
+		while (true) {
+			size_t size = 0;
+			uint8_t buf[1024] = {};
+			if (FFL_OK!=mHtmlFile->read(buf, 1024, &size)) {
+				break;
+			}
+			if (size == 0) {
+				break;
+			}
+
+			content.append((const char*)buf, size);
+		}
+
+		String data;
+		formatString(data, format.c_str(), content.size());
+		data.append(content.c_str(), content.size());
+
+		FFL::IOWriter* writer = mConn->getWriter();
+		size_t nWrited = 0;
+		writer->write((void*)data.c_str(), data.size(), &nWrited);
+		mConn->close();
+	}
 }
