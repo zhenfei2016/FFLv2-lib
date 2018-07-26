@@ -36,7 +36,7 @@ ADD_SRC_FILE(FFL_Loadmodule.h)
 ADD_SRC_FILE(FFL_Initialize.h)
 ADD_SRC_FILE(FFL_Commandline.h)
 ADD_SRC_FILE(FFL_CommandHelper.h)
-
+ADD_SRC_FILE(FFL_Path.h)
 
 
 SET(LOCAL_SRC_DIR ./source/)
@@ -50,6 +50,8 @@ ADD_SRC_FILE(FFL_Loadmodule.c)
 ADD_SRC_FILE(FFL_Initialize.c)
 ADD_SRC_FILE(FFL_Commandline.c)
 ADD_SRC_FILE(FFL_CommandHelper.c)
+ADD_SRC_FILE(sysFile.c)
+ADD_SRC_FILE(FFL_Path.c)
 
 SET(LOCAL_SRC_DIR ./source/getopt/)
 ADD_SRC_FILE(getopt.c)

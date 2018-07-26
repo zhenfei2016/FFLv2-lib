@@ -14,9 +14,14 @@ public:
 	};
 };
 
-int serverMain() {
+int FFL_main() {
+	char exePath[1024] = {};
+	char exeName[1024] = {};
+	FFL_getCurrentProcessPath(exePath, 1023, exeName);
+
+	FFL::sp<HttpApiLoginHandelr> handler=new HttpApiLoginHandelr();
 	FFL::HttpConnectMgr mgr;
-	mgr.registerApi("/FFLv2?login",new HttpApiLoginHandelr());	
+	mgr.registerApi("/FFLv2?login",handler);	
 	FFL::TcpServer server(NULL,5000);
 	server.setConnectManager(&mgr);
 	server.start();

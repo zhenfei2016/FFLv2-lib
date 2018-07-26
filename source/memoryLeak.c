@@ -1,4 +1,5 @@
 #include "thread/FFL_Mutex.h"
+#include "sysFile.h"
 
 typedef  struct MemBlock {
 	void* ptr;
@@ -25,6 +26,8 @@ static void internalAllocMemBlock(void* ptr, int size);
 *    释放内存，返回是否成功 1 ,0
 * */
 static int internalFreeMemblock(void* ptr, int* size);
+
+static void internalAddLeakId(int32_t id);
 
 void *FFL_malloc(size_t size)
 {
@@ -105,8 +108,7 @@ void  FFL_dumpMemoryLeak() {
 	FFL_LockMutex(lock);
 	block = g_memblock_header;
 	FFL_LOG_INFO("FFL_malloc_memory_dump begin ");
-	while (block)
-	{
+	while (block){
 		maxid = FFL_MAX(maxid, block->id);
 		FFL_LOG_INFO("FFL_malloc mem =%p size=%d  createitme= %u  id=%u",
 			block->ptr, block->size, block->createtime, block->id);
@@ -119,36 +121,108 @@ void  FFL_dumpMemoryLeak() {
 /*
 *  打印当前未释放的内存，到文件中
 */
-void  FFL_dumpMemoryLeakFile(const char* path) {
+void FFL_dumpMemoryLeakFile(const char* path) {
+	int maxid = 0;
+	int count = 0;
+	MemBlock* block;
 
+	uint8_t fileInfo[4096] = {0};
+	uint8_t* pInfoEnd= fileInfo;
+	uint32_t fileInfoSize = 0;
+	FileHandle* file=0;
+	FFL_mutex* lock = g_memblock_mutex;
+	if (!lock) {
+		return;
+	}
+
+	file= createFile(path, MODE_ALWAYS_CREATE);
+	FFL_LockMutex(lock);
+	block = g_memblock_header;
+	FFL_LOG_INFO("FFL_malloc_memory_dump begin ");
+	while (block) {
+		maxid = FFL_MAX(maxid, block->id);
+		FFL_LOG_INFO("FFL_malloc mem =%p size=%d  createitme= %u  id=%u",
+			block->ptr, block->size, block->createtime, block->id);
+		if (pInfoEnd - fileInfo < 4000) {
+			pInfoEnd += sprintf((char*)pInfoEnd, "%d,", block->id);			
+		}
+		block = block->next;
+		count++;
+	}
+
+	if (count > 0) {
+		writeFile(file, fileInfo, pInfoEnd - fileInfo);
+	}
+	closeFile(file);
+	FFL_LOG_INFO("FFL_malloc_memory_dump count=%d maxid=%u end ", count, maxid);
+	FFL_UnlockMutex(lock);
 }
 /*
 *  参考上一次释放的内存文件，打印对应的堆栈
 */
-void  FFL_checkMemoryLeak(const char* path) {
+void FFL_checkMemoryLeak(const char* path) {
+	uint8_t buf[4096] = {0};
+	int32_t size = 0;
 
+	uint8_t* bufStart = 0;
+	uint8_t* bufEnd = 0;
+	uint8_t* bufCur = 0;
+
+	FileHandle* h=createFile(path, MODE_OPEN);
+	if (h && h->fd>=0) {
+		while (1) {
+			if ((size=readFile(h,buf, 4096)) <= 0){
+				break;
+			}
+			break;
+		}
+
+		bufCur = buf;
+		bufStart = buf;
+		bufEnd = buf + size;
+		while (bufCur<bufEnd) {
+			if (*bufCur == ',') {
+				internalAddLeakId(atoi((char*)bufStart));
+				bufStart = bufCur +1;
+			}
+
+			bufCur++;
+		}
+
+	}
+	closeFile(h);
 }
 
 /*******************************************************************************************/
 /*******************************************************************************************/
-static int gInt3Table[] = { 78 };
+static int gInt3Table[4096] ;
+static int gInt3TableSize = 0;
+
+static void internalAddLeakId(int32_t id) {
+	if (gInt3TableSize >= 4096) {
+		return;
+	}
+
+	gInt3Table[gInt3TableSize] = id;
+	gInt3TableSize++;
+}
 /*
 * 是否内存泄漏的id
 */
 static int internalIsMemoryLeakId(int32_t id) {
-	for (int i = 0; i < sizeof(gInt3Table) / sizeof(gInt3Table[0]); i++) {
+	for (int i = 0; i < gInt3TableSize&&gInt3Table; i++) {
 		if (id== gInt3Table[i]) {
-			assert(0);
-			break;
+			return 1;
 		}
 	}
+	return 0;
 }
 
 /*
  *打印调用栈
  */
 static void internalPrintCallStack() {
-	assert("internalPrintCallStack");
+	assert(0);
 }
 
 
@@ -176,7 +250,7 @@ static void internalAllocMemBlock(void* ptr, int size)
 	FFL_mutex* lock = g_memblock_mutex;
 
 	FFL_LockMutex(lock);
-	block = malloc(sizeof(MemBlock));
+	block =(MemBlock*) malloc(sizeof(MemBlock));
 	block->createtime = FFL_getNowMs();
 	block->id = g_memblock_id++;
 	block->ptr = ptr;

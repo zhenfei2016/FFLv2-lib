@@ -68,7 +68,7 @@ int printLog(int level,const char* tag, const char *format, va_list v)
     return  1;
 }
 #endif
-extern int serverMain();
+extern int FFL_main();
 
 extern "C" int main(int argc ,const char* argv[]) {	
 	FFL::startMemoryWatch();
@@ -78,7 +78,7 @@ extern "C" int main(int argc ,const char* argv[]) {
     FFL_LogSetLevel(FFL_LOG_LEVEL_ALL);
 	//FFL_LogSetLevel(FFL_LOG_LEVEL_WARNING);
 	FFL_LOG_INFO("start server");
-	serverMain();
+	FFL_main();
 	FFL_LOG_INFO("quit server");
 	FFL_dumpMemoryLeak();
 	getchar();

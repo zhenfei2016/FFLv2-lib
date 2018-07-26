@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-PROJECT(server)
+PROJECT(httpServer)
 
 INCLUDE_DIRECTORIES(
             ./			
             ../ffl/include/)
 
 SET(LOCAL_SRC_FILES
-   main.cpp;serverMain.cpp
+   main.cpp;httpServer.cpp
    )
 
 
@@ -24,9 +24,9 @@ if (MSVC)
         string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
     endforeach()
 endif(MSVC)
+ADD_EXECUTABLE(httpServer  ${LOCAL_SRC_FILES})
+TARGET_LINK_LIBRARIES(httpServer FFL)
 
-
-
-ADD_EXECUTABLE(server  ${LOCAL_SRC_FILES})
-TARGET_LINK_LIBRARIES(server FFL)
+ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
+TARGET_LINK_LIBRARIES(memoryLeak FFL)
 

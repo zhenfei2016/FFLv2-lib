@@ -31,8 +31,7 @@ namespace FFL {
 	//  启动，停止connect
 	//
 	status_t NetConnect::start() {
-		return onStart();
-		
+		return onStart();		
 	}
 	void NetConnect::stop() {
 		onStop();
