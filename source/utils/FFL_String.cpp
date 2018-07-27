@@ -1,4 +1,6 @@
 #include <utils/FFL_String.hpp>
+#include <algorithm>
+#include <iterator>
 
 namespace FFL{		
 	static const int32_t MAX_LOG_LENGTH = 4096;
@@ -64,6 +66,13 @@ namespace FFL{
 
 	bool stringEndsWith(String& str, const String& subfix) {
 		return str.find(subfix) == str.size() - subfix.size();
+	}
+
+	String stringUpper(String& str){		
+		String dst;
+		transform(str.begin(), str.end(), back_inserter(dst), ::toupper);
+		//tolower();
+		return dst;
 	}
 }
 

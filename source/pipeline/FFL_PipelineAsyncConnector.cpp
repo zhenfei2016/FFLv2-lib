@@ -141,7 +141,7 @@ namespace FFL {
 	// 连接器转发消息
 	//
 	status_t PipelineAsyncConnector::tranport(const sp<PipelineMessage> &msg, int64_t delayUs)
-	{
+	{	
 		return postMessage(msg, delayUs);
 	}
 	//
@@ -178,6 +178,11 @@ namespace FFL {
 			if (mHandler->id() == 0) {
 				FFL_LOG_WARNING("PipelineAsyncConnector handlerId=0");
 			}
+
+			if (msg->trackId() != -1) {
+				msg->trackStat("transTime:%" lld64, FFL_getNowUs());
+			}
+
 			//
 			// 发送
 			//

@@ -57,6 +57,7 @@ namespace FFL {
 		{			
 			if (mInput->mGenerateTrackId) {
 				mIdleMsg->trackIdReset(FFL_generateId());
+				mIdleMsg->trackStat("type=source");
 			}
 		    mInput->dispathMessage(mIdleMsg);
 		}

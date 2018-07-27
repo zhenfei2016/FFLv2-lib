@@ -91,6 +91,10 @@ int readFile(FileHandle* fd, uint8_t* buf, int32_t size) {
 	}
 	return 0;
 }
+
+int getFileSize(FileHandle* fd) {
+	return 0;
+}
 #else
 //
 //定义flags:只写，文件不存在那么就创建，文件长度戳为0
@@ -272,6 +276,12 @@ namespace FFL {
 		return ret;
 	}
 
+	//
+	//  文件大小
+	//
+	int32_t File::getSize() {
+		return 0;
+	}
 	//
 	//  文件是否创建了
 	//

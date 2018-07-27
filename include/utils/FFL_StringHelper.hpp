@@ -25,6 +25,12 @@ namespace FFL {
 	//  分割字符串
 	//
 	FFL::Vector<String> StringSplit(const String& str, const String& flag);
+
+	String stringTrimLeft(const String& str, uint8_t ch);
+	String stringTrimRight(const String& str, uint8_t ch);
+
+	bool stringStartsWith(String& str, const String& prefix);
+	bool stringEndsWith(String& str, const String& subfix);
 }
 
 

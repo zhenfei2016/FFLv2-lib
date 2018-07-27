@@ -22,4 +22,11 @@ namespace FFL {
 
 	HttpApiHandler::HttpApiHandler(){}
 	HttpApiHandler::~HttpApiHandler(){}
+
+	HttpFileHandler::HttpFileHandler(){
+	}
+	HttpFileHandler::~HttpFileHandler() {
+
+	}
+
 }

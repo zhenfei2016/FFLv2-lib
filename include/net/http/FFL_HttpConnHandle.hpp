@@ -47,6 +47,19 @@ namespace FFL {
 
 		virtual void onHttpQuery(HttpConnect* conn, FFL::String& path, FFL::String& query)=0;
 	};
+
+	//
+	//  处理文件请求
+	//
+	class HttpFileHandler : public RefBase {
+	public:
+		HttpFileHandler();
+		virtual ~HttpFileHandler();
+		//
+		//  返回是否处理这个请求
+		//
+		virtual bool onHttpFile(HttpConnect* conn,const FFL::String& path) = 0;
+	};
 }
 
 #endif

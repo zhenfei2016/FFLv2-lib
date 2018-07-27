@@ -42,6 +42,9 @@ namespace FFL {
 	void HttpConnectMgr::setHandler(sp<HttpConnectHandler> handler) {
 		mHandler = handler;
 	}
+	void HttpConnectMgr::setFileHandler(sp<HttpFileHandler> hander) {
+		mFileHandler = hander;
+	}
 	NetConnect* HttpConnectMgr::onCreateConnect(NetFD fd, NetServer* srv) {
 		HttpConnect* conn= new  HttpConnect(fd, mDefHandler);		
 		return conn;
@@ -97,24 +100,47 @@ namespace FFL {
                           requestId,
                           path.c_str(),query.c_str());
         
-		FFL::sp<HttpApiHandler> handler = getRegisterApi(path + "?" + query);
-		if (!handler.isEmpty()) {
-			handler->onHttpQuery(conn, path, query);
-		}else {
-			if (mHandler.isEmpty()) {
-                FFL_LOG_DEBUG_TAG("http","not find handler  %s?%s  ",
-                                  path.c_str(),query.c_str());
-                sp<HttpResponse> res=conn->createResponse();
-                res->finish();
+		if (query.size() == 0) {
+			//
+			//  请求文件
+			//
+			onRequestFile(conn, path,request);
+		}
+		else {
+			FFL::sp<HttpApiHandler> handler = getRegisterApi(path + "?" + query);
+			if (!handler.isEmpty()) {				
+				handler->onHttpQuery(conn, path, query);
 			}
 			else {
-				mHandler->onReceiveRequest(conn, request);
-				FFL_socketClose(conn->getFd());
-				//conn->close();
+				if (mHandler.isEmpty()) {
+					FFL_LOG_DEBUG_TAG("http", "not find handler  %s?%s  ",
+						path.c_str(), query.c_str());
+					sp<HttpResponse> res = conn->createResponse();
+					res->finish();
+				}
+				else {
+					mHandler->onReceiveRequest(conn, request);
+					FFL_socketClose(conn->getFd());
+					//conn->close();
+				}
 			}
 		}
         FFL_LOG_DEBUG_TAG("http","complete(%" lld64 "): %s?%s  \r\n\r\n",
                           requestId,
                           path.c_str(),query.c_str());
+	}
+
+	void HttpConnectMgr::onRequestFile(HttpConnect* conn,const String& path, HttpRequest* request) {
+		if (!mFileHandler.isEmpty()) {
+			if (mFileHandler->onHttpFile(conn, path)) {
+				return;
+			}
+		}
+
+		//
+		//  默认的处理过程
+		//
+		sp<HttpResponse> res = conn->createResponse();
+		res->finish();
 	}
 }

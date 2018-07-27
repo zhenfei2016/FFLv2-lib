@@ -53,6 +53,19 @@ namespace FFL {
 	private:
 		FFL::File* mHtmlFile;
 	};
+
+	class HttpFileResponse : public HttpResponse {
+	public:
+		HttpFileResponse(HttpConnect* conn);
+		virtual ~HttpFileResponse();
+		
+		//
+		//  应答这个文件，返回是否有效的应答了
+		//
+		bool response(const char* file);
+	private:
+		
+	};
 }
 
 #endif

@@ -35,6 +35,10 @@ namespace FFL {
 		//  设置http处理句柄
 		//
 		void setHandler(sp<HttpConnectHandler> handler);
+		//
+		//  设置处理文件请求的句柄
+		//
+		void setFileHandler(sp<HttpFileHandler> hander);		
 	public:
 		//
 		//  注册处理指定http ，请求的处理句柄
@@ -51,6 +55,10 @@ namespace FFL {
 		//
 		friend class DefHttpConnectHandler;
 		void receiveRequest(HttpConnect* conn, HttpRequest* request);
+		//
+		//   请求一个文件
+		//
+		void onRequestFile(HttpConnect* conn, const String& path, HttpRequest* request);
 	private:
 		//
 		//  默认的handler;
@@ -58,6 +66,10 @@ namespace FFL {
 		sp<HttpConnectHandler> mDefHandler;
 
 		sp<HttpConnectHandler> mHandler;
+		//
+		//  处理文件请求
+		//
+		sp<HttpFileHandler> mFileHandler;
 
 		CMutex mApisLock;
 		std::map<String, wp<HttpApiHandler> > mApis;
