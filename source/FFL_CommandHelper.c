@@ -112,3 +112,11 @@ void FFL_inputLooper(CmdOption* opts,void* userdata,
 		}
 	}
 }
+
+
+/*
+*  ¥Ú”°∞Ô÷˙
+*/
+void FFL_cmdUsage(CmdOption* opts) {
+	help(0,opts);
+}

@@ -48,6 +48,11 @@ extern "C" {
 	void FFL_inputLooper(CmdOption* opts, void* userdata,
 		    int(*fnQuitFlag)(void* userdata) );
 
+	/*
+	*  打印帮助
+	*/
+	void FFL_cmdUsage(CmdOption* opts );
+
 #ifdef  __cplusplus
 }
 #endif
