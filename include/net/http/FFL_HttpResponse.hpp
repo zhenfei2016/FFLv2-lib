@@ -41,18 +41,7 @@ namespace FFL {
 		int32_t mStatusCode;
 
 		HttpConnect* mConn;
-	};
-
-	class HttpHtmlResponse : public HttpResponse {
-	public:
-		HttpHtmlResponse(HttpConnect* conn);
-		virtual ~HttpHtmlResponse();
-
-		void htmlPath(const char* path);
-		void response();
-	private:
-		FFL::File* mHtmlFile;
-	};
+	};	
 
 	class HttpFileResponse : public HttpResponse {
 	public:
