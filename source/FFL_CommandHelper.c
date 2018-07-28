@@ -7,7 +7,7 @@
 *  FFL_CommandHelper.c
 *  Created by zhufeifei(34008081@qq.com) on 2018/07/21
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ÃüÁîĞĞ´¦ÀíµÄ°ïÖúÀà
+*  å‘½ä»¤è¡Œå¤„ç†çš„å¸®åŠ©ç±»
 *  
 *   static void play(const char* args, void* userdata) {
 *	}
@@ -58,7 +58,7 @@ static void help(const char* args, void* userdata) {
 }
 
 /*
-*  fnQuitFlag ·µ»Ø·Ç0ÔòÍË³öÑ­»·
+*  fnQuitFlag è¿”å›é0åˆ™é€€å‡ºå¾ªç¯
 */
 void FFL_inputLooper(CmdOption* opts,void* userdata,
 	int(*fnQuitFlag)(void* userdata)){
@@ -82,7 +82,7 @@ void FFL_inputLooper(CmdOption* opts,void* userdata,
 
 	while (fgets(cmd + 2, 256 - 3, stdin)) {
 		//
-		//  °ÑÊäÈëÃüÁî¸ñÊ½»¯Îª  cmd=xxx  ,¾ÍÊÇ°ÑÃüÁî×ª»¯³ÉµÚÒ»¸ö²ÎÊı
+		//  æŠŠè¾“å…¥å‘½ä»¤æ ¼å¼åŒ–ä¸º  cmd=xxx  ,å°±æ˜¯æŠŠå‘½ä»¤è½¬åŒ–æˆç¬¬ä¸€ä¸ªå‚æ•°
 		//		
 		char* pCmdLine = cmd + 2;
 		while (*pCmdLine++) {
@@ -97,7 +97,7 @@ void FFL_inputLooper(CmdOption* opts,void* userdata,
 			optCount,
 			userdata) < 0) {
 			/*
-			*  ¿´Ò»ÏÂ±¾ÏµÍ³ÊÇ·ñÖ§³ÖÕâ¸öÃüÁî
+			*  çœ‹ä¸€ä¸‹æœ¬ç³»ç»Ÿæ˜¯å¦æ”¯æŒè¿™ä¸ªå‘½ä»¤
 			*/
 			if(FFL_parseCommnadline(argc, argv,
 				gCmdOption,
@@ -115,7 +115,7 @@ void FFL_inputLooper(CmdOption* opts,void* userdata,
 
 
 /*
-*  ´òÓ¡°ïÖú
+*  æ‰“å°å¸®åŠ©
 */
 void FFL_cmdUsage(CmdOption* opts) {
 	help(0,opts);

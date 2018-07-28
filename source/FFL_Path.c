@@ -26,13 +26,22 @@
 */
 status_t FFL_getCurrentProcessPath(char* processdir, size_t len, char* processname) {
 	char* pathEnd=0;
-#if WIN32 
+    int32_t size=0;
+#if WIN32
 	GetModuleFileNameA(NULL, processdir, len);
 	pathEnd = strrchr(processdir, '\\');
 #else	
-	if (readlink("/proc/self/exe", processdir, len) <= 0) {
-		return FFL_FAILED;
-	}	
+    getcwd(processdir,len);
+    size=strlen(processdir);
+    if(size>0 && processdir[size-1]!='/'){
+        processdir[size]='/';
+        processdir[size+1]=0;
+    }
+    
+    return FFL_OK;
+	//if (readlink("/proc/self/exe", processdir, len) <= 0) {
+	//	return FFL_FAILED;
+	//}
 #endif
 	if(pathEnd ==NULL)
 		pathEnd = strrchr(processdir, '/');
