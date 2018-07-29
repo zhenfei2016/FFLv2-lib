@@ -213,6 +213,14 @@ ADD_SRC_FILE(FFL_PipelineHandler.cpp)
 ADD_SRC_FILE(PipelineMessageTrackFile.hpp)
 ADD_SRC_FILE(PipelineMessageTrackFile.cpp)
 
+SET(LOCAL_SRC_DIR ./include/helper/)
+ADD_SRC_FILE(FFL_NodeBase.hpp)
+ADD_SRC_FILE(FFL_LogSender.hpp)
+
+SET(LOCAL_SRC_DIR ./source/helper/)
+ADD_SRC_FILE(FFL_NodeBase.cpp)
+ADD_SRC_FILE(FFL_LogSender.cpp)
+
 
 #SET(LOCAL_SRC_DIR ./include/net/base/)
 #ADD_SRC_FILE(FFL_Net.h)

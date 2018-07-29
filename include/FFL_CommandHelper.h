@@ -48,6 +48,9 @@ extern "C" {
 	void FFL_inputLooper(CmdOption* opts, void* userdata,
 		    int(*fnQuitFlag)(void* userdata) );
 
+	void FFL_cmdLooper(CmdOption* opts, void* userdata,
+		int(*fnQuitFlag)(void* userdata));
+
 	/*
 	*  打印帮助
 	*/

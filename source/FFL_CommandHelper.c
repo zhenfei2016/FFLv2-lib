@@ -113,7 +113,10 @@ void FFL_inputLooper(CmdOption* opts,void* userdata,
 	}
 }
 
-
+void FFL_cmdLooper(CmdOption* opts, void* userdata,
+	int(*fnQuitFlag)(void* userdata)) {
+	FFL_inputLooper(opts,userdata,fnQuitFlag);
+}
 /*
 *  打印帮助
 */
