@@ -8,9 +8,7 @@ namespace FFL {
 #define  ConnSocketType 2
 	class LogInfo : public FFL::PipelineMessagePayload {
 	public:
-		//
-		//  已经处理完成了，可以回收了		
-		//
+    
 		virtual void consume(){
 		}
 
@@ -36,14 +34,18 @@ namespace FFL {
 				LogInfo* info=(LogInfo*) (msg->getPayload());
 				if (mSocket) {
 					size_t writed = 0;
-					mSocket->write((void*)(info->mInfo.c_str()), info->mInfo.size(),&writed );
-				} else {
-
-					if (!mIsConnecting) {
+                    if(FFL_OK!=
+                         mSocket->write((void*)(info->mInfo.c_str()),
+                                              info->mInfo.size(),&writed) ){
+                        FFL_SafeFree (mSocket);
+                    }
+				}
+                       
+                if((!mSocket) && (!mIsConnecting)){
 						FFL::PipelineMessage* controlMsg = new FFL::PipelineMessage(ConnSocketType);
 						postMessage(mOutputSocket.getId(), controlMsg);
 						mIsConnecting = true;
-					}
+					
 				}
 				msg->consume(this);
 			} else if (msg->getType() == ConnSocketType) {

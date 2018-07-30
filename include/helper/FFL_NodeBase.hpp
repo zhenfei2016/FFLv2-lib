@@ -71,6 +71,7 @@ namespace FFL {
 			FFL::String mName;
 		};
 
+    class NodeBase;
 		//
 		//  管理node
         //

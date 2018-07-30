@@ -33,7 +33,9 @@ namespace FFL {
 		static ContentTypeMap  sMap[] = {
 			{".html","text/html" },
 			{ ".js","text/javascript" },
+            { ".js.map","text/javascript.map" },
 			{ ".css","text/css" },
+            { ".css.map","text/css.map" },
 			{ ".json","text/json" },
 			{ ".xml","text/xml" },
 			{ ".rss","application / rss + xml" },
