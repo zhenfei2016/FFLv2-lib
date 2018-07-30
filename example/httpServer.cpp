@@ -7,7 +7,7 @@
 
 class HttpApiLoginHandelr : public FFL::HttpApiHandler {
 public:
-	virtual void onHttpQuery(FFL::HttpConnect* conn, FFL::String& path, FFL::String& query) {
+	virtual void onHttpQuery(FFL::HttpConnect* conn, FFL::String& query,FFL::HttpRequest* request) {
 		FFL::sp<FFL::HttpResponse> res = conn->createResponse();
 		res->writeJson("{\"login\":\"1\"");
 		conn->realese();

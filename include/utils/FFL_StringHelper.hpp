@@ -26,11 +26,23 @@ namespace FFL {
 	//
 	FFL::Vector<String> StringSplit(const String& str, const String& flag);
 
+	//
+	//  trim一个字符
+	//
 	String stringTrimLeft(const String& str, uint8_t ch);
 	String stringTrimRight(const String& str, uint8_t ch);
 
+	//
+	//  以什么结尾，开头
+	//
 	bool stringStartsWith(String& str, const String& prefix);
 	bool stringEndsWith(String& str, const String& subfix);
+
+	//
+	//  转大小写
+	//
+	String stringUpper(const String& str);
+	String stringLower(const String& str);
 }
 
 

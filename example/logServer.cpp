@@ -1,6 +1,7 @@
 #include <FFL.h>
 #include <helper/FFL_NodeBase.hpp>
 #include <FFL_CommandHelper.h>
+#include <net/base/FFL_Net.h>
 
 
 class LogInputNode : public FFL::NodeBase {
@@ -71,7 +72,7 @@ public:
 		node->setName("logInput");
 		node->create(mManager);
 		FFL::OutputInterface output=node->createOutputInterface();
-
+		//FFL_socketNetworkTcpClient();
 		LogUploaderNode* uploader = new LogUploaderNode();
 		uploader->setName("logUploader");
 		uploader->create(mManager);

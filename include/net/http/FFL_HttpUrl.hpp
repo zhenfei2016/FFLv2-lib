@@ -31,6 +31,7 @@ namespace FFL {
 		String mHost;		
 		String mPath;
 		String mQuery;
+		List<String> mQueryParams;
 		
 	};
 }

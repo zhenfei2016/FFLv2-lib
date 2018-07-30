@@ -67,7 +67,7 @@ namespace FFL {
         mConsumeListener(NULL)
 	{
         mPayloadAutoDel=false;
-        FFL_LOG_DEBUG("PipelineMessage::PipelineMessage(%d) %p",mType,this);
+       // FFL_LOG_DEBUG("PipelineMessage::PipelineMessage(%d) %p",mType,this);
 
 		mTrackInfo = new TrackInfo();
 		trackIdReset(-1);

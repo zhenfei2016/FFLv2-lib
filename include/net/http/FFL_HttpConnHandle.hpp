@@ -45,7 +45,7 @@ namespace FFL {
 		HttpApiHandler();
 		virtual ~HttpApiHandler();
 
-		virtual void onHttpQuery(HttpConnect* conn, FFL::String& path, FFL::String& query)=0;
+		virtual void onHttpQuery(HttpConnect* conn,FFL::String& query, HttpRequest* request)=0;
 	};
 
 	//

@@ -68,11 +68,17 @@ namespace FFL{
 		return str.find(subfix) == str.size() - subfix.size();
 	}
 
-	String stringUpper(String& str){		
+	String stringUpper(const String& str){		
 		String dst;
-		transform(str.begin(), str.end(), back_inserter(dst), ::toupper);
-		//tolower();
+		transform(str.begin(), str.end(), back_inserter(dst), ::toupper);		
 		return dst;
 	}
+
+	String stringLower(const String& str) {
+		String dst;
+		transform(str.begin(), str.end(), back_inserter(dst), ::tolower);
+		return dst;
+	}
+
 }
 

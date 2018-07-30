@@ -150,7 +150,11 @@ namespace FFL {
 				   const OutputInterface& input,
 				   const char* name,
 				   void* userdata);
-
+		
+			InputInterface  connectTimerInput(				   
+				   const char* name,
+				   uint32_t timeMs,
+				   void* userdata);
 			/////////////////////////////////////////////////////////////////////////////////////////////
 			//    输出相关，本节点输出的数据
 			/////////////////////////////////////////////////////////////////////////////////////////////
@@ -216,7 +220,7 @@ namespace FFL {
 			virtual void onStartMessageLooper();
 			virtual void onQuitMessageLooper();			
 
-			virtual bool onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata)=0;
+			virtual bool onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata);
 		private:
 			//
 			// 节点id

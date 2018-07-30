@@ -91,39 +91,39 @@ namespace FFL {
 			//  返回false则node不进行启动了
 			//
 			bool onStartupBefore() {
-				FFL_LOG_INFO("[%s] onStartupBefore %p", mNodeBase->mNodeName.c_str(), this);
+				FFL_LOG_INFO("%s: onStartupBefore %p", mNodeBase->mNodeName.c_str(), this);
 				return true;
 			}
 			void onStartupAfter() {
-				FFL_LOG_INFO("[%s] onStartupAfter %p", mNodeBase->mNodeName.c_str(), this);
+				FFL_LOG_INFO("%s: onStartupAfter %p", mNodeBase->mNodeName.c_str(), this);
 			}
 
 			void onShutdownBefore() {
-				FFL_LOG_INFO("[%s] onShutdownBefore %p", mNodeBase->mNodeName.c_str(), this);
+				FFL_LOG_INFO("%s: onShutdownBefore %p", mNodeBase->mNodeName.c_str(), this);
 			}
 			void onShutdownAfter() {
-				FFL_LOG_INFO("[%s] onShutdownAfter %p", mNodeBase->mNodeName.c_str(), this);
+				FFL_LOG_INFO("%s: onShutdownAfter %p", mNodeBase->mNodeName.c_str(), this);
 			}
 
 			void onStartMessageLooper(FFL::PipelineInputId id) {
-				FFL_LOG_INFO("[%s:%d] onStartMessageLooper %p", mNodeBase->mNodeName.c_str(), id, this);
+				FFL_LOG_INFO("%s:%d: onStartMessageLooper %p", mNodeBase->mNodeName.c_str(), id, this);
 				mNodeBase->onStartMessageLooper();
 			}
 			bool prepareHandleMessage(FFL::PipelineInputId id, const FFL::sp<FFL::PipelineMessage> &msg)
 			{
-				FFL_LOG_INFO("[%s:%d] prepareHandleMessage %p", mNodeBase->mNodeName.c_str(), id, this);
+				FFL_LOG_INFO("%s:%d: prepareHandleMessage %p", mNodeBase->mNodeName.c_str(), id, this);
 				return true;
 			}
 			//
 			//  退出looper的消息
 			//
 			void onQuitMessageLooper(FFL::PipelineInputId id, uint32_t exitCode) {
-				FFL_LOG_INFO("[%s:%d] onQuitMessageLooper %p", mNodeBase->mNodeName.c_str(), id, this);
+				FFL_LOG_INFO("%s:%d: onQuitMessageLooper %p", mNodeBase->mNodeName.c_str(), id, this);
 				mNodeBase->onQuitMessageLooper();
 			}
 
 			void onEvent(const FFL::sp<FFL::PipelineEvent> &msg) {
-				FFL_LOG_INFO("[%s] onEvent %p", mNodeBase->mNodeName.c_str(), this);
+				FFL_LOG_INFO("%s: onEvent %p", mNodeBase->mNodeName.c_str(), this);
 			}
 		private:
 			NodeBase* mNodeBase;
@@ -245,6 +245,28 @@ namespace FFL {
 			input.reset();
 			return input;
 		}
+		InputInterface  NodeBase::connectTimerInput(
+			const char* name,			
+			uint32_t timeMs, void* userdata) {
+			FFL::sp<FFL::PipelineInputHandler> callback =
+				new FFL::ClassMethodInputHandler<NodeBase, void*>(this, &NodeBase::receiveData, userdata);
+			InputInterface input = createInputInterface(callback, name);
+			if (!input.isValid()) {
+				FFL_LOG_ERROR("invalid input id");
+				input.reset();
+				return input;
+			}
+
+			FFL::sp<FFL::PipelineSourceConnector> conn = 0;
+			if (timeMs==0) {
+				conn = new FFL::PipelineIdleSourceConnector();
+			}
+			else {
+				conn = new FFL::PipelineTimerSourceConnector(timeMs);
+			}
+			getPipeline()->connectSource(input.getNodeId(), input.getId(), conn);
+			return input;
+		}
 
 		FFL::sp<FFL::PipelineOutput> NodeBase::getOutput(FFL::PipelineOutputId id) {
 			return mNodeHandler->getOutput(id);
@@ -342,7 +364,8 @@ namespace FFL {
 			const OutputInterface& output,
 			const InputInterface& input,
 			void* userdata) {
-			return new FFL::SyncPipelineConnector();
+			//return new FFL::SyncPipelineConnector();
+			return new FFL::PipelineAsyncConnector();
 		}
 		void NodeBase::onCreate() {}
 		void NodeBase::onDestroy() {}
@@ -350,5 +373,8 @@ namespace FFL {
 		{}
 		void NodeBase::onQuitMessageLooper()
 		{}	
+		bool NodeBase::onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {
+			return false;
+		}
 	
 }

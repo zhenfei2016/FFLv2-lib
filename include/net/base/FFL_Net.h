@@ -35,21 +35,21 @@ extern "C" {
 	 */
 	SOCKET_STATUS FFL_socketLoopbackClient(int port, int type, NetFD*fd);
 	SOCKET_STATUS FFL_socketLoopbackClientTimeout(int port, int type, NetFD*fd,int timeout_tm);
-    #define FFL_socketLoopbackTcpClient(port,fd) FFL_socket_loopback_client(port,SOCK_STREAM,fd)
-    #define FFL_socketLoopbackUdpClient(port,fd) FFL_socket_loopback_client(port,SOCK_DGRAM,fd)
+    #define FFL_socketLoopbackTcpClient(port,fd) FFL_socketLoopbackClient(port,SOCK_STREAM,fd)
+    #define FFL_socketLoopbackUdpClient(port,fd) FFL_socketLoopbackClient(port,SOCK_DGRAM,fd)
     /*  
 	 * 本地loopback的服务器，监听连接
 	 */
 	SOCKET_STATUS FFL_socketLoopbackServer(int port, int type,NetFD* fd);
-    #define FFL_socketLoopbackTcpServer(port,fd) FFL_socket_loopback_server(port,SOCK_STREAM,fd);  
-    #define FFL_socketLoopbackUdpServer(port,fd) FFL_socket_loopback_server(port,SOCK_DGRAM,fd);·
+    #define FFL_socketLoopbackTcpServer(port,fd) FFL_socketLoopbackServer(port,SOCK_STREAM,fd);  
+    #define FFL_socketLoopbackUdpServer(port,fd) FFL_socketLoopbackServer(port,SOCK_DGRAM,fd);·
 	/*
 	 *连接到服务器，返回句柄fd
 	 */
 	SOCKET_STATUS FFL_socketNetworkClient(const char *host, int port, int type, NetFD* fd);
 	SOCKET_STATUS FFL_socketNetworkClientTimeout(const char *host, int port, int type, NetFD* fd,int timeout_tm);
-	#define FFL_socketNetworkTcpClient(host,port,fd) FFL_socket_network_client(host,port,SOCK_STREAM,fd)
-	#define FFL_socketNetworkUdpClient(host,port,fd) FFL_socket_network_client(host,port,SOCK_DGRAM,fd)
+	#define FFL_socketNetworkTcpClient(host,port,fd) FFL_socketNetworkClient(host,port,SOCK_STREAM,fd)
+	#define FFL_socketNetworkUdpClient(host,port,fd) FFL_socketNetworkClient(host,port,SOCK_DGRAM,fd)
 
 	/* 
 	 *本地的服务器，监听连接 

@@ -48,6 +48,35 @@ namespace FFL{
 		//  清空缓存
 		//
 		void clear();
+	public:
+		//
+		//  cache中创建消息
+		//
+		template<class PLAYLOAD>
+		FFL::sp<FFL::PipelineMessage> createMessage(PLAYLOAD** payload,int32_t playloadType){
+			FFL::sp<FFL::PipelineMessage> msg = dumpIfNullAlloc();
+			PLAYLOAD* pl = NULL;
+			//
+			//  获取缓存
+			//
+			do {
+				FFL::PipelineMessagePayload* payload = msg->getPayload();
+				if (payload != NULL && msg->getType() == playloadType) {
+					pl = (PLAYLOAD*)payload;
+				}
+
+				if (pl) break;
+
+				//
+				//  如果不存在则创建他
+				//
+				pl = new PLAYLOAD();
+				msg->setPayload(pl);
+			} while (0);
+
+			*payload = pl;
+			return msg;
+		}
 	private:
 		class CacheListener;
 		friend class CacheListener;
@@ -61,6 +90,8 @@ namespace FFL{
 
 		uint32_t mMsgType;
 	};
+
+	
 }
 
 

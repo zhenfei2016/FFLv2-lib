@@ -25,25 +25,32 @@ SOCKET_STATUS FFL_socketNetworkClientTimeout(const char *host, int port, int typ
     struct sockaddr_in addr;
     int s;
 
-	//gethostname(hostname, 100);   //获得主机的名称
-	//getaddrinfo(hostname, NULL, &hints, &res);   //利用主机名称获取本地地址
-	//char buff[100];
-	//DWORD bufflen = 100;
-	////将本地地址转换成字符串显示
-	//struct sockaddr_in* pSockaddr = (sockaddr_in*)res->ai_addr;
-	//char *pIP = inet_ntoa(pSockaddr->sin_addr);
 
-    hp = gethostbyname(host);
-	if (hp == 0) {
-		return FFL_ERROR_SOCKET_GET_PEER_IP;
+	if (inet_addr(host) != INADDR_NONE) {
+		addr.sin_family = AF_INET;
+		addr.sin_port = htons(port);
+		addr.sin_addr.s_addr = inet_addr(host);
+	}
+	else {
+		//gethostname(hostname, 100);   //获得主机的名称
+
+		//getaddrinfo(host, NULL, &hints, &res);   //利用主机名称获取本地地址
+		//char buff[100];
+		//DWORD bufflen = 100;
+		////将本地地址转换成字符串显示
+		//struct sockaddr_in* pSockaddr = (sockaddr_in*)res->ai_addr;
+		//char *pIP = inet_ntoa(pSockaddr->sin_addr);
+
+		hp = gethostbyname(host);
+		if (hp == 0) {
+			return FFL_ERROR_SOCKET_GET_PEER_IP;
+		}
+		addr.sin_family = hp->h_addrtype;
+		addr.sin_port = htons(port);
+		memcpy(&addr.sin_addr, hp->h_addr, hp->h_length);
 	}
 
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = hp->h_addrtype;
-    addr.sin_port = htons(port);
-    memcpy(&addr.sin_addr, hp->h_addr, hp->h_length);
-
-    s = socket(hp->h_addrtype, type, 0);
+    s = socket(addr.sin_family, type, 0);
 	if (s < 0) {
 		return FFL_ERROR_SOCKET_CREATE;
 	}

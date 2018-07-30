@@ -12,6 +12,7 @@
 */
 
 #include <net/http/FFL_HttpUrl.hpp>
+#include <utils/FFL_StringHelper.hpp>
 #include "http-parser-2.1/http_parser.h"
 
 namespace FFL {	
@@ -53,6 +54,14 @@ namespace FFL {
 		getUrlField(url, mPath, &parserUrl, UF_PATH);
 		getUrlField(url, mQuery, &parserUrl, UF_QUERY);
 
+		mQueryParams.clear();
+		FFL::Vector<String> queryList=StringSplit(mQuery, "&");
+		if (queryList.size() >=2) {
+			mQuery = queryList[0];
+			for (int32_t i = 1; i < (int32_t)queryList.size(); i++) {
+				mQueryParams.push_back(queryList[i]);
+			}
+		}
 		FFL_LOG_DEBUG("HttpUrl::parse schema=%s  host=%s port=%d path=%s query=%s",
 			mSchema.c_str(),
 			mHost.c_str(),

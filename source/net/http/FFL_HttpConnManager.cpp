@@ -13,6 +13,7 @@
 */
 #include <net/http/FFL_HttpConnManager.hpp>
 #include <net/http/FFL_Http.hpp>
+#include <utils/FFL_StringHelper.hpp>
 
 namespace FFL {
 
@@ -62,22 +63,27 @@ namespace FFL {
 
 		//}	
 
+		String key = stringLower(pathAndQuery);
 		CMutex::Autolock l(mApisLock);
 		wp<HttpApiHandler> wHandler = handler;
-		mApis[pathAndQuery] = wHandler;
+		mApis[key] = wHandler;
     }
     FFL::sp<HttpApiHandler> HttpConnectMgr::unregisterApi(const String& pathAndQuery){
+		String key = stringLower(pathAndQuery);
+
 		FFL::sp<HttpApiHandler> hander;
 		CMutex::Autolock l(mApisLock);
-		std::map<String, wp<HttpApiHandler> >::iterator it = mApis.find(pathAndQuery);
+		std::map<String, wp<HttpApiHandler> >::iterator it = mApis.find(key);
 		if (it != mApis.end()) {
 			hander= it->second.promote();
 		}
          return hander;
     }
     FFL::sp<HttpApiHandler> HttpConnectMgr::getRegisterApi(const String& pathAndQuery){
+		String key = stringLower(pathAndQuery);
+
 		CMutex::Autolock l(mApisLock);
-		std::map<String, wp<HttpApiHandler> >::iterator it = mApis.find(pathAndQuery);
+		std::map<String, wp<HttpApiHandler> >::iterator it = mApis.find(key);
 		if (it != mApis.end()) {
 			return it->second.promote();
 		}
@@ -91,9 +97,12 @@ namespace FFL {
 	void HttpConnectMgr::receiveRequest(HttpConnect* conn, HttpRequest* request) {
 		String path;
 		request->getPath(path);
-
+		
 		String query;
 		request->getQuery(query);
+
+		//FFL::List<FFL::String> params;
+		//request->getQueryParams(params);
 
         int64_t requestId=mRequestId++;
         FFL_LOG_DEBUG_TAG("http","request(%" lld64  "): %s?%s",
@@ -109,7 +118,7 @@ namespace FFL {
 		else {
 			FFL::sp<HttpApiHandler> handler = getRegisterApi(path + "?" + query);
 			if (!handler.isEmpty()) {				
-				handler->onHttpQuery(conn, path, query);
+				handler->onHttpQuery(conn, query, request);
 			}
 			else {
 				if (mHandler.isEmpty()) {

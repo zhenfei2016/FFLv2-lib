@@ -94,7 +94,7 @@ namespace FFL {
 		if (msg.isEmpty()) {
 			msg = new PipelineMessage(mMsgType);
 			msg->setConsumeListener(mListener);
-            FFL_LOG_DEBUG("PipelineMessageCache new PipelineMessage(%d) cache:%d dumped:%d",mMsgType,mList.size(),mDumpdList.size()+1);
+            //FFL_LOG_DEBUG("PipelineMessageCache new PipelineMessage(%d) cache:%d dumped:%d",mMsgType,mList.size(),mDumpdList.size()+1);
 		}
         mDumpdList.push_back(msg);
 		return msg;

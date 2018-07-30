@@ -52,6 +52,7 @@ namespace FFL {
 
 		void getPath(String& path);
 		void getQuery(String& query);
+		void getQueryParams(List<String>& query);
 	public:
 		//
 		//  创建应答
