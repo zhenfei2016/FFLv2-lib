@@ -110,8 +110,7 @@ namespace FFL {
 				mNodeBase->onStartMessageLooper();
 			}
 			bool prepareHandleMessage(FFL::PipelineInputId id, const FFL::sp<FFL::PipelineMessage> &msg)
-			{
-				FFL_LOG_INFO("%s:%d: prepareHandleMessage %p", mNodeBase->mNodeName.c_str(), id, this);
+			{				
 				return true;
 			}
 			//

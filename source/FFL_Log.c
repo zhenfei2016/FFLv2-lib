@@ -32,6 +32,8 @@ static FFL_LogLevel gLogMaxLevel = FFL_LOG_LEVEL_ERROR;
  */
 static int defaultPrintLog(int level,const char* tag, const char *format, va_list vl);
 static FFL_LogHookFun gLogHookFun = NULL;
+static void* gLogHookFunUserdata = 0;
+
 
 static FILE *gLogFd;
 
@@ -42,7 +44,7 @@ static FILE *gLogFd;
 static void internalPrintLog(int level,const char* tag, const char *format, va_list args)
 {
 	if (level <= gLogMaxLevel) {
-		if (gLogHookFun && (gLogHookFun(level, tag, format, args) > 0)) {
+		if (gLogHookFun && (gLogHookFun(level, tag, format, args, gLogHookFunUserdata) > 0)) {
 			return;
 		}
 
@@ -82,9 +84,9 @@ void FFL_LogSetOutput(FILE *file)
 	gLogFd = file;
 }
 
-void FFL_LogHook(FFL_LogHookFun cb)
-{
-	gLogHookFun = cb;
+void FFL_LogHook(FFL_LogHookFun callback, void* userdata){
+	gLogHookFun = callback;
+	gLogHookFunUserdata = userdata;
 }
 
 /*

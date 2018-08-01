@@ -64,9 +64,10 @@ const char* FFL_LogGetLevelString(int level);
  *  根据返回值表示是否需要继续默认的日志输出
  *  1 : 已经把日志处理了，不需要默认日志系统了
  *  0 : 用默认日志处理函数    
+ *  userdata :透传数据
  */
-typedef int (*FFL_LogHookFun)(int level,const char* tag,const char *format, va_list);
-void FFL_LogHook(FFL_LogHookFun cb);
+typedef int (*FFL_LogHookFun)(int level,const char* tag,const char *format, va_list args,void* userdata);
+void FFL_LogHook(FFL_LogHookFun callback, void* userdata);
 
 
 /*

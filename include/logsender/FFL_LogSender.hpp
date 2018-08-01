@@ -20,4 +20,11 @@ namespace FFL {
 	};
 }
 
+
+//
+//  接管log系统
+//
+extern "C" void FFL_hookLogSystem(FFL::LogSender& sender);
+extern "C" void FFL_unhookLogSystem();
+
 #endif

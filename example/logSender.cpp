@@ -18,11 +18,6 @@ static CmdOption  gCmdOption[] = {
 	{ 0,0,0,0 },
 };
 
-FFL::LogSender* gSender;
-int printLogToSender(int level, const char* tag, const char *format, va_list v){	
-	gSender->write(level,tag,format,v);
-	return 1;
-}
 
 static int32_t gIndex = 0;
 class TestThread : public FFL::Thread {
@@ -34,23 +29,29 @@ public:
 	}
 };
 int FFL_main() {
-	FFL_socketInit();
-	char exePath[1024] = {};
-	char exeName[1024] = {};
-	FFL_getCurrentProcessPath(exePath, 1023, exeName);
-
+	//
+	//  模拟日志输入
+	//
 	FFL::sp<TestThread> testThread = new TestThread();
 	testThread->run("test");
 
-	gSender = new FFL::LogSender();
-	gSender->startup();
-	FFL_LogHook(printLogToSender);
+	//
+	//
+	//
+	FFL::LogSender logSender;	
+	logSender.startup();
+	FFL_hookLogSystem(logSender);
+
+
+	
 
 	//
 	//  打印一下帮助函数
 	//
 	FFL_cmdUsage(gCmdOption);
 	FFL_cmdLooper(gCmdOption,0, quitFlag);	
+	FFL_unhookLogSystem();
+
 	FFL_sleep(1000);
 	return 0;
 }
