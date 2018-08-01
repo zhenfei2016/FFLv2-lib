@@ -1,7 +1,8 @@
 #ifndef _FFL_LOG_SENDER_HPP_
 #define _FFL_LOG_SENDER_HPP_
 
-#include <helper/FFL_NodeBase.hpp>
+#include <FFL.h>
+
 namespace FFL {	
 	class LogPipeline;
 	class LogSender {
@@ -12,7 +13,8 @@ namespace FFL {
 		void startup();
 		void shutdown();
 
-		void write(uint8_t* data, int32_t len);
+		void write(int level,uint8_t* data, int32_t len);
+		void write(int level, const char* tag, const char *format, va_list args);
 	private:
 		LogPipeline* mLogInstance;
 	};

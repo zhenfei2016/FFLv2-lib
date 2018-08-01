@@ -20,7 +20,7 @@
 #include <pipeline/FFL_PipelineInputHandler.hpp>
 #include <pipeline/FFL_Pipeline.hpp>
 #include <pipeline/FFL_PipelineNode.hpp>
-#include "PipelineLooper.hpp"
+#include <pipeline/FFL_PipelineLooper.hpp>
 #include "PipelineMessageTrackFile.hpp"
 
 namespace FFL {

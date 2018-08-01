@@ -70,6 +70,10 @@ namespace FFL{
 		//
 		void setPayload(PipelineMessagePayload* payload,bool autoDel=true);
 		PipelineMessagePayload* getPayload() const;	
+		template<typename T>
+		T* getPayloadT() const {
+			return (T*)getPayload();
+		}
 		//
 		// 设置这个消息带的参数，
 		//

@@ -1,6 +1,6 @@
 #include <FFL.h>
 #include <FFL_CommandHelper.h>
-#include <helper/FFL_LogSender.hpp>
+#include <logsender//FFL_LogSender.hpp>
 #include <thread/FFL_Thread.hpp>
 #include <net/base/FFL_Net.h>
 
@@ -20,9 +20,7 @@ static CmdOption  gCmdOption[] = {
 
 FFL::LogSender* gSender;
 int printLogToSender(int level, const char* tag, const char *format, va_list v){	
-	char str[4096] = {};
-	vsnprintf(str, 4096 - 1, format, v);
-	gSender->write((uint8_t*)str,strlen(str));
+	gSender->write(level,tag,format,v);
 	return 1;
 }
 

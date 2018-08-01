@@ -69,6 +69,13 @@ FFL_LogLevel FFL_LogGetLevel()
 {
 	return gLogMaxLevel;
 }
+const char* FFL_LogGetLevelString(int level) {
+	if (level < 0 || level >= FFL_LOG_LEVEL_ALL) {
+		return "NUL";
+	}
+
+	return s_levels_string[level];
+}
 
 void FFL_LogSetOutput(FILE *file)
 {

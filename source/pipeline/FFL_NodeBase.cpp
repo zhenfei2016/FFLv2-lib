@@ -1,5 +1,5 @@
 
-#include <helper/FFL_NodeBase.hpp>
+#include <pipeline/FFL_NodeBase.hpp>
 
 namespace FFL {	
 
@@ -291,12 +291,7 @@ namespace FFL {
 				FFL_LOG_WARNING("failed to NodeBase::createOutputInterface. Node not create. ");
 			}
 			return output;
-		}
-		OutputInterface NodeBase::connectOutput(const InputInterface& input) {
-			OutputInterface output;
-			output.reset();
-			return output;
-		}
+		}		
 		//
 		//   清空输出节点中没有处理的消息
 		//
@@ -308,6 +303,18 @@ namespace FFL {
 			else {
 				FFL_LOG_WARNING("NodeBase(%s)::clearMessage not find dstid=%d ", dstId);
 			}
+		}
+
+		//
+		//  跟next的node连接到一起，当前node生产的数据，输入到next的name接口中
+		//  返回当前的节点的输出接口
+		//
+		OutputInterface NodeBase::connectNext(NodeBase* next, const char* name, void* userdata) {
+			OutputInterface output = createOutputInterface();
+			if (output.isValid()) {
+				InputInterface input=next->connectInput(output, name, userdata);
+			}			
+			return output;
 		}
 	
 		//

@@ -30,9 +30,6 @@ TARGET_LINK_LIBRARIES(httpServer FFL)
 ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
 TARGET_LINK_LIBRARIES(memoryLeak FFL)
 
-ADD_EXECUTABLE(logServer main.cpp;logServer.cpp)
-TARGET_LINK_LIBRARIES(logServer FFL)
-
 ADD_EXECUTABLE(logSender main.cpp;logSender.cpp)
 TARGET_LINK_LIBRARIES(logSender FFL)
 

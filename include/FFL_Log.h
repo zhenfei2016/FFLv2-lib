@@ -58,6 +58,7 @@ typedef enum
 void FFL_LogSetLevel(FFL_LogLevel level);
 FFL_LogLevel FFL_LogGetLevel();
 
+const char* FFL_LogGetLevelString(int level);
 /*
  *  设置输出日志hook函数
  *  根据返回值表示是否需要继续默认的日志输出
@@ -66,6 +67,7 @@ FFL_LogLevel FFL_LogGetLevel();
  */
 typedef int (*FFL_LogHookFun)(int level,const char* tag,const char *format, va_list);
 void FFL_LogHook(FFL_LogHookFun cb);
+
 
 /*
 *日志文件

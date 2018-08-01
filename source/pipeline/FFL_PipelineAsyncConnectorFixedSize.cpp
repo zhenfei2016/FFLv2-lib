@@ -16,7 +16,7 @@
 #include <pipeline/FFL_PipelineAsyncConnectorFixedsize.hpp>
 #include <pipeline/FFL_PipelineInput.hpp>
 #include <utils/FFL_Handler.hpp>
-#include "PipelineLooper.hpp"
+#include <pipeline/FFL_PipelineLooper.hpp>
 
 namespace FFL {
 	class DefaultMessageSizeCalculator : public PipelineAsyncConnectorFixSize::MessageSizeCalculator {

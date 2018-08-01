@@ -12,7 +12,7 @@
 *
 */
 
-#include "PipelineLooper.hpp"
+#include <pipeline/FFL_PipelineLooper.hpp>
 #include <pipeline/FFL_PipelineMessage.hpp>
 
 namespace FFL {

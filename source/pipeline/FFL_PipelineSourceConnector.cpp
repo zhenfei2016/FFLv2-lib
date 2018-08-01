@@ -17,7 +17,7 @@
 #include <pipeline/FFL_PipelineSourceConnector.hpp>
 #include <pipeline/FFL_PipelineInput.hpp>
 #include <pipeline/FFL_PipelineHandler.hpp>
-#include "PipelineLooper.hpp"
+#include <pipeline/FFL_PipelineLooper.hpp>
 
 
 namespace FFL {
