@@ -235,9 +235,9 @@ SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 AUX_SOURCE_DIRECTORY(./source/net/http/http-parser-2.1/ DIR_SRCS)
 SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 
-#  输出路径 bin
+#  杈撳嚭璺緞 bin
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../bin)
-#  输出路径 lib
+#  杈撳嚭璺緞 lib
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../lib)
 
 
@@ -281,7 +281,7 @@ add_library( FFL STATIC ${LOCAL_SRC_FILES})
 #INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)
 #ENDIF()
 
-#  拷贝输出文件到install目录 
+#  鎷疯礉杈撳嚭鏂囦欢鍒癷nstall鐩綍 
 ADD_CUSTOM_TARGET(install_FFL 
    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib
    COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXECUTABLE_OUTPUT_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/libs/
@@ -296,6 +296,16 @@ ADD_CUSTOM_TARGET(install_FFL
 #add_custom_command(TARGET test PRE_BUILD  COMMAND echo "hi prebuild"  )
 #add_custom_command(TARGET test PRE_LINK  COMMAND echo "hi prebuild"  )
 #add_custom_command(TARGET test POST_BUILD  COMMAND echo "hi prebuild"  )
+IF (WIN32)
+   ADD_SUBDIRECTORY(example)
+ELSEIF (IOS_PLATFORM)
+    
+ELSEIF (APPLE)
+    ADD_SUBDIRECTORY(example)
+ELSEIF (ANDROID)
+    
+ELSEIF (UNIX)  
+      
+ENDIF () 
 
-ADD_SUBDIRECTORY(example)
 
