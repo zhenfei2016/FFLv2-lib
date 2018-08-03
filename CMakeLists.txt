@@ -281,12 +281,6 @@ add_library( FFL STATIC ${LOCAL_SRC_FILES})
 #INSTALL(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)
 #ENDIF()
 
-#  拷贝输出文件到install目录 
-ADD_CUSTOM_TARGET(install_FFL 
-   COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib
-   COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXECUTABLE_OUTPUT_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/libs/
-   COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBRARY_OUTPUT_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/libs/
-   COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/include/ ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)
 
 #execute_process(
 #COMMAND ${CMAKE_COMMAND} -E remove_directory ../../install/
@@ -296,16 +290,18 @@ ADD_CUSTOM_TARGET(install_FFL
 #add_custom_command(TARGET test PRE_BUILD  COMMAND echo "hi prebuild"  )
 #add_custom_command(TARGET test PRE_LINK  COMMAND echo "hi prebuild"  )
 #add_custom_command(TARGET test POST_BUILD  COMMAND echo "hi prebuild"  )
-IF (WIN32)
+
+IF( ${BUILD_FFLV2_EXAMPLE} MATCHES "OFF" )
+   MESSAGE("message:" "close build FFLv2-lib example")
+ELSE()
    ADD_SUBDIRECTORY(example)
-ELSEIF (IOS_PLATFORM)
-    
-ELSEIF (APPLE)
-    ADD_SUBDIRECTORY(example)
-ELSEIF (ANDROID)
-    
-ELSEIF (UNIX)  
-      
-ENDIF () 
 
-
+   #  拷贝输出文件到install目录 
+   SET( FFLv2Lib_INSTALL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/ )
+   ADD_CUSTOM_TARGET(install_FFL 
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/cmakemode/ ${CMAKE_CURRENT_SOURCE_DIR}/../FFLv2-cmakemodule/
+     COMMAND ${CMAKE_COMMAND} -E remove_directory ${FFLv2Lib_INSTALL_PATH}
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXECUTABLE_OUTPUT_PATH} ${FFLv2Lib_INSTALL_PATH}/bin/
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBRARY_OUTPUT_PATH} ${FFLv2Lib_INSTALL_PATH}/libs//
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/include/ ${FFLv2Lib_INSTALL_PATH}/libs/include)
+ENDIF()
