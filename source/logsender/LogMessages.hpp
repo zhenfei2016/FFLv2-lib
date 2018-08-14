@@ -22,7 +22,7 @@ namespace FFL {
 		RefCountWriter() {
 		}
 		virtual ~RefCountWriter() {
-			
+
 		}
 
 		virtual IOWriter* getWriter() = 0;

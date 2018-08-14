@@ -18,18 +18,14 @@
  *  初始化函数
  *
  * */
-void FFL_CALL FFL_initialize()
-{
+void FFL_CALL FFL_initialize(){
     FFL_LOG_INFO("FFL_initialize call");
 }
-
-
 /*
  *  结束FFL库的使用，调用后就不要再使用FFL的函数了
  *
  * */
-void FFL_CALL FFL_terminate()
-{
+void FFL_CALL FFL_terminate(){
     FFL_LOG_INFO("FFL_terminate call");
 }
 

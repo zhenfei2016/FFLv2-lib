@@ -8,5 +8,8 @@ extern "C" int main(int argc ,const char* argv[]) {
 	FFL_main();
 	FFL_LOG_INFO("quit server");
 	FFL_dumpMemoryLeak();
+
+	printf("press any key to quit");
+	getchar();
 	return 0;
 }

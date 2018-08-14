@@ -1,3 +1,16 @@
+/*
+*  This file is part of FFL project.
+*
+*  The MIT License (MIT)
+*  Copyright (C) 2017-2018 zhufeifei All rights reserved.
+*
+*  FFL_LogSender.cpp
+*  Created by zhufeifei(34008081@qq.com) on 2018/08/05
+*  https://github.com/zhenfei2016/FFL-v2.git
+*
+*  日志发送管理器
+*/
+
 #include <logsender/FFL_LogSender.hpp>
 #include <net/base/FFL_Net.h>
 #include "LogPipeline.hpp"
@@ -11,9 +24,15 @@ namespace FFL {
 		mLogInstance->shutdown();
 		FFL_SafeFree(mLogInstance);
 	}
-
-	void LogSender::startup() {
+	//
+	//  初始化logsender
+	//
+	void LogSender::initialize(LogSenderType type, const char* url) {
+		mLogInstance->setLogType(type, url);
+	}
+	bool LogSender::startup() {
 		mLogInstance->startup();
+		return true;
 	}
 	void LogSender::shutdown() {
 		mLogInstance->shutdown();
@@ -25,9 +44,6 @@ namespace FFL {
 	void LogSender::write(int level, const char* tag, const char *format, va_list args) {
 		mLogInstance->write(level, tag,format,args);
 	}
-
-
-
 }
 
 static int printLogToSender(int level, const char* tag, const char *format, va_list args, void* userdata) {

@@ -1,9 +1,20 @@
+/*
+*  This file is part of FFL project.
+*
+*  The MIT License (MIT)
+*  Copyright (C) 2017-2018 zhufeifei All rights reserved.
+*
+*  LogUploader.cpp   
+*  Created by zhufeifei(34008081@qq.com) on 2018/08/05
+*  https://github.com/zhenfei2016/FFL-v2.git
+*  日志上传
+*
+*/
 #include "LogUploader.hpp"
 #include "LogMessages.hpp"
 #include "LogMessageId.hpp"
 
 namespace FFL {
-
 	LogUploader::LogUploader() {
 		setName("LogUploader");
 		mCreateWriterTime = 0;
@@ -15,11 +26,8 @@ namespace FFL {
 	//
 	//  输出到next中
 	//
-	void LogUploader::outputToCreator(NodeBase* next, const char* name, void* userdata) {
+	void LogUploader::connectOutputToCreator(NodeBase* next, const char* name, void* userdata) {
 		mOutputWriter = connectNext(next, name, userdata);
-	}
-	void LogUploader::onCreate() {
-
 	}
 	FFL::sp<FFL::PipelineConnector > LogUploader::onCreateConnector(
 		const OutputInterface& output,

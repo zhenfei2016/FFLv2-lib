@@ -131,11 +131,13 @@ namespace FFL {
 		NodeBase::NodeBase() : mNodeId(FFL::Pipeline_INVALID_Id)
 		{
 			mNodeMgr = NULL;
-			mNodeHandler = new NodeHandler(this);
+			mNodeHandler = NULL;
 		}
 
 		NodeBase::~NodeBase()
-		{}
+		{
+			mNodeHandler = NULL;
+		}
 		//
 		// 开始创建这个节点
 		//
@@ -145,6 +147,7 @@ namespace FFL {
 				return FFL_ERROR_FAIL;
 			}
 			mNodeMgr = mgr;
+			mNodeHandler = new NodeHandler(this);
 
 			FFL::sp<FFL::Pipeline> pipeline = mNodeMgr->getPipeline();
 			mNodeId = pipeline->createNode(mNodeHandler);
@@ -161,6 +164,9 @@ namespace FFL {
 				mNodeMgr->unRegisterNode(this);
 				mNodeMgr = NULL;
 				onDestroy();
+				mNodeId = Pipeline_INVALID_Id;				
+				mNodeHandler = NULL;
+				mConns.clear();
 			}
 		}
 		bool NodeBase::isCreated() const {

@@ -181,8 +181,7 @@ namespace FFL {
 		//  返回当前的节点的输出接口
 		//  userdata:透传的数据
 		//
-		OutputInterface connectNext(NodeBase* next, const char* name, void* userdata);
-
+		OutputInterface connectNext(NodeBase* next, const char* name, void* userdata);		
 	private:
 		//
 		//  连接起来一个输出，一个输入

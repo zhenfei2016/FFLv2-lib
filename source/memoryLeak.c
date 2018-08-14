@@ -65,7 +65,10 @@ void *FFL_malloc(size_t size)
 	subfix[3] = 0x4e;
 
 	internalAllocMemBlock(mem, size);
-	FFL_LOG_INFO("FFL_malloc mem =%p size=%d  t= %u", mem, size, FFL_getNowMs());
+	//
+	//  有可能造成嵌套调用
+	//FFL_LOG_INFO("FFL_malloc mem =%p size=%d  t= %u", mem, size, FFL_getNowMs());
+	//
 	return mem;
 }
 
@@ -85,11 +88,11 @@ void FFL_free(void *mem)
 			FFL_LOG_ERROR("FFL_free not find mem =%p", mem);
 		}
 		else {
-			FFL_LOG_INFO("FFL_free mem =%p ", mem);
+			//FFL_LOG_INFO("FFL_free mem =%p ", mem);
 			prefix = ((char*)mem) - 4;
 			if (prefix[0] != 0x1b || prefix[1] != 0x2b || prefix[2] != 0x3b || prefix[3] != 0x4b)
 			{
-				FFL_LOG_ERROR("FFL_free prefix breakdown %p", mem);
+				//FFL_LOG_ERROR("FFL_free prefix breakdown %p", mem);
 				FFL_ASSERT_LOG(0, "memory corruption!");
 			}
 

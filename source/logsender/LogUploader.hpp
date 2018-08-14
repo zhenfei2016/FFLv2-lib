@@ -1,3 +1,15 @@
+/*
+*  This file is part of FFL project.
+*
+*  The MIT License (MIT)
+*  Copyright (C) 2017-2018 zhufeifei All rights reserved.
+*
+*  LogUploader.hpp   
+*  Created by zhufeifei(34008081@qq.com) on 2018/08/05
+*  https://github.com/zhenfei2016/FFL-v2.git
+*
+*
+*/
 #ifndef _FFL_LOG_UPLOADER_HPP_
 #define _FFL_LOG_UPLOADER_HPP_
 
@@ -14,10 +26,8 @@ namespace FFL {
 		//
 		//  输出到next中,请求一个creator
 		//
-		void outputToCreator(NodeBase* next, const char* name, void* userdata);
+		void connectOutputToCreator(NodeBase* next, const char* name, void* userdata);
 	protected:	
-		void onCreate();
-
 		FFL::sp<FFL::PipelineConnector > onCreateConnector(	const OutputInterface& output,
 			const InputInterface& input,
 			void* userdata) ;
@@ -38,7 +48,6 @@ namespace FFL {
 		void tryCreateWriter();
 	private:		
 		OutputInterface mOutputWriter;
-
 		//
 		//  上次创建writer的时间
 		//

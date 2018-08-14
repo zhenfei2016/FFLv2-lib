@@ -39,19 +39,18 @@ int FFL_main() {
 	//
 	//
 	FFL::LogSender logSender;	
+	logSender.initialize(FFL::LOG_ST_NEW_FILE, "d:\\123.txt");
+	//logSender.initialize(FFL::LOG_ST_TCP_CONNECT, "127.0.0.1:5000");
 	logSender.startup();
 	FFL_hookLogSystem(logSender);
-
-
-	
-
 	//
 	//  打印一下帮助函数
 	//
 	FFL_cmdUsage(gCmdOption);
 	FFL_cmdLooper(gCmdOption,0, quitFlag);	
+	logSender.shutdown();
 	FFL_unhookLogSystem();
-
 	FFL_sleep(1000);
+
 	return 0;
 }
