@@ -13,8 +13,18 @@ void quit(const char* args, void* userdata) {
 static int quitFlag(void* userdata) {
 	return gExitFlag;
 }
+
+static int gFilePathIndex = 1;
+void setTarget(const char* args, void* userdata) {
+	FFL::LogSender* logSender = (FFL::LogSender*) userdata;
+	char path[1024] = {};
+	sprintf(path, "d:\\logsender_%d.txt", gFilePathIndex++);
+	logSender->setTargetUrl(FFL::LOG_ST_NEW_FILE, path);
+}
+
 static CmdOption  gCmdOption[] = {
 	{ "exit",0,quit,"exit sys." },	
+	{ "setTarget",0,setTarget,"set log Target file path." },
 	{ 0,0,0,0 },
 };
 
@@ -39,18 +49,18 @@ int FFL_main() {
 	//
 	//
 	FFL::LogSender logSender;	
-	logSender.initialize(FFL::LOG_ST_NEW_FILE, "d:\\123.txt");
-	//logSender.initialize(FFL::LOG_ST_TCP_CONNECT, "127.0.0.1:5000");
+	logSender.setTargetUrl(FFL::LOG_ST_NEW_FILE, "d:\\logsender_0.txt");
+	//logSender.setTargetUrl(FFL::LOG_ST_TCP_CONNECT, "127.0.0.1:5000");
 	logSender.startup();
 	FFL_hookLogSystem(logSender);
 	//
 	//  打印一下帮助函数
 	//
 	FFL_cmdUsage(gCmdOption);
-	FFL_cmdLooper(gCmdOption,0, quitFlag);	
+	FFL_cmdLooper(gCmdOption,&logSender, quitFlag);
 	logSender.shutdown();
-	FFL_unhookLogSystem();
-	FFL_sleep(1000);
+	testThread->requestExitAndWait();
+	FFL_unhookLogSystem();	
 
 	return 0;
 }

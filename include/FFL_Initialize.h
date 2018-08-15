@@ -23,14 +23,14 @@ extern "C" {
 	 *  初始化函数
 	 *
 	 * */
-	extern DECLSPEC void FFL_CALL FFL_initialize();
+	void FFL_CALL FFL_initialize();
 
 
 	/*
 	 *  结束FFL库的使用，调用后就不要再使用FFL的函数了
 	 *
 	 * */
-	extern DECLSPEC void FFL_CALL FFL_terminate();
+	void FFL_CALL FFL_terminate();
 
 
 #ifdef  __cplusplus

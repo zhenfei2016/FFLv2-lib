@@ -27,7 +27,7 @@ int FFL_outofmemory()
 	return FFL_ERROR_SUCCESS;
 }
 
-DECLSPEC char* FFL_CALL FFL_strdup(const char *s)
+char* FFL_CALL FFL_strdup(const char *s)
 {
 	char *ptr = NULL;
 	if (s) {
@@ -39,7 +39,7 @@ DECLSPEC char* FFL_CALL FFL_strdup(const char *s)
 	return ptr;
 }
 
-DECLSPEC char* FFL_CALL FFL_strndup(const char *s, size_t len)
+char* FFL_CALL FFL_strndup(const char *s, size_t len)
 {
 	char *ret = NULL, *end;
 

@@ -43,6 +43,8 @@ SET(LOCAL_SRC_DIR ./source/)
 ADD_SRC_FILE(FFL_Error.c)
 ADD_SRC_FILE(FFL_Version.c)
 ADD_SRC_FILE(FFL_Log.c)
+ADD_SRC_FILE(FFL_Kernel.c)
+
 ADD_SRC_FILE(FFL_Memory.c)
 ADD_SRC_FILE(FFL_Time.c)
 ADD_SRC_FILE(FFL_Utility.c)

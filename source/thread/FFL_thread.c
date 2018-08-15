@@ -147,14 +147,14 @@ static FFL_Thread * FFL_CreateThreadWithStackSize(int ( FFL_CALL * fn) (void *),
   对外的创建线程函数 
 
 */
-DECLSPEC FFL_Thread * FFL_CALL FFL_CreateThread(FFL_ThreadFunction fn,const char *name, void *data)
+ FFL_Thread * FFL_CALL FFL_CreateThread(FFL_ThreadFunction fn,const char *name, void *data)
 {
     size_t stacksize = 0;
     return FFL_CreateThreadWithStackSize(fn, name, stacksize, data);
 }
 
 /* 获取线程名称  */
-DECLSPEC const char * FFL_CALL FFL_GetThreadName(FFL_Thread * thread)
+ const char * FFL_CALL FFL_GetThreadName(FFL_Thread * thread)
 {
 	if (thread)
 	{
@@ -166,7 +166,7 @@ DECLSPEC const char * FFL_CALL FFL_GetThreadName(FFL_Thread * thread)
 	}
 }
 
-DECLSPEC FFL_ThreadID FFL_CALL FFL_CurrentThreadID(void)
+ FFL_ThreadID FFL_CALL FFL_CurrentThreadID(void)
 {
 	return FFL_SYS_ThreadID();
 }

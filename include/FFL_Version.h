@@ -45,12 +45,12 @@ extern "C" {
 /*
 *  获取版本号，字符串类型
 */
-extern DECLSPEC const char* FFL_CALL FFL_GetVersion();
+const char* FFL_CALL FFL_GetVersion();
 
 /*
  *  获取版本号，整形
  */
-extern DECLSPEC int FFL_CALL FFL_GetVersion_int();
+int FFL_CALL FFL_GetVersion_int();
 
 #ifdef  __cplusplus
 }

@@ -19,7 +19,7 @@
 #include <dlfcn.h>
 #endif
 
-DECLSPEC void* FFL_CALL FFL_loadmodule(const char *file)
+void* FFL_CALL FFL_loadmodule(const char *file)
 {
 #ifdef WIN32
 	void* hModule = LoadLibraryA(file);
@@ -28,7 +28,7 @@ DECLSPEC void* FFL_CALL FFL_loadmodule(const char *file)
 #endif
 	return hModule;
 }
-DECLSPEC void* FFL_CALL FFL_loadfunction(void *module, const char *fname)
+void* FFL_CALL FFL_loadfunction(void *module, const char *fname)
 {
 #ifdef WIN32
 	void *fn = (void *)GetProcAddress((HMODULE)module, fname);
@@ -37,7 +37,7 @@ DECLSPEC void* FFL_CALL FFL_loadfunction(void *module, const char *fname)
 #endif
 	return fn;
 }
-DECLSPEC void  FFL_CALL FFL_unloadmodule(void *module)
+void  FFL_CALL FFL_unloadmodule(void *module)
 {
 #ifdef WIN32
 	FreeLibrary((HMODULE)module);

@@ -36,14 +36,14 @@ void internalGetTimeString(char* s) {
 	struct tm* t = 0;
 	t = localtime(&ts);
     int tus = current % 1000000;
-#ifdef FFL_TIME_USE_SHORT_STRING
-	sprintf(s,
-		"%02d%02d%02d:%03d:%03d",
-		t->tm_hour,
-		t->tm_min,
-		t->tm_sec,
-		tus / 1000, tus % 1000);
-#else
+//#ifdef FFL_TIME_USE_SHORT_STRING
+//	sprintf(s,
+//		"%02d%02d%02d:%03d:%03d",
+//		t->tm_hour,
+//		t->tm_min,
+//		t->tm_sec,
+//		tus / 1000, tus % 1000);
+//#else
 	sprintf(s,
 		"%4d%02d%02d%02d%02d%02d:%03d:%03d",
 		t->tm_year + 1900,
@@ -53,5 +53,5 @@ void internalGetTimeString(char* s) {
 		t->tm_min,
 		t->tm_sec,
 		tus / 1000, tus % 1000);
-#endif
+//#endif
 }

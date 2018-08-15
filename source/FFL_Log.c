@@ -118,6 +118,22 @@ static int defaultPrintLog(int level,const char* tag, const char *format, va_lis
 	}
 	return 1;
 }
+/*
+* 打印日志
+*/
+void FFL_LogPrint(int level, const char *format, ...) {
+	if (level >= 0 && level < gLogMaxLevel) {
+		va_list args;
+		va_start(args, format);
+		internalPrintLog(level, 0, format, args);
+		va_end(args);
+	}
+}
+void FFL_LogPrintV(int level, const char *format, va_list args) {
+	if (level >= 0 && level < gLogMaxLevel) {		
+		internalPrintLog(level, 0, format, args);
+	}
+}
 
 void FFL_log_cri(const char *format, ...)
 {

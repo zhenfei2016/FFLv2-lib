@@ -19,5 +19,6 @@
 #include "FFL_Log.h"
 #include "FFL_Utility.h"
 #include "FFL_Path.h"
+#include "FFL_Kernel.h"
 
 #endif

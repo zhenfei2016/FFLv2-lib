@@ -16,33 +16,65 @@
 #include "LogPipeline.hpp"
 
 namespace FFL {
-	LogSender::LogSender() {
+	LogSender::LogSender():mLogInstance(NULL){
 		FFL_socketInit();
-		mLogInstance = new LogPipeline();
+		mLogStartuped = false;
+		mType = LOG_ST_NONE;
 	}
 	LogSender::~LogSender() {
-		mLogInstance->shutdown();
-		FFL_SafeFree(mLogInstance);
-	}
+		shutdown();
+		{
+			CMutex::Autolock l(mLock);
+			FFL_SafeFree(mLogInstance);
+		}
+	}	
+	//		
+	//  type：目标日志的类型
+	//  url : 目标日志的路径
+	//  startup前需要进行设置的
+	//  startup中设置，会更新目标文件的
 	//
-	//  初始化logsender
-	//
-	void LogSender::initialize(LogSenderType type, const char* url) {
-		mLogInstance->setLogType(type, url);
+	void LogSender::setTargetUrl(LogSenderType type, const char* url) {
+		mType = type;
+		mUrl = url;
+		if (mLogInstance) {
+			mLogInstance->setTargetUrl(type, url);
+		}
+
 	}
-	bool LogSender::startup() {
+	bool LogSender::startup() {	
+		CMutex::Autolock l(mLock);
+		if (!mLogStartuped) {
+			FFL_SafeFree(mLogInstance);
+		}
+
+		mLogInstance = new LogPipeline();
+		mLogInstance->setTargetUrl(mType, mUrl.c_str());
 		mLogInstance->startup();
+		mLogStartuped = true;
 		return true;
 	}
 	void LogSender::shutdown() {
-		mLogInstance->shutdown();
+		CMutex::Autolock l(mLock);
+		mLogStartuped = false;
+		if (mLogInstance) {
+			mLogInstance->shutdown();	
+			//
+			//  为了write不加锁  mLogInstance延迟delete
+			//
+
+		}
 	}
 
 	void LogSender::write(int level, uint8_t* data, int32_t len) {
-		mLogInstance->write(level, data, len);
+		if (mLogStartuped&&mLogInstance) {
+			mLogInstance->write(level, data, len);
+		}
 	}
 	void LogSender::write(int level, const char* tag, const char *format, va_list args) {
-		mLogInstance->write(level, tag,format,args);
+		if (mLogStartuped&&mLogInstance) {
+			mLogInstance->write(level, tag, format, args);
+		}
 	}
 }
 

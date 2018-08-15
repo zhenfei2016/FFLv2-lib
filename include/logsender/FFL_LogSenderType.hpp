@@ -16,6 +16,7 @@
 namespace FFL {	
 
 	enum LogSenderType {
+		LOG_ST_NONE = 0,
 		//
 		//  一个tcp连接，连接一个服务器
 		//

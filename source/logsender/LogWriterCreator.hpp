@@ -23,7 +23,7 @@ namespace FFL {
 
 	class LogWriterCreator :public FFL::NodeBase {
 	public:
-		LogWriterCreator(LogSenderType type,const char* url);
+		LogWriterCreator();
 		virtual ~LogWriterCreator();
 
 		//
@@ -38,22 +38,15 @@ namespace FFL {
 		//*
 		//  创建网络类型的writer
 		//
-		FFL::sp<RefCountWriter> createNetWriter();
+		FFL::sp<RefCountWriter> createNetWriter(const String& url);
 		//
 		//  创建文件类型的writer
 		//
 		FFL::sp<RefCountWriter> createFileWriter();
 	protected:
-		virtual bool onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata);
-	private:
+		virtual bool onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata);	
 	private:		
 		OutputInterface mOutputWriter;	
-
-		//
-		//  创建的类型
-		//
-		LogSenderType mType;
-		String mUrl;
 	};
 }
 

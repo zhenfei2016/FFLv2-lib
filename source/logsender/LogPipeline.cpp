@@ -20,15 +20,28 @@ namespace FFL {
 		mCollector = new LogCollector();
 		mManager = NULL;
 	}
+	//		
+	//  type：目标日志的类型
+	//  url : 目标日志的路径	
+	//  更新目标文件的
 	//
-	//
-	//
-	void LogPipeline::setLogType(LogSenderType type, const char* url) {
+	void LogPipeline::setTargetUrl(LogSenderType type, const char* url) {
 		mType = type;
 		mUrl = url;
+		if (isStartup()) {
+			if (!mUploader.isEmpty()) {
+				mUploader->refrushWriter(mType,mUrl);
+			}
+		}
 	}
 	LogPipeline::~LogPipeline() {
+		shutdown();
 		FFL_SafeFree(mManager);
+	}
+
+	void LogPipeline::getTargetUrl(LogSenderType& type, String& url) {
+		type = mType;
+		url = mUrl;
 	}
 
 	bool LogPipeline::startup() {		
@@ -42,11 +55,12 @@ namespace FFL {
 		mCollector->reset();
 		mCollector->create(mManager);
 		
-		LogWriterCreator* writerCreator = new LogWriterCreator(mType,mUrl.c_str());
+		LogWriterCreator* writerCreator = new LogWriterCreator();
 		writerCreator->create(mManager);
 		
 		LogUploader* uploader = new LogUploader();
-		uploader->create(mManager);
+		uploader->refrushWriter(mType, mUrl);
+		uploader->create(mManager);		
 
 			
 		//
@@ -60,15 +74,16 @@ namespace FFL {
 		mCollector->connectOutputToUploader(uploader, "uploader",0);
 		uploader->connectOutputToCreator(writerCreator, "creator-writer", 0);
 		writerCreator->connectOutputWriterTarger(uploader, "update-writer", 0);
-
+		mUploader = uploader;
 		mPipeline->startup();
 		return true;
 	}
 
 	void LogPipeline::shutdown() {		
-		if (isStartup()) {
+		if (isStartup()) {			
 			mPipeline->shutdownAndWait();
-		}
+		}		
+		mUploader = NULL;
 		FFL_SafeFree(mManager);
 		mPipeline = NULL;
 	}
@@ -82,8 +97,8 @@ namespace FFL {
 		FFL_getNowString(timeFormat);
 
 		FFL::String info;
-		FFL::formatString(info, "%s:%s tid = %d ",
-			FFL_LogGetLevelString(level),timeFormat, (int)FFL_CurrentThreadID());
+		FFL::formatString(info, "%s %s pid:%d tid:%d ",
+			FFL_LogGetLevelString(level),timeFormat, FFL_getProcessId(),(int)FFL_CurrentThreadID());
 		info.append((const char*)data);		
 
 		if (!mCollector.isEmpty()) {

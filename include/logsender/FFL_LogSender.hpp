@@ -15,6 +15,7 @@
 
 #include <FFL.h>
 #include <logsender/FFL_LogSenderType.hpp>
+#include <thread/FFL_Mutex.hpp>
 
 namespace FFL {	
 	class LogPipeline;
@@ -22,13 +23,13 @@ namespace FFL {
 	public:
 		LogSender();
 		~LogSender();
-		//
-		//  初始化logsender
+		//		
 		//  type：目标日志的类型
 		//  url : 目标日志的路径
-		//  需要在startup前进行设置的
+		//  startup前需要进行设置的
+		//  startup中设置，会更新目标文件的
 		//
-		void initialize(LogSenderType type, const char* url);
+		void setTargetUrl(LogSenderType type, const char* url);
 		//
 		//  启动，停止日志
 		//
@@ -41,6 +42,14 @@ namespace FFL {
 		void write(int level, const char* tag, const char *format, va_list args);
 	private:
 		LogPipeline* mLogInstance;
+		bool mLogStartuped;
+
+		CMutex mLock;
+		//
+		//  创建的类型
+		//
+		LogSenderType mType;
+		String mUrl;
 	};
 }
 

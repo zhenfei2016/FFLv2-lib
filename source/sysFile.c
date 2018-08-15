@@ -30,7 +30,7 @@ FileHandle* createFile(const char* path, OpenFileMode mode) {
 		FILE_SHARE_WRITE | FILE_SHARE_READ,
 		NULL,
 		openMode,
-		NULL, NULL);
+		0, NULL);
 
 	if (h != INVALID_HANDLE_VALUE) {
 		FileHandle* handle = FFL_mallocz(sizeof(FileHandle));

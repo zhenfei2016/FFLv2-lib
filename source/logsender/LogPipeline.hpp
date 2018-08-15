@@ -15,14 +15,18 @@
 #include "LogCollector.hpp"
 
 namespace FFL {
+	class LogUploader;
 	class LogPipeline  {
 	public:
 		LogPipeline();
 		~LogPipeline();	
+		//		
+		//  type：目标日志的类型
+		//  url : 目标日志的路径	
+		//  更新目标文件的
 		//
-		//
-		//
-		void setLogType(LogSenderType type, const char* url);
+		void setTargetUrl(LogSenderType type, const char* url);
+		void getTargetUrl(LogSenderType& type, String& url);
 		//
 		//  启动，停止LogPipeline
 		//
@@ -42,6 +46,8 @@ namespace FFL {
 		// 收集器
 		//
 		FFL::sp<LogCollector> mCollector;
+		FFL::sp<LogUploader> mUploader;
+		
 		//
 		//  创建的类型
 		//

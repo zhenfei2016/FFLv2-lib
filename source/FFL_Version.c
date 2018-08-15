@@ -18,7 +18,7 @@ static const char* s_ffl_version = FFL_TOSTRING( FFLLIB_VERSION_STRING);
 /*
  *  获取版本号，字符串类型
  */
-DECLSPEC const char* FFL_CALL FFL_GetVersion()
+const char* FFL_CALL FFL_GetVersion()
 {
 	return s_ffl_version;
 }
@@ -26,7 +26,7 @@ DECLSPEC const char* FFL_CALL FFL_GetVersion()
 /*
  *  获取版本号，整形
  */
-DECLSPEC int FFL_CALL FFL_GetVersion_int()
+int FFL_CALL FFL_GetVersion_int()
 {
 	return FFLLIB_VERSION_INT;
 }

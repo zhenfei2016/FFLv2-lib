@@ -82,8 +82,8 @@ extern "C" {
 	} while( 0 )
 
 
-	extern DECLSPEC char* FFL_CALL FFL_strdup(const char *s);
-	extern DECLSPEC char* FFL_CALL FFL_strndup(const char *s, size_t len);
+	char* FFL_CALL FFL_strdup(const char *s);
+	char* FFL_CALL FFL_strndup(const char *s, size_t len);
 
 	//
 	//  内存字节序

@@ -17,7 +17,7 @@
 
 
 /*  创建线程池 */
-DECLSPEC FFL_Threadpool FFL_CALL FFL_CreateThreadpool(int threadnum)
+FFL_Threadpool FFL_CALL FFL_CreateThreadpool(int threadnum)
 {
 	sys_threadpool* pool=0;
 	if(sys_threadpool_init(&pool,threadnum,0,0)==0)
@@ -32,7 +32,7 @@ DECLSPEC FFL_Threadpool FFL_CALL FFL_CreateThreadpool(int threadnum)
  * 运行一个job，如果当前没有可用的线程则等待
  *
  */
-DECLSPEC int FFL_CALL FFL_RunThreadpoolJob(FFL_Threadpool pool,FFL_ThreadpoolJob* job)
+int FFL_CALL FFL_RunThreadpoolJob(FFL_Threadpool pool,FFL_ThreadpoolJob* job)
 {
 	if(pool)
 	{
@@ -49,7 +49,7 @@ DECLSPEC int FFL_CALL FFL_RunThreadpoolJob(FFL_Threadpool pool,FFL_ThreadpoolJob
  * 结束线程池
  * 等待所有的线程结束后zai返回
  */
-DECLSPEC void FFL_CALL  FFL_DetachThreadpool(FFL_Threadpool  pool)
+void FFL_CALL  FFL_DetachThreadpool(FFL_Threadpool  pool)
 {
 	if(pool)
 	{

@@ -31,28 +31,28 @@ extern "C" {
 	//name ：线程名称
 	//data : 上下文参数
 	//
-	extern DECLSPEC FFL_Thread *FFL_CALL FFL_CreateThread(FFL_ThreadFunction fn, const char *name, void *data);
+	FFL_Thread *FFL_CALL FFL_CreateThread(FFL_ThreadFunction fn, const char *name, void *data);
 
 	//获取线程名称
 	//
-	extern DECLSPEC const char *FFL_CALL  FFL_GetThreadName(FFL_Thread *thread);
+	const char *FFL_CALL  FFL_GetThreadName(FFL_Thread *thread);
 	//获取线程id, 当前线程，其他线程
 	//
-	extern DECLSPEC FFL_ThreadID FFL_CALL  FFL_CurrentThreadID(void);
-	extern DECLSPEC FFL_ThreadID FFL_CALL  FFL_GetThreadID(FFL_Thread * thread);
+	FFL_ThreadID FFL_CALL  FFL_CurrentThreadID(void);
+	FFL_ThreadID FFL_CALL  FFL_GetThreadID(FFL_Thread * thread);
 	//设置线程优先级
 	//
-	extern DECLSPEC int FFL_CALL  FFL_SetThreadPriority(FFL_ThreadPriority priority);
+	int FFL_CALL  FFL_SetThreadPriority(FFL_ThreadPriority priority);
 
 	/*
 	 * 阻塞等待线程结束，返回后thread就不可用了
 	*/
-	extern DECLSPEC void FFL_CALL  FFL_WaitThread(FFL_Thread * thread, int *status);
+	void FFL_CALL  FFL_WaitThread(FFL_Thread * thread, int *status);
 
 	/*
 	 * 结束线程  非阻塞，返回后线程还有资源没释放，等会会自己释放的，但是thread不可用了
 	*/
-	extern DECLSPEC void FFL_CALL  FFL_DetachThread(FFL_Thread * thread);
+	void FFL_CALL  FFL_DetachThread(FFL_Thread * thread);
 
 #ifdef  __cplusplus
 }

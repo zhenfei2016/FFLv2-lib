@@ -15,13 +15,27 @@
 #include "LogMessageId.hpp"
 
 namespace FFL {
-	LogUploader::LogUploader() {
+	LogUploader::LogUploader():mType(LOG_ST_NONE) {
 		setName("LogUploader");
 		mCreateWriterTime = 0;
 		mWriter = NULL;
 	}
 
 	LogUploader:: ~LogUploader() {
+	}
+	//
+	//  刷新一下新的writer，会请求重新创建
+	//
+	void LogUploader::refrushWriter(LogSenderType type,const String& url) {
+		//
+		//  创建目标
+		//
+		mType=type;
+		mUrl=url;	
+		
+		if (mOutputWriter.isValid()) {
+			createWriter();
+		}
 	}
 	//
 	//  输出到next中
@@ -90,9 +104,19 @@ namespace FFL {
 			//
 			//  是否跟上一次大于一分钟了
 			//
-			mCreateWriterTime = FFL_getNowUs();
-			FFL::PipelineMessage* controlMsg = new FFL::PipelineMessage(LOG_MESSAGE_CREATE_WRITER);
-			postMessage(mOutputWriter.getId(), controlMsg);			
+			createWriter();
+		}
+	}
+	void LogUploader::createWriter() {
+		mCreateWriterTime = FFL_getNowUs();
+		FFL::PipelineMessage* controlMsg = new FFL::PipelineMessage(LOG_MESSAGE_CREATE_WRITER);
+		LogWriterUrlMessage* urlMessage= new LogWriterUrlMessage();
+		urlMessage->mType = mType;
+		urlMessage->mUrl = mUrl;
+		controlMsg->setPayload(urlMessage);
+
+		if (FFL_OK != postMessage(mOutputWriter.getId(), controlMsg)) {
+			controlMsg->consume(this);
 		}
 	}
 

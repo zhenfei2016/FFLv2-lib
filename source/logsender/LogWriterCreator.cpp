@@ -39,7 +39,7 @@ namespace FFL {
 
 	class FileWriter : public RefCountWriter {
 	public:
-		FileWriter(const char* path) {
+		FileWriter() {
 			mFile = new File();		
 		}
 
@@ -56,8 +56,7 @@ namespace FFL {
 	};
 
 
-	LogWriterCreator::LogWriterCreator(LogSenderType type, const char* url):mType(type) {
-		mUrl = url?url:"";
+	LogWriterCreator::LogWriterCreator() {		
 		setName("LogWriterCreator");		
 	}
 
@@ -84,26 +83,33 @@ namespace FFL {
 	//
 	bool LogWriterCreator::onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {
 		if (msg->getType() == LOG_MESSAGE_CREATE_WRITER) {
+			LogWriterUrlMessage* urlMessage = msg->getPayloadT<LogWriterUrlMessage>();
+			if (urlMessage == NULL) {
+				msg->consume(this);
+				return true;
+			}
+
+			String url=urlMessage->mUrl;
 			//
 			//  创建一个新的writer
 			//
 			FFL::sp<RefCountWriter> writer;
-			switch (mType)
+			switch (urlMessage->mType)
 			{
 			case FFL::LOG_ST_TCP_CONNECT:
-				writer = createNetWriter();
+				writer = createNetWriter(url);
 				break;
 			case FFL::LOG_ST_EXIST_FILE:
 			{
-				FileWriter* fileWriter = new FileWriter(mUrl.c_str());
-				fileWriter->mFile->open(mUrl);
+				FileWriter* fileWriter = new FileWriter();
+				fileWriter->mFile->open(url);
 				writer = fileWriter;
 			}
 				break;
 			case FFL::LOG_ST_NEW_FILE:
 			{
-				FileWriter* fileWriter = new FileWriter(mUrl.c_str());
-				fileWriter->mFile->create(mUrl);
+				FileWriter* fileWriter = new FileWriter();
+				fileWriter->mFile->create(url);
 				writer = fileWriter;
 			}
 				break;
@@ -118,12 +124,12 @@ namespace FFL {
 	//
 	//  创建网络类型的writer
 	//
-	FFL::sp<RefCountWriter> LogWriterCreator::createNetWriter() {
+	FFL::sp<RefCountWriter> LogWriterCreator::createNetWriter(const String& url) {
 		NetFD fd = 0;
 
 		String ip;
 		int32_t port;
-		FFL_parseHostport(mUrl, ip, port);
+		FFL_parseHostport(url, ip, port);
 		if (port > 0 && FFL_isIp(ip) == FFL_OK) {
 		   FFL_socketNetworkTcpClient(ip.c_str(), port, &fd);
 	    }
@@ -137,7 +143,7 @@ namespace FFL {
 	//  创建文件类型的writer
 	//
 	FFL::sp<RefCountWriter> LogWriterCreator::createFileWriter() {
-		FileWriter*writer= new FileWriter(mUrl.c_str());
+		FileWriter*writer= new FileWriter();
 		return writer;
 	}
 }

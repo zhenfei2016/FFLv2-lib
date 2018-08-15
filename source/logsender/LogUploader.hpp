@@ -15,6 +15,7 @@
 
 #include <pipeline/FFL_NodeBase.hpp>
 #include <net/FFL_NetSocket.hpp>
+#include <logsender/FFL_LogSenderType.hpp>
 
 
 namespace FFL {
@@ -23,6 +24,11 @@ namespace FFL {
 	public:
 		LogUploader();
 		virtual ~LogUploader();
+
+		//
+		//  刷新一下新的writer，会请求重新创建
+		//
+		void refrushWriter(LogSenderType type, const String& url);
 		//
 		//  输出到next中,请求一个creator
 		//
@@ -46,6 +52,7 @@ namespace FFL {
 		//  创建writer
 		//
 		void tryCreateWriter();
+		void createWriter();
 	private:		
 		OutputInterface mOutputWriter;
 		//
@@ -55,6 +62,12 @@ namespace FFL {
 		FFL::sp<FFL::RefCountWriter> mWriter;
 
 		FFL::sp<FFL::PipelineLooper > mLooper;
+
+		//
+		//  创建目标
+		//
+		LogSenderType mType;
+		String mUrl;
 	};
 }
 

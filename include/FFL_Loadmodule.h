@@ -19,9 +19,9 @@
 extern "C" {
 #endif
 
-	DECLSPEC void* FFL_CALL FFL_loadmodule(const char *file);
-	DECLSPEC void* FFL_CALL FFL_loadfunction(void *module, const char *fname);
-	DECLSPEC void  FFL_CALL FFL_unloadmodule(void *module);
+	void* FFL_CALL FFL_loadmodule(const char *file);
+	void* FFL_CALL FFL_loadfunction(void *module, const char *fname);
+	void  FFL_CALL FFL_unloadmodule(void *module);
 
 #ifdef  __cplusplus
 }

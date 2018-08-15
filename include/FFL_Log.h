@@ -76,6 +76,11 @@ void FFL_LogHook(FFL_LogHookFun callback, void* userdata);
 void FFL_LogSetOutput(FILE *file);
 
 /*
+* 打印日志
+*/
+void FFL_LogPrint(int level, const char *format, ...);
+void FFL_LogPrintV(int level, const char *format, va_list args);
+/*
 *输出函数
 */
 void FFL_log_cri(const char *format, ...);

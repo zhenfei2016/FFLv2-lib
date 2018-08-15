@@ -3,6 +3,7 @@
 
 #include <pipeline/FFL_PipelineMessage.hpp>
 #include <utils/FFL_Io.hpp>
+#include <logsender/FFL_LogSenderType.hpp>
 
 namespace FFL {
 	//
@@ -14,6 +15,17 @@ namespace FFL {
 		}
 
 		FFL::String mInfo;
+	};
+
+
+	class LogWriterUrlMessage : public FFL::PipelineMessagePayload {
+	public:
+		virtual void consume() {
+		}
+
+
+		LogSenderType mType;
+		FFL::String mUrl;
 	};
 
 
