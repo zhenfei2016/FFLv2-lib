@@ -18,13 +18,13 @@ extern "C" {
 	struct FFL_semaphore_sys;
 	typedef struct FFL_semaphore_sys FFL_sem;
 
-	extern DECLSPEC FFL_sem *FFL_CALL FFL_CreateSemaphore(uint32_t initial_value);
-	extern DECLSPEC void FFL_CALL FFL_DestroySemaphore(FFL_sem * sem);
-	extern DECLSPEC int FFL_CALL FFL_SemWait(FFL_sem * sem);
-	extern DECLSPEC int FFL_CALL FFL_SemTryWait(FFL_sem * sem);
-	extern DECLSPEC int FFL_CALL FFL_SemWaitTimeout(FFL_sem * sem, uint32_t ms);
-	extern DECLSPEC int FFL_CALL FFL_SemPost(FFL_sem * sem);
-	extern DECLSPEC int32_t FFL_CALL FFL_SemValue(FFL_sem * sem);
+	FFL_sem *FFL_CALL FFL_CreateSemaphore(uint32_t initial_value);
+	void FFL_CALL FFL_DestroySemaphore(FFL_sem * sem);
+	int FFL_CALL FFL_SemWait(FFL_sem * sem);
+	int FFL_CALL FFL_SemTryWait(FFL_sem * sem);
+	int FFL_CALL FFL_SemWaitTimeout(FFL_sem * sem, uint32_t ms);
+	int FFL_CALL FFL_SemPost(FFL_sem * sem);
+	int32_t FFL_CALL FFL_SemValue(FFL_sem * sem);
 
 
 

@@ -17,7 +17,7 @@
 /*
  *  是否检测内存泄露
  */
-#define  CHECK_FOR_MEMORY_LEAKS 1
+#define  CHECK_FOR_MEMORY_LEAKS 0
 
 /*
  *  为了省个事所以加了一个宏定义的判断
