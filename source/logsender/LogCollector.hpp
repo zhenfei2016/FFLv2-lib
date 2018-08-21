@@ -47,6 +47,11 @@ namespace FFL {
 		FFL::List< FFL::String> mInfoList;
 		FFL::sp<FFL::PipelineMessageCache > mMessageCache;
 		OutputInterface mOutputUploader;
+
+		//
+		//  日志太多了，丢弃了多少条
+		//
+		int32_t mDiscardNum;
 	};
 		
 }

@@ -15,7 +15,16 @@
 #include "LogMessages.hpp"
 
 namespace FFL {
-	LogCollector::LogCollector() {
+	//
+	//  处理间隔中最多缓存gMaxLogNum条日志
+	//
+	static int32_t gMaxLogNum = 100;
+
+	//
+	//  日志收集的处理间隔，gTimerTick_ms处理一次
+	//
+	static uint32_t gTimerTick_ms = 1000;
+	LogCollector::LogCollector():mDiscardNum(0){
 		setName("LogCollector");
 		mMessageCache = new FFL::PipelineMessageCache(LOG_MESSAGE_READER);
 	}
@@ -32,6 +41,7 @@ namespace FFL {
 		{
 			FFL::CMutex::Autolock l(mInfoLock);
 			mInfoList.clear();
+			mDiscardNum = 0;
 		}
 	}
 	//
@@ -39,6 +49,11 @@ namespace FFL {
 	//
 	void LogCollector::collect(FFL::String& info) {
 		FFL::CMutex::Autolock l(mInfoLock);
+		if (mInfoList.size() >= gMaxLogNum) {
+			mDiscardNum++;
+			mInfoList.pop_front();
+		}
+
 		mInfoList.push_back(info);
 	}
 	//
@@ -51,7 +66,7 @@ namespace FFL {
 	//  成功创建了node
 	//
 	void LogCollector::onCreate() {	
-		connectTimerInput("LogCollector", 1000, 0);
+		connectTimerInput("LogCollector", gTimerTick_ms, 0);
 	}
 	//
 	//  获取数据循环函数
@@ -60,10 +75,15 @@ namespace FFL {
 		FFL::String infoString;
 		{
 			FFL::CMutex::Autolock l(mInfoLock);
+			if (mDiscardNum > 0) {
+				FFL::formatString(infoString, "FFLog discard log count=(%d)", mDiscardNum);				
+				mDiscardNum = 0;
+			}
+
 			while (mInfoList.size() > 0) {
 				infoString += mInfoList.front() + "\r";
 				mInfoList.pop_front();
-			}
+			}			
 		}
 
 		if (infoString.size()) {
