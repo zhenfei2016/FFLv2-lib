@@ -7,7 +7,7 @@
 *  LogCollector.cpp   
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/14 
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ÈÕÖ¾ÊÕ¼¯
+*  æ—¥å¿—æ”¶é›†
 *
 */
 #include "LogCollector.hpp"
@@ -16,12 +16,12 @@
 
 namespace FFL {
 	//
-	//  ´¦Àí¼ä¸ôÖĞ×î¶à»º´ægMaxLogNumÌõÈÕÖ¾
+	//  å¤„ç†é—´éš”ä¸­æœ€å¤šç¼“å­˜gMaxLogNumæ¡æ—¥å¿—
 	//
-	static int32_t gMaxLogNum = 100;
+	static uint32_t gMaxLogNum = 100;
 
 	//
-	//  ÈÕÖ¾ÊÕ¼¯µÄ´¦Àí¼ä¸ô£¬gTimerTick_ms´¦ÀíÒ»´Î
+	//  æ—¥å¿—æ”¶é›†çš„å¤„ç†é—´éš”ï¼ŒgTimerTick_mså¤„ç†ä¸€æ¬¡
 	//
 	static uint32_t gTimerTick_ms = 1000;
 	LogCollector::LogCollector():mDiscardNum(0){
@@ -32,7 +32,7 @@ namespace FFL {
 	LogCollector::~LogCollector() {
 	}
 	//
-	// ÖØÖÃÈÕÖ¾ÊÕ¼¯Æ÷
+	// é‡ç½®æ—¥å¿—æ”¶é›†å™¨
 	//
 	void LogCollector::reset() {		
 		destroy();		
@@ -45,7 +45,7 @@ namespace FFL {
 		}
 	}
 	//
-	//  ÏòreaderÖĞÌî³äÊı¾İ
+	//  å‘readerä¸­å¡«å……æ•°æ®
 	//
 	void LogCollector::collect(FFL::String& info) {
 		FFL::CMutex::Autolock l(mInfoLock);
@@ -57,19 +57,19 @@ namespace FFL {
 		mInfoList.push_back(info);
 	}
 	//
-	//  Êä³öµ½nextÖĞ
+	//  è¾“å‡ºåˆ°nextä¸­
 	//
 	void LogCollector::connectOutputToUploader(NodeBase* next, const char* name, void* userdata) {
 		mOutputUploader = connectNext(next, name, userdata);
 	}
 	//
-	//  ³É¹¦´´½¨ÁËnode
+	//  æˆåŠŸåˆ›å»ºäº†node
 	//
 	void LogCollector::onCreate() {	
 		connectTimerInput("LogCollector", gTimerTick_ms, 0);
 	}
 	//
-	//  »ñÈ¡Êı¾İÑ­»·º¯Êı
+	//  è·å–æ•°æ®å¾ªç¯å‡½æ•°
 	//
 	bool LogCollector::onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {
 		FFL::String infoString;

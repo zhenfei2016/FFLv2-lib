@@ -7,7 +7,7 @@
 
 namespace FFL {
 	//
-	//  日志信息
+	//  鏃ュ織淇℃伅
 	//
 	class LogInfo : public FFL::PipelineMessagePayload {
 	public:
@@ -41,7 +41,7 @@ namespace FFL {
 	};
 
 	//
-	//  一个writer的message
+	//  涓�涓獁riter鐨刴essage
 	//
 	class LogWriterMessage : public FFL::PipelineMessagePayload{
 	public:

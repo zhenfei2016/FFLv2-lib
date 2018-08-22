@@ -7,7 +7,7 @@
 *  LogWriterCreator.cpp   
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/06 
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ´´½¨ÈÕÖ¾writer
+*  åˆ›å»ºæ—¥å¿—writer
 *
 */
 #include "LogWriterCreator.hpp"
@@ -68,7 +68,7 @@ namespace FFL {
 	}
 
 	//
-	//  ·¢ËÍĞÂ´´½¨µÄweiterµ½targetÖĞ
+	//  å‘é€æ–°åˆ›å»ºçš„weiteråˆ°targetä¸­
 	//
 	void LogWriterCreator::postNewWriterToTager(FFL::sp<RefCountWriter> writer) {
 		FFL::PipelineMessage* controlMsg = new FFL::PipelineMessage(LOG_MESSAGE_UPDATE_WRITER);
@@ -79,7 +79,7 @@ namespace FFL {
 	}
 
 	//
-	//  ÊÕµ½ÏûÏ¢
+	//  æ”¶åˆ°æ¶ˆæ¯
 	//
 	bool LogWriterCreator::onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {
 		if (msg->getType() == LOG_MESSAGE_CREATE_WRITER) {
@@ -91,7 +91,7 @@ namespace FFL {
 
 			String url=urlMessage->mUrl;
 			//
-			//  ´´½¨Ò»¸öĞÂµÄwriter
+			//  åˆ›å»ºä¸€ä¸ªæ–°çš„writer
 			//
 			FFL::sp<RefCountWriter> writer;
 			switch (urlMessage->mType)
@@ -122,7 +122,7 @@ namespace FFL {
 		return true;
 	}
 	//
-	//  ´´½¨ÍøÂçÀàĞÍµÄwriter
+	//  åˆ›å»ºç½‘ç»œç±»å‹çš„writer
 	//
 	FFL::sp<RefCountWriter> LogWriterCreator::createNetWriter(const String& url) {
 		NetFD fd = 0;
@@ -140,7 +140,7 @@ namespace FFL {
 		return NULL;
 	}
 	//
-	//  ´´½¨ÎÄ¼şÀàĞÍµÄwriter
+	//  åˆ›å»ºæ–‡ä»¶ç±»å‹çš„writer
 	//
 	FFL::sp<RefCountWriter> LogWriterCreator::createFileWriter() {
 		FileWriter*writer= new FileWriter();

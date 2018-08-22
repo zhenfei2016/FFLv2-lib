@@ -7,7 +7,7 @@
 *  LogPipeline.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/05
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ÈÕÖ¾´¦ÀíÁ÷Ë®Ïß£¬´®ÆğÀ´Õû¸öµÄÁ÷³Ì
+*  æ—¥å¿—å¤„ç†æµæ°´çº¿ï¼Œä¸²èµ·æ¥æ•´ä¸ªçš„æµç¨‹
 *
 */
 #include <pipeline/FFL_NodeBase.hpp>
@@ -21,19 +21,19 @@ namespace FFL {
 		LogPipeline();
 		~LogPipeline();	
 		//		
-		//  type£ºÄ¿±êÈÕÖ¾µÄÀàĞÍ
-		//  url : Ä¿±êÈÕÖ¾µÄÂ·¾¶	
-		//  ¸üĞÂÄ¿±êÎÄ¼şµÄ
+		//  typeï¼šç›®æ ‡æ—¥å¿—çš„ç±»å‹
+		//  url : ç›®æ ‡æ—¥å¿—çš„è·¯å¾„	
+		//  æ›´æ–°ç›®æ ‡æ–‡ä»¶çš„
 		//
 		void setTargetUrl(LogSenderType type, const char* url);
 		void getTargetUrl(LogSenderType& type, String& url);
 		//
-		//  Æô¶¯£¬Í£Ö¹LogPipeline
+		//  å¯åŠ¨ï¼Œåœæ­¢LogPipeline
 		//
 		bool startup();
 		void shutdown();        
 		//
-		//  Ğ´ÈÕÖ¾ĞÅÏ¢
+		//  å†™æ—¥å¿—ä¿¡æ¯
 		//
 		void write(int level, uint8_t* data, int32_t len);
 		void write(int level, const char* tag, const char *format, va_list v);
@@ -43,13 +43,13 @@ namespace FFL {
 		FFL::NodeManager* mManager;
 		FFL::sp<FFL::Pipeline> mPipeline;
 		//
-		// ÊÕ¼¯Æ÷
+		// æ”¶é›†å™¨
 		//
 		FFL::sp<LogCollector> mCollector;
 		FFL::sp<LogUploader> mUploader;
 		
 		//
-		//  ´´½¨µÄÀàĞÍ
+		//  åˆ›å»ºçš„ç±»å‹
 		//
 		LogSenderType mType;
 		String mUrl;

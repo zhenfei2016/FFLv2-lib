@@ -7,7 +7,7 @@
 *  LogCollector.hpp   
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/07 
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ÊÕ¼¯ÈÕÖ¾
+*  æ”¶é›†æ—¥å¿—
 *
 */
 #ifndef _FFL_LOG_COLLECTOR_HPP_
@@ -23,20 +23,20 @@ namespace FFL {
 		virtual ~LogCollector();
 
 		//
-		// ÖØÖÃÈÕÖ¾ÊÕ¼¯Æ÷
+		// é‡ç½®æ—¥å¿—æ”¶é›†å™¨
 		//
 		void reset();
 		//
-		//  ÏòreaderÖĞÌî³äÊı¾İ
+		//  å‘readerä¸­å¡«å……æ•°æ®
 		//
 		void collect(FFL::String& info);
 		//
-		//  Êä³öµ½nextÖĞ
+		//  è¾“å‡ºåˆ°nextä¸­
 		//
 		void connectOutputToUploader(NodeBase* next, const char* name, void* userdata);
 	private:
 		//
-		//  ³É¹¦´´½¨ÁËnode
+		//  æˆåŠŸåˆ›å»ºäº†node
 		//
 		virtual void onCreate();
 
@@ -49,7 +49,7 @@ namespace FFL {
 		OutputInterface mOutputUploader;
 
 		//
-		//  ÈÕÖ¾Ì«¶àÁË£¬¶ªÆúÁË¶àÉÙÌõ
+		//  æ—¥å¿—å¤ªå¤šäº†ï¼Œä¸¢å¼ƒäº†å¤šå°‘æ¡
 		//
 		int32_t mDiscardNum;
 	};

@@ -7,7 +7,7 @@
 *  LogUploader.cpp   
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/05
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ÈÕÖ¾ÉÏ´«
+*  æ—¥å¿—ä¸Šä¼ 
 *
 */
 #include "LogUploader.hpp"
@@ -24,11 +24,11 @@ namespace FFL {
 	LogUploader:: ~LogUploader() {
 	}
 	//
-	//  Ë¢ĞÂÒ»ÏÂĞÂµÄwriter£¬»áÇëÇóÖØĞÂ´´½¨
+	//  åˆ·æ–°ä¸€ä¸‹æ–°çš„writerï¼Œä¼šè¯·æ±‚é‡æ–°åˆ›å»º
 	//
 	void LogUploader::refrushWriter(LogSenderType type,const String& url) {
 		//
-		//  ´´½¨Ä¿±ê
+		//  åˆ›å»ºç›®æ ‡
 		//
 		mType=type;
 		mUrl=url;	
@@ -38,7 +38,7 @@ namespace FFL {
 		}
 	}
 	//
-	//  Êä³öµ½nextÖĞ
+	//  è¾“å‡ºåˆ°nextä¸­
 	//
 	void LogUploader::connectOutputToCreator(NodeBase* next, const char* name, void* userdata) {
 		mOutputWriter = connectNext(next, name, userdata);
@@ -90,7 +90,7 @@ namespace FFL {
 	}
 
 	//
-	//  ¸üĞÂwriter
+	//  æ›´æ–°writer
 	//
 	void LogUploader::handleUpdateWriter(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {
 		LogWriterMessage* payload=msg->getPayloadT<LogWriterMessage>();
@@ -102,7 +102,7 @@ namespace FFL {
 		if (mCreateWriterTime == 0 ||
 			FFL_getNowUs() - mCreateWriterTime > (1000 * 1000) * 60) {
 			//
-			//  ÊÇ·ñ¸úÉÏÒ»´Î´óÓÚÒ»·ÖÖÓÁË
+			//  æ˜¯å¦è·Ÿä¸Šä¸€æ¬¡å¤§äºä¸€åˆ†é’Ÿäº†
 			//
 			createWriter();
 		}

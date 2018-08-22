@@ -7,7 +7,7 @@
 *  LogPipeline.cpp   
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/05
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ÈÕÖ¾´¦ÀíÁ÷Ë®Ïß£¬´®ÆðÀ´Õû¸öµÄÁ÷³Ì
+*  æ—¥å¿—å¤„ç†æµæ°´çº¿ï¼Œä¸²èµ·æ¥æ•´ä¸ªçš„æµç¨‹
 *
 */
 #include "LogPipeline.hpp"
@@ -21,9 +21,9 @@ namespace FFL {
 		mManager = NULL;
 	}
 	//		
-	//  type£ºÄ¿±êÈÕÖ¾µÄÀàÐÍ
-	//  url : Ä¿±êÈÕÖ¾µÄÂ·¾¶	
-	//  ¸üÐÂÄ¿±êÎÄ¼þµÄ
+	//  typeï¼šç›®æ ‡æ—¥å¿—çš„ç±»åž‹
+	//  url : ç›®æ ‡æ—¥å¿—çš„è·¯å¾„	
+	//  æ›´æ–°ç›®æ ‡æ–‡ä»¶çš„
 	//
 	void LogPipeline::setTargetUrl(LogSenderType type, const char* url) {
 		mType = type;
@@ -64,18 +64,20 @@ namespace FFL {
 
 			
 		//
-		//  reader   Éú²úÈÕÖ¾Êý¾Ý¸øuploader
-		//  uploader Éú²ú¿ØÖÆÊý¾Ý¸ø writerCreator ÈÃ´´½¨writer
-		//  writerCreator ´´½¨writer³É¹¦ºó£¬·´À¡¸øuploaderµÄwriter
+		//  reader   ç”Ÿäº§æ—¥å¿—æ•°æ®ç»™uploader
+		//  uploader ç”Ÿäº§æŽ§åˆ¶æ•°æ®ç»™ writerCreator è®©åˆ›å»ºwriter
+		//  writerCreator åˆ›å»ºwriteræˆåŠŸåŽï¼Œåé¦ˆç»™uploaderçš„writer
 		//
-		//  writer:ÊÇ×î×ÜµÄÊý¾Ý´æ´¢·½Ê½£¬¿ÉÒÔÍøÂç£¬±¾µØµÈµÈ
-		//  £¬Ö÷Òª¿´writerµÄ´´½¨·½Ê½
+		//  writer:æ˜¯æœ€æ€»çš„æ•°æ®å­˜å‚¨æ–¹å¼ï¼Œå¯ä»¥ç½‘ç»œï¼Œæœ¬åœ°ç­‰ç­‰
+		//  ï¼Œä¸»è¦çœ‹writerçš„åˆ›å»ºæ–¹å¼
 		//
 		mCollector->connectOutputToUploader(uploader, "uploader",0);
 		uploader->connectOutputToCreator(writerCreator, "creator-writer", 0);
 		writerCreator->connectOutputWriterTarger(uploader, "update-writer", 0);
 		mUploader = uploader;
-		mPipeline->startup();
+		mPipeline->syncStartupAllNode();
+		uploader->refrushWriter(mType, mUrl);
+
 		return true;
 	}
 

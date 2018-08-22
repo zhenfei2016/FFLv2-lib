@@ -152,6 +152,13 @@ namespace FFL {
 				break;
 			}else {
 				int64_t delayUs = mClock->clockToWorldTimeBucket(whenUs- nowUs);
+				//
+				//  时间异常
+				//
+				if(nowUs<0){
+					FFL_LOG_WARNING("MessageQueue nowUs<0 ");
+					delayUs=1000;
+				}
 				mQueueChangedCondition.waitRelative(mLock, (uint32_t)(delayUs / 1000));
 			}
 		}

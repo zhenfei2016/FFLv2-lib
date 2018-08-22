@@ -18,14 +18,20 @@ static void internalTimeInit()
 	}
 }
 
-int64_t internalGetUs()
-{
+static int64_t gLastNowus=0;
+int64_t internalGetUs(){
 	struct timeval now;
 	internalTimeInit();
 
-	gettimeofday(&now, NULL);
-	int64_t nowUs = (int64_t)((now.tv_sec - gStartUs.tv_sec) * 1000 * 1000 + 
-		(now.tv_usec - gStartUs.tv_usec));	
+	int64_t nowUs =gLastNowus;
+	if(gettimeofday(&now, NULL)==0) {
+		int64_t a= (int64_t) now.tv_sec * 1000 * 1000 +now.tv_usec;
+		int64_t b= (int64_t) gStartUs.tv_sec * 1000 * 1000 +gStartUs.tv_usec;
+		nowUs = a-b;
+		gLastNowus=nowUs;
+	}else{
+
+	}
 	return nowUs;
 }
 

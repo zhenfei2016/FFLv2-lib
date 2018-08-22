@@ -8,7 +8,7 @@
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/05
 *  https://github.com/zhenfei2016/FFL-v2.git
 *
-*  ÈÕÖ¾·¢ËÍ¹ÜÀíÆ÷
+*  æ—¥å¿—å‘é€ç®¡ç†å™¨
 */
 
 #include <logsender/FFL_LogSender.hpp>
@@ -29,10 +29,10 @@ namespace FFL {
 		}
 	}	
 	//		
-	//  type£ºÄ¿±êÈÕÖ¾µÄÀàĞÍ
-	//  url : Ä¿±êÈÕÖ¾µÄÂ·¾¶
-	//  startupÇ°ĞèÒª½øĞĞÉèÖÃµÄ
-	//  startupÖĞÉèÖÃ£¬»á¸üĞÂÄ¿±êÎÄ¼şµÄ
+	//  typeï¼šç›®æ ‡æ—¥å¿—çš„ç±»å‹
+	//  url : ç›®æ ‡æ—¥å¿—çš„è·¯å¾„
+	//  startupå‰éœ€è¦è¿›è¡Œè®¾ç½®çš„
+	//  startupä¸­è®¾ç½®ï¼Œä¼šæ›´æ–°ç›®æ ‡æ–‡ä»¶çš„
 	//
 	void LogSender::setTargetUrl(LogSenderType type, const char* url) {
 		mType = type;
@@ -60,7 +60,7 @@ namespace FFL {
 		if (mLogInstance) {
 			mLogInstance->shutdown();	
 			//
-			//  ÎªÁËwrite²»¼ÓËø  mLogInstanceÑÓ³Ùdelete
+			//  ä¸ºäº†writeä¸åŠ é”  mLogInstanceå»¶è¿Ÿdelete
 			//
 
 		}
@@ -86,7 +86,7 @@ static int printLogToSender(int level, const char* tag, const char *format, va_l
 	return 1;
 }
 //
-//  ½Ó¹ÜlogÏµÍ³
+//  æ¥ç®¡logç³»ç»Ÿ
 //
 extern "C"  void FFL_hookLogSystem(FFL::LogSender& sender) {
 	FFL_LogHook(printLogToSender, &sender);

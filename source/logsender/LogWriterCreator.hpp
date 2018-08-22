@@ -7,7 +7,7 @@
 *  LogWriterCreator.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/08/06
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ´´½¨ÈÕÖ¾writer
+*  åˆ›å»ºæ—¥å¿—writer
 *
 */
 #ifndef _FFL_LOG_WRITER_CREATOR_HPP_
@@ -27,20 +27,20 @@ namespace FFL {
 		virtual ~LogWriterCreator();
 
 		//
-		//  Á¬½Óµ±Ç°½ÚµãµÄ´´½¨µÄwriter £¬ outputµ½nextÖĞ
+		//  è¿æ¥å½“å‰èŠ‚ç‚¹çš„åˆ›å»ºçš„writer ï¼Œ outputåˆ°nextä¸­
 		//
 		void connectOutputWriterTarger(NodeBase* next, const char* name, void* userdata);
 	private:
 		//
-		//  ·¢ËÍĞÂ´´½¨µÄweiterµ½targetÖĞ
+		//  å‘é€æ–°åˆ›å»ºçš„weiteråˆ°targetä¸­
 		//
 		void postNewWriterToTager(FFL::sp<RefCountWriter> writer);
 		//*
-		//  ´´½¨ÍøÂçÀàĞÍµÄwriter
+		//  åˆ›å»ºç½‘ç»œç±»å‹çš„writer
 		//
 		FFL::sp<RefCountWriter> createNetWriter(const String& url);
 		//
-		//  ´´½¨ÎÄ¼şÀàĞÍµÄwriter
+		//  åˆ›å»ºæ–‡ä»¶ç±»å‹çš„writer
 		//
 		FFL::sp<RefCountWriter> createFileWriter();
 	protected:

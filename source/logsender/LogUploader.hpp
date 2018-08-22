@@ -26,11 +26,11 @@ namespace FFL {
 		virtual ~LogUploader();
 
 		//
-		//  Ë¢ĞÂÒ»ÏÂĞÂµÄwriter£¬»áÇëÇóÖØĞÂ´´½¨
+		//  åˆ·æ–°ä¸€ä¸‹æ–°çš„writerï¼Œä¼šè¯·æ±‚é‡æ–°åˆ›å»º
 		//
 		void refrushWriter(LogSenderType type, const String& url);
 		//
-		//  Êä³öµ½nextÖĞ,ÇëÇóÒ»¸öcreator
+		//  è¾“å‡ºåˆ°nextä¸­,è¯·æ±‚ä¸€ä¸ªcreator
 		//
 		void connectOutputToCreator(NodeBase* next, const char* name, void* userdata);
 	protected:	
@@ -40,23 +40,23 @@ namespace FFL {
 
 		virtual bool onReceivedData(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata);
 		//
-		//  ´¦ÀíÈÕÖ¾ÏûÏ¢
+		//  å¤„ç†æ—¥å¿—æ¶ˆæ¯
 		//
 		void handleLogInfo(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata);
 		//
-		//  ¸üĞÂwriter
+		//  æ›´æ–°writer
 		//
 		void handleUpdateWriter(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata);
 	private:
 		//
-		//  ´´½¨writer
+		//  åˆ›å»ºwriter
 		//
 		void tryCreateWriter();
 		void createWriter();
 	private:		
 		OutputInterface mOutputWriter;
 		//
-		//  ÉÏ´Î´´½¨writerµÄÊ±¼ä
+		//  ä¸Šæ¬¡åˆ›å»ºwriterçš„æ—¶é—´
 		//
 		int64_t mCreateWriterTime;
 		FFL::sp<FFL::RefCountWriter> mWriter;
@@ -64,7 +64,7 @@ namespace FFL {
 		FFL::sp<FFL::PipelineLooper > mLooper;
 
 		//
-		//  ´´½¨Ä¿±ê
+		//  åˆ›å»ºç›®æ ‡
 		//
 		LogSenderType mType;
 		String mUrl;

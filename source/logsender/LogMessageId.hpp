@@ -2,23 +2,23 @@
 #define _LOG_MESSAGE_ID_HPP_
 
 //
-//  reader¶ÁÈ¡µÄÔ­Ê¼Êı¾İÏûÏ¢
+//  readerè¯»å–çš„åŸå§‹æ•°æ®æ¶ˆæ¯
 //
 #define LOG_MESSAGE_READER  1
 
 //
-//  uploaderµÄÌá½»ÏûÏ¢
+//  uploaderçš„æäº¤æ¶ˆæ¯
 //
 #define LOG_MESSAGE_UPLOADER 2
 
 
 //
-//  ´´½¨writer
+//  åˆ›å»ºwriter
 //
 #define LOG_MESSAGE_CREATE_WRITER 3
 
 //
-//  ¸üĞÂ´´½¨µÄwriter
+//  æ›´æ–°åˆ›å»ºçš„writer
 //
 #define LOG_MESSAGE_UPDATE_WRITER 4
 
