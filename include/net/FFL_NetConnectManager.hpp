@@ -15,6 +15,7 @@
 
 #include <FFL.h>
 #include <thread/FFL_Mutex.hpp>
+#include <net/FFL_NetConnect.hpp>
 
 namespace FFL {
 	class NetConnect;

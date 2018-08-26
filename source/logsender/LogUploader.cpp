@@ -14,7 +14,18 @@
 #include "LogMessages.hpp"
 #include "LogMessageId.hpp"
 
+
 namespace FFL {
+    //
+    //  最多缓存几条没有成功上传的日志
+    //
+    static const uint32_t gMaxCacheCount=5;
+    
+    //
+    // 最多连续几次创建writer失败后，不再创建了
+    //
+    static const uint32_t gMaxCreateWriterFailedCount=5;
+    
 	LogUploader::LogUploader():mType(LOG_ST_NONE) {
 		setName("LogUploader");
 		mCreateWriterTime = 0;
@@ -31,9 +42,16 @@ namespace FFL {
 		//  创建目标
 		//
 		mType=type;
-		mUrl=url;	
+		mUrl=url;
+        mCreateWriteNum=0;
 		
 		if (mOutputWriter.isValid()) {
+            if(type == LOG_ST_NEW_FILE || type ==LOG_ST_EXIST_FILE){
+                //
+                //   文件类型的直接先清空以前的writer
+                //
+                mWriter=NULL;
+            }
 			createWriter();
 		}
 	}
@@ -74,18 +92,41 @@ namespace FFL {
 		}		
 		return true;
 	}
-	void LogUploader::handleLogInfo(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {		
+	void LogUploader::handleLogInfo(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {
+        LogInfo* info = (LogInfo*)(msg->getPayload());     
 		if (!mWriter.isEmpty()) {
 			IOWriter* writer=mWriter->getWriter();			
 			if (writer) {
-				size_t writed = 0;
-				LogInfo* info = (LogInfo*)(msg->getPayload());
-				if (FFL_OK == writer->write((void*)(info->mInfo.c_str()),
-					info->mInfo.size(), &writed)) {
-					return;
-				}
+                size_t writed = 0;
+                
+                size_t count=mInfoCache.size();
+                for(size_t i=0;i<count && mInfoCache.size()>0;i++){
+                    if (FFL_OK != writer->write((void*)(mInfoCache.front().c_str()),
+                                                mInfoCache.front().size(), &writed)) {
+                       break;
+                    }
+                    mInfoCache.pop_front();
+                }
+                
+               
+                //
+                // 成功则退出
+                //
+                if (FFL_OK == writer->write((void*)(info->mInfo.c_str()),
+                                            info->mInfo.size(), &writed)) {
+                    return;
+                }
+				
 			}
 		}
+        
+        
+        if(mInfoCache.size()>=gMaxCacheCount){
+            mInfoCache.pop_front();
+        }
+        mInfoCache.push_back(info->mInfo);
+        
+        
 		tryCreateWriter();
 	}
 
@@ -95,16 +136,23 @@ namespace FFL {
 	void LogUploader::handleUpdateWriter(const FFL::sp<FFL::PipelineMessage>& msg, void* userdata) {
 		LogWriterMessage* payload=msg->getPayloadT<LogWriterMessage>();
 		mWriter = payload->mWriter;
+        if(mWriter!=NULL){
+        }
 	}
 
 
 	void LogUploader::tryCreateWriter() {
+        if(mCreateWriteNum>=gMaxCreateWriterFailedCount){
+           return;
+        }
+        
 		if (mCreateWriterTime == 0 ||
-			FFL_getNowUs() - mCreateWriterTime > (1000 * 1000) * 60) {
+			FFL_getNowUs() - mCreateWriterTime > (1000 * 1000) * 60 ) {
 			//
 			//  是否跟上一次大于一分钟了
 			//
 			createWriter();
+            mCreateWriteNum++;
 		}
 	}
 	void LogUploader::createWriter() {

@@ -14,7 +14,7 @@
 #include <net/http/FFL_HttpConnManager.hpp>
 #include <net/http/FFL_Http.hpp>
 #include <utils/FFL_StringHelper.hpp>
-
+#include <net/FFL_NetConnect.hpp>
 namespace FFL {
 
 	class DefHttpConnectHandler : public HttpConnectHandler {

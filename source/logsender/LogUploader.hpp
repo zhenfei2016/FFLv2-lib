@@ -16,7 +16,7 @@
 #include <pipeline/FFL_NodeBase.hpp>
 #include <net/FFL_NetSocket.hpp>
 #include <logsender/FFL_LogSenderType.hpp>
-
+#include <utils/FFL_List.hpp>
 
 namespace FFL {
 	class RefCountWriter;
@@ -57,12 +57,18 @@ namespace FFL {
 		OutputInterface mOutputWriter;
 		//
 		//  上次创建writer的时间
+        //  创建writer的次数
 		//
 		int64_t mCreateWriterTime;
+        uint32_t mCreateWriteNum;
 		FFL::sp<FFL::RefCountWriter> mWriter;
 
 		FFL::sp<FFL::PipelineLooper > mLooper;
 
+        //
+        // 缓存的未成功上传的日志信息
+        //
+        FFL::List<String> mInfoCache;
 		//
 		//  创建目标
 		//

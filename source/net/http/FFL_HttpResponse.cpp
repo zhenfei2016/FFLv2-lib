@@ -52,7 +52,7 @@ namespace FFL {
 			formatString(header, format.c_str(), json.size());			
 		}
 
-		int size=header.size();
+		header.size();
 		String data;
 		data = header + json;		
 
