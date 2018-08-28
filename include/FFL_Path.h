@@ -25,6 +25,11 @@ extern "C" {
 	 * processname ： 如果非空，则返回进程名称
 	 */
 	status_t FFL_getCurrentProcessPath(char* processdir, size_t len, char* processname);
+    
+    /*
+     *  获取工作目录
+     */
+    status_t FFL_getWorkPath(char* workPath, size_t len);
 #ifdef  __cplusplus
 }
 #endif
