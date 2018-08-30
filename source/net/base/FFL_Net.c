@@ -14,6 +14,7 @@
 #include "internalSocket.h"
 #include <net/base/FFL_Net.h>
 
+
 static int gSocketInited=0;
 
 void FFL_socketInit(){
@@ -239,6 +240,6 @@ int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize) {
 	}	
 	
 	addr = ((struct in_addr*)hent->h_addr);
-	strncpy_s (hostlist, bufSize-1, inet_ntoa(*addr), bufSize-1);
+	strncpy(hostlist, inet_ntoa(*addr), bufSize - 1);
 	return 1;
 }

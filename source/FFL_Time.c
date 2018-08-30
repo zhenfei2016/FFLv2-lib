@@ -12,6 +12,7 @@
 */
 
 #include "FFL_Time.h"
+#include <string.h>
 //
 //  是否使用短类型的时间字符串
 //  短类型day hour min second ms us
@@ -86,13 +87,13 @@ void FFL_usToString(int64_t timeUs, char* s, int32_t bufSize) {
 	int us = mod % 1000;
 
 	if (hour > 0) {
-		sprintf_s(s, bufSize, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
+		snprintf(s, bufSize, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
 	}else if(mintue>0){
-		sprintf_s(s, bufSize, "%2d:%02d:%03d:%03d", mintue, second, ms, us);
+		snprintf(s, bufSize, "%2d:%02d:%03d:%03d", mintue, second, ms, us);
 	}else if (second > 0) {
-		sprintf_s(s, bufSize, "%2d:%03d:%03d", second, ms, us);
+		snprintf(s, bufSize, "%2d:%03d:%03d", second, ms, us);
 	}else{
 		// <1s
-		sprintf_s(s, bufSize, "00:%03d:%03d",us / 1000, us % 1000);
+		snprintf(s, bufSize, "00:%03d:%03d",us / 1000, us % 1000);
 	}
 }
