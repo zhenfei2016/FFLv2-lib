@@ -5,7 +5,7 @@
 #include "FFL_Config.h"
 
 #ifdef WIN32
-
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #include <winsock2.h>
 typedef int  socklen_t;
 #pragma comment(lib,"ws2_32.lib")

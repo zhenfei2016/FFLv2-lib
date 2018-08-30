@@ -239,6 +239,6 @@ int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize) {
 	}	
 	
 	addr = ((struct in_addr*)hent->h_addr);
-	strcpy (hostlist, inet_ntoa(*addr));
+	strncpy_s (hostlist, bufSize-1, inet_ntoa(*addr), bufSize-1);
 	return 1;
 }

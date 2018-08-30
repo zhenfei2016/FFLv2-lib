@@ -60,15 +60,15 @@ int32_t FFL_getNowMs() {
 }
 
 
-void FFL_getNowString(char* s) {
-	internalGetTimeString(s);
+void FFL_getNowString(char* s, int32_t bufSize) {
+	internalGetTimeString(s,bufSize);
 }
 
 
 /*
 *  毫米转化为string，
 */
-void FFL_usToString(int64_t timeUs, char* s) {
+void FFL_usToString(int64_t timeUs, char* s, int32_t bufSize) {
 	int second = (int)(timeUs / (1000 * 1000 ));
 	int mod = (int)(timeUs % (1000 * 1000));
 
@@ -86,13 +86,13 @@ void FFL_usToString(int64_t timeUs, char* s) {
 	int us = mod % 1000;
 
 	if (hour > 0) {
-		sprintf(s, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
+		sprintf_s(s, bufSize, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
 	}else if(mintue>0){
-		sprintf(s,  "%2d:%02d:%03d:%03d", mintue, second, ms, us);
+		sprintf_s(s, bufSize, "%2d:%02d:%03d:%03d", mintue, second, ms, us);
 	}else if (second > 0) {
-		sprintf(s,  "%2d:%03d:%03d", second, ms, us);
+		sprintf_s(s, bufSize, "%2d:%03d:%03d", second, ms, us);
 	}else{
 		// <1s
-		sprintf(s,  "00:%03d:%03d",us / 1000, us % 1000);
+		sprintf_s(s, bufSize, "00:%03d:%03d",us / 1000, us % 1000);
 	}
 }

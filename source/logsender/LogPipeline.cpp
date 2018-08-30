@@ -96,7 +96,7 @@ namespace FFL {
 		}
 
 		char timeFormat[256] = {};
-		FFL_getNowString(timeFormat);
+		FFL_getNowString(timeFormat,255);
 
 		FFL::String info;
 		FFL::formatString(info, "%s %s pid:%d tid:%d ",

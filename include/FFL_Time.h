@@ -34,12 +34,12 @@ extern "C" {
 	/*
 	 *  获取当前时间的字符串类型
 	 */
-	void FFL_getNowString(char* s);
+	void FFL_getNowString(char* s,int32_t bufSize);
 
 	/*
 	*  毫秒转化为string， s:需要保证足够存储转化出来的时间字符串
 	*/
-	void FFL_usToString(int64_t timeUs, char* s);
+	void FFL_usToString(int64_t timeUs, char* s, int32_t bufSize);
 #ifdef  __cplusplus
 }
 #endif

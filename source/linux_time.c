@@ -35,7 +35,7 @@ int64_t internalGetUs(){
 	return nowUs;
 }
 
-void internalGetTimeString(char* s) {
+void internalGetTimeString(char* s, int32_t bufSize) {
 	int64_t current = internalGetUs();
 
 	time_t ts = gStartTime + (current / 1000000);
@@ -50,7 +50,7 @@ void internalGetTimeString(char* s) {
 //		t->tm_sec,
 //		tus / 1000, tus % 1000);
 //#else
-	sprintf(s,
+	sprintf_s(s, bufSize-1,
 		"%4d%02d%02d%02d%02d%02d:%03d:%03d",
 		t->tm_year + 1900,
 		t->tm_mon + 1,

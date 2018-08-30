@@ -106,7 +106,7 @@ static int defaultPrintLog(int level,const char* tag, const char *format, va_lis
 		gLogFd = stdout;
 	
 	{
-		FFL_getNowString(timeFormat);
+		FFL_getNowString(timeFormat,63);
 #ifdef WIN32
 		fprintf(gLogFd, "%s:%s tid=%d %s \n", s_levels_string[level], timeFormat, (int)FFL_CurrentThreadID(),  str);	
 #else

@@ -50,7 +50,7 @@ namespace FFL {
                 //
                 //   文件类型的直接先清空以前的writer
                 //
-                mWriter=NULL;
+                //mWriter=NULL;
             }
 			createWriter();
 		}

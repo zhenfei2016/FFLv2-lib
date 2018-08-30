@@ -18,7 +18,7 @@ static int gFilePathIndex = 1;
 void setTarget(const char* args, void* userdata) {
 	FFL::LogSender* logSender = (FFL::LogSender*) userdata;
 	char path[1024] = {};
-	sprintf(path, "d:\\logsender_%d.txt", gFilePathIndex++);
+	sprintf_s(path,1023, "d:\\logsender_%d.txt", gFilePathIndex++);
 	logSender->setTargetUrl(FFL::LOG_ST_NEW_FILE, path);
 }
 
