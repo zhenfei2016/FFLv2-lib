@@ -23,16 +23,16 @@ static void internalTimeInit()
 
 static double internalGetUs()
 {
-	internalTimeInit();
-
 	LARGE_INTEGER now;
+	double dt=0;
+	internalTimeInit();	
 	QueryPerformanceCounter(&now);
 
-	double dt = (now.QuadPart - gStartUs.QuadPart) / (double)gFreq.QuadPart;
+	dt = (now.QuadPart - gStartUs.QuadPart) / (double)gFreq.QuadPart;
 	return dt * 1000000;
 }
 
-inline void internalGetTimeString(char* s,int32_t bufSize) {
+static void internalGetTimeString(char* s,int32_t bufSize) {
 	int64_t current= (int64_t)internalGetUs();
 
 	time_t ts = gStartTime +(current / 1000000);

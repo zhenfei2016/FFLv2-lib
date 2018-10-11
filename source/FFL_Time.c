@@ -75,6 +75,8 @@ void FFL_usToString(int64_t timeUs, char* s, int32_t bufSize) {
 
 	int hour = 0;
 	int mintue = 0;
+	int ms=0;
+	int us=0;
 	if (second >= 60) {
 		mintue = second / 60;
 		second = second % 60;
@@ -83,8 +85,8 @@ void FFL_usToString(int64_t timeUs, char* s, int32_t bufSize) {
 			mintue = mintue % 60;
 		}
 	}	
-	int ms = mod / 1000;
-	int us = mod % 1000;
+	ms = mod / 1000;
+	us = mod % 1000;
 
 	if (hour > 0) {
 		snprintf(s, bufSize, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);

@@ -21,7 +21,7 @@ namespace FFL {
 	{
 		mPipelineNode = node;
 
-		OutputInfo info = {};		
+		OutputInfo info ;		
 		mOutputs.push_back(info);
 		mNextOutputId= mOutputs.size();
 	}
@@ -37,7 +37,7 @@ namespace FFL {
 		PipelineOutputId id = mNextOutputId;
 		PipelineOutput* output = new PipelineOutput(mPipelineNode, id);
 
-		OutputInfo info = {};
+		OutputInfo info ;
 		info.output = output;
 		mOutputs.push_back(info);
 		mNextOutputId = mOutputs.size();

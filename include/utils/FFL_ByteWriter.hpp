@@ -30,6 +30,14 @@ namespace FFL{
 		virtual bool write8Bytes(int64_t val) = 0;
 		virtual bool writeString(const String& val, uint32_t len) = 0;
 		virtual bool writeBytes(const int8_t* data, uint32_t size) = 0;
+		//
+		//  写的时候跳过几个字节
+		//
+		virtual void skipWrite(int32_t step) = 0;
+		//
+		//  是否还有这么多空间可以使用
+		//
+		virtual bool haveSpace(uint32_t size) = 0;
 	};
 }
 

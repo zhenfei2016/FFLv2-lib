@@ -6,7 +6,21 @@ FUNCTION(printf arg)
    message("message:" ${ARGV0})
 ENDFUNCTION()
 
+INCLUDE(./cmakemode/FFLv2Utils.cmake)
 
+#printf("FULL_NAME :")
+#set(LOCAL_SRC_FILES "./CMakeLists.txt")
+#get_filename_component(FULL_NAME ${LOCAL_SRC_FILES}  ABSOLUTE)
+#printf(${FULL_NAME})
+
+# 获取文件父路径
+#printf("PARENT_DIR :")
+#get_filename_component(PARENT_DIR ${LOCAL_SRC_FILES} PATH)
+#printf(${PARENT_DIR})
+
+#INCLUDE(${PARENT_DIR}/cmakemode/FFLv2lib.cmake)
+
+	
 SET(LOCAL_SRC_FILES "")
 FUNCTION(ADD_SRC_FILE arg)    
     SET(LOCAL_SRC_FILES "${LOCAL_SRC_FILES}${LOCAL_SRC_DIR}${ARGV0};" PARENT_SCOPE)
@@ -219,6 +233,10 @@ ADD_SRC_FILE(FFL_PipelineSourceConnector.cpp)
 ADD_SRC_FILE(FFL_PipelineHandler.cpp)
 ADD_SRC_FILE(PipelineMessageTrackFile.hpp)
 ADD_SRC_FILE(PipelineMessageTrackFile.cpp)
+#ADD_SRC_FILE(FFL_UMessage.cpp)
+#ADD_SRC_FILE(FFL_UMessageCache.cpp)
+
+
 
 
 #SET(LOCAL_SRC_DIR ./include/net/base/)
@@ -240,6 +258,8 @@ SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 
 AUX_SOURCE_DIRECTORY(./source/net/http/http-parser-2.1/ DIR_SRCS)
 SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
+
+group_by_dir(${CMAKE_SOURCE_DIR} ${LOCAL_SRC_FILES})
 
 #  输出路径 bin
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/../bin)

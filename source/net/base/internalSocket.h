@@ -25,13 +25,20 @@ typedef int  socklen_t;
 
 #define SOCKET_VALID(x) (x!=INVALID_SOCKET)
 #define SOCKET_BUFF(x) ((char*)x)
-inline void internal_socket_setup(){
-    WORD version;
-	WSADATA wsaData;
-	version = MAKEWORD(1,1);
-	WSAStartup(version, &wsaData);
-}
-#define SOCKET_SETUP() internal_socket_setup()
+//inline void internal_socket_setup(){
+//    WORD version;
+//	WSADATA wsaData;
+//	version = MAKEWORD(1,1);
+//	WSAStartup(version, &wsaData);
+//}
+//#define SOCKET_SETUP() internal_socket_setup()
+
+#define SOCKET_SETUP() \
+	do{WORD version;\
+	WSADATA wsaData;\
+	version = MAKEWORD(1,1);\
+	WSAStartup(version, &wsaData);}while(0)
+
 #define SOCKET_CLEANUP() WSACleanup()
 
 #else

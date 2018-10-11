@@ -14,7 +14,7 @@
 
 namespace FFL {
 	ByteStreamBase::ByteStreamBase():mMemEndian(0){
-		setData(0, 0,0);
+		setData(0,0,0);
 	}
 	ByteStreamBase::~ByteStreamBase() {
 	}
@@ -57,148 +57,7 @@ namespace FFL {
 				d[size - i - 1] = s[i];
 			}
 		}
-	}
-
-	ByteStreamReader::ByteStreamReader():mReadPos(0) {
-	}
-	ByteStreamReader::~ByteStreamReader() {
-	}
-	//
-	//  读写
-	//
-	bool ByteStreamReader::read1Bytes(int8_t& val) {
-		uint32_t size = 1;
-		if (getSize() >= size) {
-			readBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-
-	bool ByteStreamReader::read2Bytes(int16_t& val) {
-		uint32_t size = 2;
-		if (getSize() >= size) {
-			readBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamReader::read3Bytes(int32_t& val) {
-		uint32_t size = 3;
-		if (getSize() >= size) {
-			readBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamReader::read4Bytes(int32_t& val) {
-		uint32_t size = 4;
-		if (getSize() >= size) {
-			readBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamReader::read8Bytes(int64_t& val) {
-		uint32_t size = 8;
-		if (getSize() >= size) {
-			readBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamReader::readString(String& val, uint32_t len)
-	{
-		uint32_t size = len;
-		if (getSize() >= size) {
-			uint8_t* buf = new uint8_t[size];
-			readBuffer(buf, size, false);
-			val.append((const char*)buf, size);
-			delete[] buf;
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamReader::readBytes(int8_t* val, uint32_t size) {		
-		if (getSize() >= size) {
-			readBuffer((uint8_t*)&val, size, true);
-			return true;
-		}
-		return false;
-	}
-	void ByteStreamReader::readBuffer(uint8_t* dst, uint32_t size, bool order) {
-		internalCopyBytes(getData() + mReadPos, dst, size, order);
-		mReadPos += size;	
-		mDataSize -= size;
-	}
-
-
-	ByteStreamWriter::ByteStreamWriter() :mWritePos(0){
-	}
-	ByteStreamWriter::~ByteStreamWriter() {
 	}	
-
-	bool ByteStreamWriter::write1Bytes(int8_t val) {
-		uint32_t size = 1;
-		if (getCapacity()-getSize() >= size) {
-			writeBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamWriter::write2Bytes(int16_t val) {
-		uint32_t size = 2;
-		if (getCapacity() - getSize() >= size) {
-			writeBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamWriter::write3Bytes(int32_t val) {
-		uint32_t size = 3;
-		if (getCapacity() - getSize() >= size) {
-			writeBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamWriter::write4Bytes(int32_t val) {
-		uint32_t size = 4;
-		if (getCapacity() - getSize() >= size) {
-			writeBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamWriter::write8Bytes(int64_t val) {
-		uint32_t size = 8;
-		if (getCapacity() - getSize() >= size) {
-			writeBuffer((uint8_t*)&val, size, isSameEndian());
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamWriter::writeString(const String& val, uint32_t len) {
-		uint32_t size = len;
-		if (getCapacity() - getSize() >= size) {
-			writeBuffer((uint8_t*)val.c_str(), size, true);
-			return true;
-		}
-		return false;
-	}
-	bool ByteStreamWriter::writeBytes(const int8_t* val, uint32_t size) {
-		if (getCapacity() - getSize() >= size) {
-			writeBuffer((uint8_t*)val, size, true);
-			return true;
-		}
-		return false;
-	}
-	void ByteStreamWriter::writeBuffer(uint8_t* src, uint32_t size, bool order) {
-		internalCopyBytes(getData() + mWritePos,src, size, order);		
-		mWritePos += size;
-		mDataSize += size;
-	}
-	
 
 	ByteStream::ByteStream():mReadPos(0),mWritePos(0){
 
@@ -218,7 +77,7 @@ namespace FFL {
 	//
 	bool ByteStream::read1Bytes(int8_t& val) {
 		uint32_t size = 1;
-		if (getSize()>=size) {
+		if (haveData(size)) {
 			readBuffer((uint8_t*)&val,size, isSameEndian());
 			return true;
 		}
@@ -227,7 +86,7 @@ namespace FFL {
 
 	bool ByteStream::read2Bytes(int16_t& val) {
 		uint32_t size = 2;
-		if (getSize() >= size) {
+		if (haveData(size)) {
 			readBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -235,7 +94,7 @@ namespace FFL {
 	}
 	bool ByteStream::read3Bytes(int32_t& val) {
 		uint32_t size = 3;
-		if (getSize() >= size) {
+		if (haveData(size)) {
 			readBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -243,7 +102,7 @@ namespace FFL {
 	}
 	bool ByteStream::read4Bytes(int32_t& val) {
 		uint32_t size = 4;
-		if (getSize() >= size) {
+		if (haveData(size)) {
 			readBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -251,7 +110,7 @@ namespace FFL {
 	}
 	bool ByteStream::read8Bytes(int64_t& val) {
 		uint32_t size = 8;
-		if (getSize() >= size) {
+		if (haveData(size)) {
 			readBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -259,9 +118,9 @@ namespace FFL {
 	}
 	bool ByteStream::readString(String& val, uint32_t len){
 		uint32_t size = len;
-		if (getSize() >= size) {
+		if (haveData(size)) {
 			uint8_t* buf = new uint8_t[size];
-			readBuffer(buf, size, false);
+			readBuffer(buf, size, true);
 			val.append((const char*)buf, size);
 			delete[] buf;
 			return true;
@@ -269,16 +128,34 @@ namespace FFL {
 		return false;
 	}
 	bool ByteStream::readBytes(int8_t* val, uint32_t size) {
-		if (getSize() >= size) {
+		if (haveData(size)) {
 			readBuffer((uint8_t*)val, size, true);
 			return true;
 		}
 		return false;
 	}
+	//
+	//  跳过多少个字节
+	//
+	void ByteStream::skipRead(int32_t step) {
+		mReadPos += step;
+		if (mReadPos < 0) {
+			mReadPos = 0;
+		}
+		if (mReadPos >= mDataSize) {
+			mReadPos = mDataSize;
+		}
+	}
+	//
+	//  是否还有这么多可以读的数据
+	//
+	bool ByteStream::haveData(uint32_t size) {
+		return (getSize() >= size);
+	}
 
 	bool ByteStream::write1Bytes(int8_t val) {
 		uint32_t size = 1;
-		if (getCapacity()- getSize() >= size) {
+		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -286,7 +163,7 @@ namespace FFL {
 	}
 	bool ByteStream::write2Bytes(int16_t val) {
 		uint32_t size = 2;
-		if (getCapacity() - getSize() >= size) {
+		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -294,7 +171,7 @@ namespace FFL {
 	}
 	bool ByteStream::write3Bytes(int32_t val) {
 		uint32_t size = 3;
-		if (getCapacity() - getSize() >= size) {
+		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -302,7 +179,7 @@ namespace FFL {
 	}
 	bool ByteStream::write4Bytes(int32_t val) {
 		uint32_t size = 4;
-		if (getCapacity() - getSize() >= size) {
+		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -310,7 +187,7 @@ namespace FFL {
 	}
 	bool ByteStream::write8Bytes(int64_t val) {
 		uint32_t size = 8;
-		if (getCapacity() - getSize() >= size) {
+		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)&val, size, isSameEndian());
 			return true;
 		}
@@ -318,47 +195,78 @@ namespace FFL {
 	}
 	bool ByteStream::writeString(const String& val, uint32_t len) {
 		uint32_t size = len;
-		if (getCapacity() - getSize() >= size) {
+		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)val.c_str(), size, true);
 			return true;
 		}
 		return false;
 	}
 	bool ByteStream::writeBytes(const int8_t* val, uint32_t size) {
-		if (getCapacity() - getSize() >= size) {
+		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)val, size, true);
 			return true;
 		}
 		return false;
 	}
+	//
+	//  跳过多少个空位置
+	//
+	void ByteStream::skipWrite(int32_t step) {
+		mWritePos += step;
+		if (step < 0) {
+			mWritePos = (mWritePos > (-step))?(mWritePos+step) : 0;
+			mDataSize = mWritePos;
+			return;
+		}
 
-	void ByteStream::readBuffer(uint8_t* dst, uint32_t size, bool reversal) {
-		if (mReadPos + size <= getCapacity()) {
+		if (haveSpace(step)) {
+			mWritePos += step;
+			mDataSize += step;
+		}
+		else {
+			mWritePos = mDataCapacity;
+			mDataSize = mDataCapacity;
+		}
+	}
+	//
+	//  是否还有这么多空间可以使用
+	//
+	bool ByteStream::haveSpace(uint32_t size) {
+		return getCapacity() >= getSize() + size;
+	}	
+
+
+	void ByteStream::readBuffer(uint8_t* dst, uint32_t size, bool order) {
+		FFL_ASSERT(mDataSize >= size);
+		//if (mReadPos + size <= getCapacity()) {
 			if (dst) {
-				internalCopyBytes(getData() + mReadPos, dst, size, reversal);
+				internalCopyBytes(getData() + mReadPos, dst, size, order);
 			}
 			mReadPos += size;
-		}else {
-			uint8_t s1 = getCapacity() - mReadPos;
-			if (dst) {
-				internalCopyBytes(getData() + mReadPos, dst, s1, reversal);
-				internalCopyBytes(getData(), dst + s1, size - s1, reversal);
-			}
-			mReadPos = size-s1;
-		}
+		//}else {
+		//	uint8_t s1 = getCapacity() - mReadPos;
+		//	if (dst) {
+		//		internalCopyBytes(getData() + mReadPos, dst, s1, reversal);
+		//		internalCopyBytes(getData(), dst + s1, size - s1, reversal);
+		//	}
+		//	mReadPos = size-s1;
+		//}
 		mDataSize -= size;
 	}
 	void ByteStream::writeBuffer(uint8_t* src, uint32_t size, bool order) {
-		if (mWritePos + size <= getCapacity()) {
+		//
+		// 不使用环形结构 
+		FFL_ASSERT(mWritePos + size <= getCapacity());
+		//if (mWritePos + size <= getCapacity()) {
 			internalCopyBytes(src,getData() + mWritePos, size, order);
 			mWritePos += size;			
-		}
-		else {
-			uint8_t s1 = getCapacity() - mWritePos;
-			internalCopyBytes(src,getData() + mWritePos,s1, order);
-			internalCopyBytes(src +s1 ,getData(), size - s1, order);
-			mWritePos = size - s1;
-		}
+		//}
+		//else {
+		//	uint8_t s1 = getCapacity() - mWritePos;
+		//	internalCopyBytes(src,getData() + mWritePos,s1, order);
+		//	internalCopyBytes(src +s1 ,getData(), size - s1, order);
+		//	mWritePos = size - s1;
+		//}
 		mDataSize += size;
 	}
 }

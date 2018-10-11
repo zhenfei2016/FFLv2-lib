@@ -32,13 +32,13 @@ extern "C" {
 	/*
 	 *  内存申请，并且清空
 	*/
-	inline static void *FFL_mallocz(size_t size){
+	static void *FFL_mallocz(size_t size){
 		void *mem = FFL_malloc(size);
 		if (mem)
 			memset(mem, 0, size);
 		return mem;
 	}
-	inline static void FFL_freep(void **mem){
+	static void FFL_freep(void **mem){
 		if (mem && *mem) {
 			FFL_free(*mem);
 			*mem = 0;

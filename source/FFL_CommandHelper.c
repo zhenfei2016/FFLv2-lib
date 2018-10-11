@@ -63,17 +63,21 @@ static void help(const char* args, void* userdata) {
 void FFL_inputLooper(CmdOption* opts,void* userdata,
 	int(*fnQuitFlag)(void* userdata)){
 	char cmd[256] = {0};
-	cmd[0] = '-';
-	cmd[1] = '-';
 	const char *argv[] = {
 		"",
 		cmd,
 	};
 	int argc = 2;
-
 	int optCount = 0; 
+    
+	CmdOption* opt;
+	char* pCmdLine =0;
+
+	cmd[0] = '-';
+	cmd[1] = '-';
+
 	{
-		CmdOption* opt = opts;		
+		opt = opts;		
 		while (opt->mName) {
 			optCount++;
 			opt++;
@@ -84,7 +88,7 @@ void FFL_inputLooper(CmdOption* opts,void* userdata,
 		//
 		//  把输入命令格式化为  cmd=xxx  ,就是把命令转化成第一个参数
 		//		
-		char* pCmdLine = cmd + 2;
+		pCmdLine = cmd + 2;
 		while (*pCmdLine++) {
 			if (*pCmdLine == ' ' || *pCmdLine == '\n' || *pCmdLine == '\r') {
 				*pCmdLine = '=';

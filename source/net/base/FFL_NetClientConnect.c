@@ -24,7 +24,7 @@ SOCKET_STATUS FFL_socketNetworkClientTimeout(const char *host, int port, int typ
     struct hostent *hp;
     struct sockaddr_in addr;
     int s;
-
+	int error=0;
 
 	if (inet_addr(host) != INADDR_NONE) {
 		addr.sin_family = AF_INET;
@@ -55,7 +55,7 @@ SOCKET_STATUS FFL_socketNetworkClientTimeout(const char *host, int port, int typ
 		return FFL_ERROR_SOCKET_CREATE;
 	}
 
-    int error=connect(s, (struct sockaddr *) &addr, sizeof(addr));
+    error=connect(s, (struct sockaddr *) &addr, sizeof(addr));
     if( error< 0){
         FFL_socketClose(s);
         return FFL_ERROR_SOCKET_CONNECT;

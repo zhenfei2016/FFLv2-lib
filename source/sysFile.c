@@ -15,6 +15,7 @@
 #ifdef WIN32
 FileHandle* createFile(const char* path, OpenFileMode mode) {
 	DWORD openMode = OPEN_EXISTING;
+	HANDLE fd=NULL;
 	if (mode == MODE_OPEN) {
 		openMode = OPEN_EXISTING;
 	}
@@ -25,16 +26,16 @@ FileHandle* createFile(const char* path, OpenFileMode mode) {
 
 	}
 
-	HANDLE h = CreateFileA(path,
+	fd = CreateFileA(path,
 		GENERIC_READ | GENERIC_WRITE,
 		FILE_SHARE_WRITE | FILE_SHARE_READ,
 		NULL,
 		openMode,
 		0, NULL);
 
-	if (h != INVALID_HANDLE_VALUE) {
+	if (fd != INVALID_HANDLE_VALUE) {
 		FileHandle* handle = FFL_mallocz(sizeof(FileHandle));
-		handle->fd = h;
+		handle->fd = fd;
 
 		if (MODE_APPEND) {
 

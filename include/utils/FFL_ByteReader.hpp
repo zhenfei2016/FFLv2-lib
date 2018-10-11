@@ -28,6 +28,14 @@ namespace FFL{
 		virtual bool read8Bytes(int64_t& val) = 0;
 		virtual bool readString(String& val, uint32_t len) = 0;
 		virtual bool readBytes(int8_t* data, uint32_t size) = 0;
+		//
+		//  跳过多少个字节
+		//
+		virtual void skipRead(int32_t step) = 0;
+		//
+		//  是否还有这么多可以读的数据
+		//
+		virtual bool haveData(uint32_t size) = 0;
 	};
 }
 

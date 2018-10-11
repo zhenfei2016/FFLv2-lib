@@ -24,15 +24,15 @@ namespace FFL{
 		//
 		//   原始指针，指针指向的缓冲容量
 		//
-		uint8_t* getData() const { return mData; }
+		inline uint8_t* getData() const { return mData; }
 		//
 		//  缓存容量
 		//
-		uint32_t getCapacity() const { return mDataCapacity; }
+		inline uint32_t getCapacity() const { return mDataCapacity; }
 		//
 		//  缓存中当前的有效数据
 		//
-		uint32_t getSize() const { return mDataSize; }
+		inline uint32_t getSize() const { return mDataSize; }
 	public:
 		//
 		//  设置数据，bytestream将在这个数据集上进行操作
@@ -60,58 +60,8 @@ namespace FFL{
 		//
 		uint32_t mMemEndian;
 	};
-
-	class ByteStreamReader :public ByteStreamBase, public ByteReader {
-	public:
-		ByteStreamReader();
-		~ByteStreamReader();
-	public:
-		//
-		//  ByteReader 读写
-		//
-		bool read1Bytes(int8_t& val);
-		bool read2Bytes(int16_t& val);
-		bool read3Bytes(int32_t& val);
-		bool read4Bytes(int32_t& val);
-		bool read8Bytes(int64_t& val);
-		bool readString(String& val, uint32_t len);
-		bool readBytes(int8_t* data, uint32_t size);
-	protected:
-		void readBuffer(uint8_t* dst, uint32_t size, bool order);
-	private:
-		uint32_t mReadPos;
-	};
-
-
-	class ByteStreamWriter :public ByteStreamBase,public ByteWriter{
-	public:
-		ByteStreamWriter();
-		~ByteStreamWriter();		
-	public:
-		//
-		//  ByteWriter
-		//
-		bool write1Bytes(int8_t val);
-		bool write2Bytes(int16_t val);
-		bool write3Bytes(int32_t val);
-		bool write4Bytes(int32_t val);
-		bool write8Bytes(int64_t val);
-		bool writeString(const String& val, uint32_t len);
-		bool writeBytes(const int8_t* data, uint32_t size);
-	private:
-		void writeBuffer(uint8_t* src, uint32_t size, bool order);
-	private:
-		//
-		//  写位置
-		//		
-		uint32_t mWritePos;
-	};
-
-
-	
-
 	//
-	//  环形缓冲字节流
+	//  可以进行读写的字节流
 	//
 	class ByteStream :public ByteStreamBase ,public ByteWriter,public ByteReader {
 	public:
@@ -132,6 +82,15 @@ namespace FFL{
 		bool readString(String& val, uint32_t len);
 		bool readBytes(int8_t* val, uint32_t size);
 		//
+		//  跳过多少个字节
+		//
+		void skipRead(int32_t step);
+		//
+		//  是否还有这么多可以读的数据
+		//
+		bool haveData(uint32_t size);
+
+		//
 		//  ByteWriter 写
 		//
 		bool write1Bytes(int8_t val);
@@ -141,6 +100,14 @@ namespace FFL{
 		bool write8Bytes(int64_t val);
 		bool writeString(const String& val, uint32_t len);
 		bool writeBytes(const int8_t* val, uint32_t size);
+		//
+		//  跳过多少个空位置
+		//
+		void skipWrite(int32_t step);
+		//
+		//  是否还有这么多空间可以使用
+		//
+		bool haveSpace(uint32_t size);
 	protected:
 		//
 		//  读写指定的字节

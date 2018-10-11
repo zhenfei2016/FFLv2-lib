@@ -20,7 +20,7 @@ namespace FFL {
 	{
 		mPipelineNode = node;
 
-		InputInfo info = {};		
+		InputInfo info;		
 		mInputs.push_back(info);
 		mNextInputId= mInputs.size();
 	}
@@ -36,7 +36,7 @@ namespace FFL {
 		PipelineInput* input = new PipelineInput(mPipelineNode, handler, id);
 		input->setName(name);
 
-		InputInfo info = {};
+		InputInfo info ;
 		info.input = input;
 		mInputs.push_back(info);
 		mNextInputId = mInputs.size();

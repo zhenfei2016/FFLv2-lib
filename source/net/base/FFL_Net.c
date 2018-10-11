@@ -154,14 +154,7 @@ SOCKET_STATUS FFL_socketSetRecvTimeout(NetFD fd, int64_t ms)
 {
 	int32_t sec = 0;
 	int32_t usec = 0;
-
-	if (ms != 0)
-	{
-		sec = (int32_t)(ms / 1000);
-		usec = (int32_t)((ms % 1000)*1000);
-	}
-
-	struct timeval tv = { sec , usec };
+	struct timeval tv = { (int32_t)(ms / 1000) , (int32_t)((ms % 1000)*1000) };
 	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO,(const char*)( &tv), sizeof(tv)) == -1)
 	{
 		return FFL_ERROR_SOCKET_FAILED;
@@ -175,14 +168,7 @@ SOCKET_STATUS FFL_socketSetRecvTimeout(NetFD fd, int64_t ms)
 SOCKET_STATUS FFL_socketSetSendTimeout(NetFD fd, int64_t ms){
 	int32_t sec = 0;
 	int32_t usec = 0;
-
-	if (ms != 0)
-	{
-		sec = (int32_t)(ms / 1000);
-		usec = (int32_t)((ms % 1000)*1000);
-	}
-
-	struct timeval tv = { sec , usec };
+	struct timeval tv = { (int32_t)(ms / 1000) , (int32_t)((ms % 1000)*1000) };
 	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (const char*)(&tv), sizeof(tv)) == -1)
 	{
 		return FFL_ERROR_SOCKET_FAILED;

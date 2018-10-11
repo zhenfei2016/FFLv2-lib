@@ -51,7 +51,8 @@
 /*
 * 内联函数
 */
-#define FFL_INLINE inline
+//#define FFL_INLINE inline
+#define FFL_INLINE 
 
 
 /*  最大值 */
@@ -171,5 +172,8 @@ extern "C" {
 }
 #endif
 
+#if _MSC_VER
+#define snprintf _snprintf
+#endif
 
 #endif

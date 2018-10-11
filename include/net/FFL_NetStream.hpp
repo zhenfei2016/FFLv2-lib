@@ -54,6 +54,14 @@ namespace FFL {
 		bool read8Bytes(int64_t& val);
 		bool readString(String& val, uint32_t len);
 		bool readBytes(int8_t* data, uint32_t size);
+		//
+		//  跳过多少个字节
+		//
+		void skipRead(int32_t step);
+		//
+		//  是否还有这么多可以读的数据
+		//
+		bool haveData(uint32_t size);
 	private:
 		ByteBuffer* mBuffer;
 		uint32_t mPosition;

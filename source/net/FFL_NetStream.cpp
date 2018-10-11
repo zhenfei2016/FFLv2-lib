@@ -98,5 +98,16 @@ namespace FFL {
 		return false;
 	}
 	
+	//
+	//  跳过多少个字节
+	//
+	void NetStreamReader::skipRead(int32_t step) {
 
+	}
+	//
+	//  是否还有这么多可以读的数据
+	//
+	bool NetStreamReader::haveData(uint32_t size) {
+		return true;
+	}
 }

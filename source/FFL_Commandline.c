@@ -16,7 +16,8 @@
 
 static struct option* alloc_getopt_Option(CmdOption* opts, int size) {	
 	struct option* optionList = FFL_mallocz((size +1)* sizeof(struct option) );
-	for (int i = 0; i < size; i++) {
+	int i=0;
+	for (i = 0; i < size; i++) {
 		if (!opts[i].mName) {
 			optionList[i].name = FFL_strdup( "__dummy__");
 			continue;
