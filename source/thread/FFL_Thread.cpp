@@ -32,8 +32,7 @@ namespace FFL {
 		return FFL_NO_ERROR;
 	}
 
-	status_t Thread::run(const char* name, int32_t priority, size_t stack)
-	{
+	status_t Thread::run(const char* name, int32_t priority, size_t stack){
 		CMutex::Autolock _l(mLock);
 		if (mRunning) 
 		{			
@@ -57,7 +56,8 @@ namespace FFL {
 
 			return FFL_ERROR_FAILED;
 		}
-				
+
+		mThreadReadyCondition.signal();				
 		return FFL_NO_ERROR;
 	}
 
@@ -67,19 +67,38 @@ namespace FFL {
 
 		sp<Thread> strong(self->mHoldSelf);
 		wp<Thread> weak(strong);
-		self->mHoldSelf.clear();
-
-		FFL_ThreadID tid= self->mTid = FFL_CurrentThreadID();
-		FFL_LOG_DEBUG("Thread(%d) run", tid);
+		self->mHoldSelf.clear();				
 		bool first = true;
 		bool exec_thread_exit = false;
-		self->threadLoopStart();
+
+		{//
+		 //  等待run函数返回成功
+		//
+			CMutex::Autolock _l(self->mLock);
+			if (self->mThread == NULL) {
+				self->mThreadReadyCondition.wait(self->mLock);
+			}
+		}
+
+		//
+		//  保存一下线程名称
+		//	
+		FFL_ThreadID tid = self->mTid = FFL_CurrentThreadID();
+		char threadName[256] = { 0 };
+		const  char* tmpName = FFL_GetThreadName(self->mThread);
+		if (tmpName != NULL && tmpName[0] != NULL) {
+			memcpy(threadName, tmpName, FFL_MIN(strlen(tmpName), 255));
+		}
+		FFL_LOG_DEBUG("Thread(%d)(%s) run", tid, threadName);
+
+
+		self->threadLoopStart();		
 		do {
 			bool result;
 			if (first) {
 				first = false;
 				self->mStatus = self->readyToRun();
-				result = (self->mStatus == FFL_NO_ERROR);
+				result = (self->mStatus == FFL_NO_ERROR);				
 
 				if (result && !self->exitPending()) {
 					// Binder threads (and maybe others) rely on threadLoop
@@ -129,9 +148,8 @@ namespace FFL {
 
 		if(!exec_thread_exit)
 		   self->threadLoopExit(0);
-		
-		FFL_LOG_DEBUG("Thread(%d) quit", tid);
 
+		FFL_LOG_DEBUG("Thread(%d)(%s) exit", tid, threadName);
 		return 0;
 	}
 

@@ -75,6 +75,7 @@ private:
     FFL_Thread*     mThread;
     mutable CMutex          mLock;
             CCondition      mThreadExitedCondition;
+			CCondition      mThreadReadyCondition;
             status_t        mStatus;
     // note that all accesses of mExitPending and mRunning need to hold mLock
     volatile bool           mExitPending;

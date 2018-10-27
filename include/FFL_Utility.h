@@ -172,7 +172,7 @@ extern "C" {
 }
 #endif
 
-#if _MSC_VER
+#if _MSC_VER <=1600
 #define snprintf _snprintf
 #endif
 
