@@ -172,8 +172,10 @@ extern "C" {
 }
 #endif
 
+#if WIN32
 #if _MSC_VER <=1600
 #define snprintf _snprintf
+#endif
 #endif
 
 #endif

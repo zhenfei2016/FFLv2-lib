@@ -29,6 +29,27 @@ void FFL_socketUninit(){
 		gSocketInited=0;
 	}
 }
+/*
+*  创建socket
+*/
+NetFD FFL_socketCreate(int type) {
+	NetFD fd = socket(AF_INET, type, 0);
+
+	if (fd > 0) {
+#ifndef WIN32
+		int flags = fcntl(fd, F_GETFD);
+		flags |= FD_CLOEXEC;
+		fcntl(fd, F_SETFD, flags);
+#endif
+	}
+	return fd;
+}
+/*
+*  关闭socket
+*/
+void FFL_socketClose(NetFD fd) {
+	FFL_SOCKET_CLOSE(fd);
+}
 
 //static void fdCloseExec(NetFD fd)
 //{
@@ -38,12 +59,7 @@ void FFL_socketUninit(){
 //    fcntl(fd, F_SETFD, flags);
 //#endif
 //}
-/*
-*  关闭socket
-*/
-void FFL_socketClose(NetFD fd) {
-	FFL_SOCKET_CLOSE(fd);
-}
+
 
 /*
 *  accept一个客户端上来

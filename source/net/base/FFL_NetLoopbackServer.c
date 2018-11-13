@@ -13,6 +13,9 @@
 #include "internalSocket.h"
 #include <net/base/FFL_Net.h>
 
+ /*
+ *  如果fd指向的为NULL 则内部会进行socket的创建
+ */
 #define LISTEN_BACKLOG 4
 SOCKET_STATUS FFL_socketLoopbackServer(int port, int type, NetFD *fd){
     struct sockaddr_in addr;
@@ -23,9 +26,14 @@ SOCKET_STATUS FFL_socketLoopbackServer(int port, int type, NetFD *fd){
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
-    s = socket(AF_INET, type, 0);
-	if (s < 0) {
-		return FFL_ERROR_SOCKET_CREATE;
+	if (*fd == NULL) {
+		s = socket(AF_INET, type, 0);
+		if (s < 0) {
+			return FFL_ERROR_SOCKET_CREATE;
+		}
+	}
+	else {
+		s = *fd;
 	}
 
     n = 1;

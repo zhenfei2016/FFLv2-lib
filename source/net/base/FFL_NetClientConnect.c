@@ -13,6 +13,9 @@
 #include "internalSocket.h"
 #include <net/base/FFL_Net.h>
 
+ /*
+ *  如果fd指向的为NULL 则内部会进行socket的创建
+ */
 SOCKET_STATUS FFL_socketNetworkClient(const char *host, int port, int type, NetFD*fd )
 {
     return FFL_socketNetworkClientTimeout(host,port,type,fd,0);
@@ -50,9 +53,14 @@ SOCKET_STATUS FFL_socketNetworkClientTimeout(const char *host, int port, int typ
 		memcpy(&addr.sin_addr, hp->h_addr, hp->h_length);
 	}
 
-    s = socket(addr.sin_family, type, 0);
-	if (s < 0) {
-		return FFL_ERROR_SOCKET_CREATE;
+	if (*fd == NULL) {
+		s = socket(addr.sin_family, type, 0);
+		if (s < 0) {
+			return FFL_ERROR_SOCKET_CREATE;
+		}
+	}
+	else {
+		s = *fd;
 	}
 
     error=connect(s, (struct sockaddr *) &addr, sizeof(addr));

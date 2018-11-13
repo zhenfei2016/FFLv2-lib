@@ -30,44 +30,51 @@ extern "C" {
 	/* socket库初始化 */
 	void FFL_socketInit();
 	void FFL_socketUninit();
+	
+	/*
+	*  创建socket
+	*/
+	NetFD FFL_socketCreate(int type);
+    #define FFL_socketCreateTcp() FFL_socketCreate(SOCK_STREAM)
+    #define FFL_socketCreateUdp() FFL_socketCreate(SOCK_DGRAM)
+	/*
+	*关闭句柄
+	*/
+	void FFL_socketClose(NetFD fd);
+
     /*
-	 *连接到loopback的服务器，返回句柄 
+	 *  连接到loopback的服务器，返回句柄 
+	 *  如果fd指向的为NULL 则内部会进行socket的创建
 	 */
-	SOCKET_STATUS FFL_socketLoopbackClient(int port, int type, NetFD*fd);
-	SOCKET_STATUS FFL_socketLoopbackClientTimeout(int port, int type, NetFD*fd,int timeout_tm);
+	SOCKET_STATUS FFL_socketLoopbackClient(int port, int type, NetFD*fd);	
     #define FFL_socketLoopbackTcpClient(port,fd) FFL_socketLoopbackClient(port,SOCK_STREAM,fd)
     #define FFL_socketLoopbackUdpClient(port,fd) FFL_socketLoopbackClient(port,SOCK_DGRAM,fd)
     /*  
-	 * 本地loopback的服务器，监听连接
+	 *  本地loopback的服务器，监听连接
+	 *  如果fd指向的为NULL 则内部会进行socket的创建
 	 */
 	SOCKET_STATUS FFL_socketLoopbackServer(int port, int type,NetFD* fd);
     #define FFL_socketLoopbackTcpServer(port,fd) FFL_socketLoopbackServer(port,SOCK_STREAM,fd);  
     #define FFL_socketLoopbackUdpServer(port,fd) FFL_socketLoopbackServer(port,SOCK_DGRAM,fd);·
 	/*
-	 *连接到服务器，返回句柄fd
+	 *  连接到服务器，返回句柄fd
+	 *  如果fd指向的为NULL 则内部会进行socket的创建
 	 */
-	SOCKET_STATUS FFL_socketNetworkClient(const char *host, int port, int type, NetFD* fd);
-	SOCKET_STATUS FFL_socketNetworkClientTimeout(const char *host, int port, int type, NetFD* fd,int timeout_tm);
+	SOCKET_STATUS FFL_socketNetworkClient(const char *host, int port, int type, NetFD* fd);	
 	#define FFL_socketNetworkTcpClient(host,port,fd) FFL_socketNetworkClient(host,port,SOCK_STREAM,fd)
 	#define FFL_socketNetworkUdpClient(host,port,fd) FFL_socketNetworkClient(host,port,SOCK_DGRAM,fd)
 
 	/* 
-	 *本地的服务器，监听连接 
+	 *  本地的服务器，监听连接 
+	 *  如果fd指向的为NULL 则内部会进行socket的创建
 	 */
 	SOCKET_STATUS FFL_socketAnyAddrServer(int port, int type,NetFD* fd);
 	#define FFL_socketAnyAddrTcpServer(port,fd) FFL_socketAnyAddrServer(port,SOCK_STREAM,fd)
 	#define FFL_socketAnyAddrUdpServer(port,fd) FFL_socketAnyAddrServer(port,SOCK_DGRAM,fd)
-
-	/* 
-	 *关闭句柄 
-	 */
-	void FFL_socketClose(NetFD fd);
-
     /*  
 	 * 服务端accept一个客户端，当一个客户端连接上来的时候，这个会返回的  clientfd
 	 */
-	SOCKET_STATUS FFL_socketAccept(NetFD serverfd, NetFD* clientfd);
-	    
+	SOCKET_STATUS FFL_socketAccept(NetFD serverfd, NetFD* clientfd);	    
     /*
      * 网络读 
      * readed : 获取读取了数据量

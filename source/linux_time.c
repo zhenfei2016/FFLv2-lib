@@ -50,7 +50,7 @@ void internalGetTimeString(char* s, int32_t bufSize) {
 //		t->tm_sec,
 //		tus / 1000, tus % 1000);
 //#else
-	snprintf(s, bufSize-1,
+	sprintf(s,
 		"%4d%02d%02d%02d%02d%02d:%03d:%03d",
 		t->tm_year + 1900,
 		t->tm_mon + 1,

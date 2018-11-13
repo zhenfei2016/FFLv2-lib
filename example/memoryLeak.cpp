@@ -27,7 +27,7 @@ int FFL_main() {
 	char exePath[1024] = {};
 	char exeName[1024] = {};
 	FFL_getCurrentProcessPath(exePath, 1023, exeName);
-	strcat_s(exePath, "memoryLeank.log");
+	strcat(exePath, "memoryLeank.log");
 
 	if (0) {
 		//
