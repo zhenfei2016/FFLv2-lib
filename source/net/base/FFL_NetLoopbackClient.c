@@ -16,10 +16,6 @@
  /*
  *  如果fd指向的为NULL 则内部会进行socket的创建
  */
-SOCKET_STATUS FFL_socketLoopbackClient(int port, int type, NetFD*fd)
-{
-    return FFL_socketLoopbackClientTimeout(port,type,fd,0);
-}
 
 SOCKET_STATUS FFL_socketLoopbackClientTimeout(int port, int type, NetFD*fd,int timeout_tm){
     struct sockaddr_in addr;
@@ -30,7 +26,7 @@ SOCKET_STATUS FFL_socketLoopbackClientTimeout(int port, int type, NetFD*fd,int t
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
-	if (*fd == NULL) {
+	if (*fd == 0) {
 		s = socket(AF_INET, type, 0);
 		if (s < 0) {
 			return FFL_ERROR_SOCKET_CREATE;
@@ -47,4 +43,9 @@ SOCKET_STATUS FFL_socketLoopbackClientTimeout(int port, int type, NetFD*fd,int t
 
 	*fd = s;
     return FFL_SOCKET_OK;
+}
+
+SOCKET_STATUS FFL_socketLoopbackClient(int port, int type, NetFD*fd)
+{
+	return FFL_socketLoopbackClientTimeout(port, type, fd, 0);
 }

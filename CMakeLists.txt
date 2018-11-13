@@ -282,7 +282,7 @@ if (MSVC)
     endforeach()
 endif(MSVC)
 
-add_library( FFL STATIC ${LOCAL_SRC_FILES})
+add_library( FFLv2 STATIC ${LOCAL_SRC_FILES})
  
 #printf("build-type:")
 #printf(${CMAKE_INSTALL_CONFIG_NAME})
@@ -326,8 +326,7 @@ ELSE()
    SET( FFLv2Lib_INSTALL_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/ )
    ADD_CUSTOM_TARGET(install_FFL 
      COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/cmakemode/ ${CMAKE_CURRENT_SOURCE_DIR}/../FFLv2-cmakemodule/
-     COMMAND ${CMAKE_COMMAND} -E remove_directory ${FFLv2Lib_INSTALL_PATH}
-     COMMAND ${CMAKE_COMMAND} -E copy_directory ${EXECUTABLE_OUTPUT_PATH} ${FFLv2Lib_INSTALL_PATH}/bin/
-     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBRARY_OUTPUT_PATH} ${FFLv2Lib_INSTALL_PATH}/libs//
-     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/include/ ${FFLv2Lib_INSTALL_PATH}/libs/include)
+     COMMAND ${CMAKE_COMMAND} -E remove_directory ${FFLv2Lib_INSTALL_PATH}     
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBRARY_OUTPUT_PATH} ${FFLv2Lib_INSTALL_PATH}/libs/
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/include/ ${FFLv2Lib_INSTALL_PATH}/include)
 ENDIF()

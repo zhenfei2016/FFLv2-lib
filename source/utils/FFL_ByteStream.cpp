@@ -214,7 +214,7 @@ namespace FFL {
 	void ByteStream::skipWrite(int32_t step) {
 		mWritePos += step;
 		if (step < 0) {
-			mWritePos = (mWritePos > (-step))?(mWritePos+step) : 0;
+			mWritePos = (mWritePos > (uint32_t)(-step))?(mWritePos+step) : 0;
 			mDataSize = mWritePos;
 			return;
 		}

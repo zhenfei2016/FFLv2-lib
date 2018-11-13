@@ -27,7 +27,7 @@ SOCKET_STATUS FFL_socketAnyAddrServer(int port, int type,NetFD*fd){
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	if (*fd == NULL) {
+	if (*fd == 0) {
 		s = socket(AF_INET, type, 0);
 		if (s < 0) {
 			return FFL_ERROR_SOCKET_CREATE;

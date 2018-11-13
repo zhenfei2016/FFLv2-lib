@@ -25,9 +25,9 @@ if (MSVC)
     endforeach()
 endif(MSVC)
 ADD_EXECUTABLE(httpServer  ${LOCAL_SRC_FILES})
-TARGET_LINK_LIBRARIES(httpServer FFL)
+TARGET_LINK_LIBRARIES(httpServer FFLv2)
 
 ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
-TARGET_LINK_LIBRARIES(memoryLeak FFL)
+TARGET_LINK_LIBRARIES(memoryLeak FFLv2)
 
 
