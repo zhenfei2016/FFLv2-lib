@@ -138,12 +138,13 @@ namespace FFL {
 	//  跳过多少个字节
 	//
 	void ByteStream::skipRead(int32_t step) {
-		mReadPos += step;
-		if (mReadPos < 0) {
-			mReadPos = 0;
-		}
-		if (mReadPos >= mDataSize) {
-			mReadPos = mDataSize;
+		if(step<0 && (uint32_t)(-step) >= mReadPos){
+			mReadPos=0;
+		}else {
+			mReadPos += step;
+			if (mReadPos >= mDataSize) {
+				mReadPos = mDataSize;
+			}
 		}
 	}
 	//

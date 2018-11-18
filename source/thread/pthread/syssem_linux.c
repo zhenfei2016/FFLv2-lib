@@ -30,7 +30,7 @@
 
 #include "FFL.h"
 #include "internal_mutex_sys.h"
-#include "thread/FFL_mutex.h"
+#include "thread/FFL_Mutex.h"
 
 struct FFL_semaphore_sys
 {

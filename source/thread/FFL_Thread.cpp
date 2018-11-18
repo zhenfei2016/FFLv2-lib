@@ -86,7 +86,7 @@ namespace FFL {
 		FFL_ThreadID tid = self->mTid = FFL_CurrentThreadID();
 		char threadName[256] = { 0 };
 		const  char* tmpName = FFL_GetThreadName(self->mThread);
-		if (tmpName != NULL && tmpName[0] != NULL) {
+		if (tmpName != NULL && tmpName[0] != 0) {
 			memcpy(threadName, tmpName, FFL_MIN(strlen(tmpName), 255));
 		}
 		FFL_LOG_DEBUG("Thread(%d)(%s) run", tid, threadName);
