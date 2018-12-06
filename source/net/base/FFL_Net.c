@@ -36,7 +36,7 @@ NetFD FFL_socketCreate(int type) {
 	NetFD fd = socket(AF_INET, type, 0);
 
 	if (fd > 0) {
-#ifndef WIN32
+#ifdef ANDROID
 		int flags = fcntl(fd, F_GETFD);
 		flags |= FD_CLOEXEC;
 		fcntl(fd, F_SETFD, flags);
@@ -222,7 +222,7 @@ SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* wri
 	destAddr.sin_port = htons(destPort);	
 	destAddr.sin_addr.s_addr = inet_addr(destIp);
 
-	int nbWrite = sendto(fd, buffer, size, 0,&destAddr,sizeof(struct sockaddr_in));	
+	int nbWrite = sendto(fd, buffer, size, 0,(struct sockaddr*)&destAddr,sizeof(struct sockaddr_in));	
 	if (nbWrite > 0) {
 		if (writed)
 			*writed = nbWrite;
@@ -361,6 +361,7 @@ int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, in
 			maxfd=fdList[i];
         }
     }
+	maxfd+=1;
 #endif
 	
 	FD_ZERO(&fdset);

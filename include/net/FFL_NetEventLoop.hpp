@@ -18,6 +18,7 @@
 #include <thread/FFL_Thread.hpp>
 #include <thread/FFL_Mutex.hpp>
 #include <net/base/FFL_Net.h>
+#include <utils/FFL_List.hpp>
 
 namespace FFL {
 	class NetEventHandler {
@@ -30,6 +31,8 @@ namespace FFL {
 	};
 	typedef void(*NetEventHandlerFree)(NetEventHandler* h);
 
+	class SocketPair;
+	class EventPacket;
 	class NetEventLoop : public FFL::Module {
 	public:
 		//
@@ -50,7 +53,7 @@ namespace FFL {
 		//
 		//  移除这个句柄的处理handler
 		//
-		void removeFd(NetFD fd);
+		bool removeFd(NetFD fd);
 	public:
 		//////////  FFL::Module impl////////////////////////////////////////////////////////////////////////////////////
 		//
@@ -69,15 +72,6 @@ namespace FFL {
 		//
 		virtual bool eventLoop(int32_t* waitTime);
 	protected:
-		//
-		//  处理一下已经标记不用的fd
-		//
-		void processDidFd();
-		//
-		//  处理一下可读的fd
-		//
-		void processReadableFd(NetFD* fdList, int8_t* readableFlagList,int32_t numFd);
-	private:
 		struct  FdEntry {
 			//
 			// 句柄
@@ -97,28 +91,36 @@ namespace FFL {
 			NetEventHandler* mReadHandler;
 			NetEventHandlerFree mReadHandlerFree;
 			void* mPriv;
-		
+
 		};
 		FdEntry* findFdEntry(NetFD fd);
-		void removeFdEntryImpl(FdEntry* entry);
+
+		bool processAddFd(NetFD fd,
+			NetEventHandler* readHandler,
+			NetEventHandlerFree readHandlerFree,
+			void* priv);
+		//
+		//  移除这个句柄的处理handler
+		//
+		bool processRemoveFd(FdEntry* entry);
+		//
+		//  处理一下可读的fd,返回是否技术
+		//
+		bool processReadableFd(NetFD* fdList, int8_t* readableFlagList,int32_t numFd);		
 	private:
 		//
 		//  本系统的控制端口
 		//
-		uint16_t mControlPort;
+		FFL::SocketPair* mSocketPairControl;		
 		NetFD mControlFd;
-		class  ConmtrolHandler: public NetEventHandler{
-		public:
-			ConmtrolHandler() {}
-			//
-			//  返回是否还继续读写
-			//
-			bool onNetEvent(NetFD fd, bool readable, bool writeable, bool exception,void* priv);
-		};
-		ConmtrolHandler mControlHandler;
-
+		bool mOnlyTryControlFd;
+		int64_t mEventNextId;
+		bool processControlEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv);
 	private:
-
+		//
+		//  停止的标志
+		//
+		volatile bool mStopLoop;
 		//
 		//  轮训等待时长
 		//
@@ -129,8 +131,14 @@ namespace FFL {
 		FdEntry* mFdList;
 		int mFdNum;
 
-		CMutex mMutex;
-		CCondition mCond;	
+	private:
+		void addEvent(EventPacket* event);
+		void removeEvent(EventPacket* event);
+		//
+		//  当前所有的add,remove事件
+		//
+		FFL::CMutex mEventsLock;
+		List<EventPacket*> mPendingEvents;
 	};
 }
 

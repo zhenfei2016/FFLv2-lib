@@ -27,17 +27,20 @@ int FFL_main() {
 	char exePath[1024] = {};
 	char exeName[1024] = {};
 	FFL_getCurrentProcessPath(exePath, 1023, exeName);
-	strcat(exePath, "memoryLeank.log");
+
+	std::string path;
+	path = exePath;
+	path += "memoryLeank.log";
 
 	if (0) {
 		//
 		//  需要需要检测，则开启这个函数，当有上次标记的泄漏的时候会触发assert中断
 		//
-		FFL_checkMemoryLeak(exePath);
+		FFL_checkMemoryLeak(path.c_str());
 	}
 
 
 	testLeak();
-	FFL_dumpMemoryLeakFile(exePath);
+	FFL_dumpMemoryLeakFile(path.c_str());
 	return 0;
 }

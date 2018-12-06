@@ -33,6 +33,7 @@
  *  socket句柄
  */
 typedef int NetFD;
+#define INVALID_NetFD 0
 
 #ifdef __cplusplus
 #include "utils/FFL_Utils.hpp"
