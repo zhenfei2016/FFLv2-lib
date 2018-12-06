@@ -39,7 +39,8 @@
 #define FFL_ERROR_SOCKET_CONNECT                1012
 
 #define  FFL_ERROR_SOCKET_FAILED                1013
-
+/*  select 函数失败 */
+#define FFL_ERROR_SOCKET_SELECT                -1000
 /*
 *  socket系列api,返回状态
 */

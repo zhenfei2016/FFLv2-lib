@@ -18,16 +18,43 @@
 namespace FFL {
 	class CSocket : public IOReader,public IOWriter {
 	public:
+		enum Protocol{
+			PROTOCOL_TCP = 0,
+			PROTOCOL_UDP = 1,
+		};
+	public:
+		//
+		//  设置默认的tcp句柄
+		//
 		CSocket(NetFD fd);
 		virtual ~CSocket();
 
-		void setFd(NetFD fd){
-			mFd=fd;
-		}
+		//
+		//  设置socket句柄
+		//
+		void setFd(NetFD fd,CSocket::Protocol pro);
+		NetFD getFd() const;		
 
-		NetFD getFd() const		{
-			return mFd;
-		}
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//
+		//  udp协议使用的，设置写的目标地址
+		//  获取最近读的来源地址
+		//
+		bool setWriteToAddr(const char* ip, uint16_t port);
+		bool getReadFromAddr(char ip[32], uint16_t* port);
+		//
+		//  创建udp服务器
+		//
+		bool createUdpServer(const char* ip, uint16_t port);
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//
+		//  tcp相关的，连接到服务器上，如果设置过fd则返回false
+		//
+		bool connect(const char* ip, uint16_t port);
+		//
+		//  关闭这个句柄
+		//
+		void close();
 		//
 		//  读数据到缓冲区
 		//  buf:缓冲区地址
@@ -53,7 +80,20 @@ namespace FFL {
 		//
 		virtual status_t writeVec(const BufferVec* bufVec, int count, size_t* pWrite) ;
 	protected:
+		//
+		//  是否tcp协议的
+		//
+		Protocol mProto;
 		NetFD mFd;
+
+		struct UdpParam {
+			char mWriteToIP[32];
+			uint16_t mWriteToPort;
+
+			char mReadFromIP[32];
+			uint16_t mReadFromPort;
+		};
+		UdpParam* mUdpParmas;
 	};
 }
 #endif

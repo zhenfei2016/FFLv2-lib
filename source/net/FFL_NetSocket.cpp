@@ -17,8 +17,100 @@
 
 namespace FFL {
 	CSocket::CSocket(NetFD fd):mFd(fd){
+		mProto = PROTOCOL_TCP;
+		mUdpParmas = NULL;
 	}
 	CSocket::~CSocket() {
+		FFL_SafeFree(mUdpParmas);
+	}
+	//
+	//  设置socket句柄
+	//
+	void CSocket::setFd(NetFD fd, CSocket::Protocol pro) {
+		mFd = fd;
+		mProto = pro;
+
+		FFL_SafeFree(mUdpParmas);
+		mUdpParmas = new UdpParam();
+		memset(mUdpParmas, 0, sizeof(mUdpParmas));
+
+	}
+	NetFD CSocket::getFd() const {
+		return mFd;
+	}
+
+	//
+	//  udp协议使用的，设置写的目标地址
+	//  获取最近读的来源地址
+	//
+	bool CSocket::setWriteToAddr(const char* ip, uint16_t port) {
+		if (mProto != PROTOCOL_UDP) {
+			return false;
+		}
+
+		if (ip == NULL || port == 0) {
+			return false;
+		}
+
+		memcpy(mUdpParmas->mWriteToIP, ip, FFL_MAX((strlen(ip )+ 1), 31));
+		mUdpParmas->mWriteToPort = port;
+
+		return true;
+	}
+	bool CSocket::getReadFromAddr(char ip[32], uint16_t* port) {
+		if (mProto != PROTOCOL_UDP) {
+			return false;
+		}
+
+		memcpy(ip, mUdpParmas->mReadFromIP, 32);
+		if (port) {
+			*port = mUdpParmas->mReadFromPort;
+		}
+		return true;
+	}
+	bool CSocket::createUdpServer(const char* ip, uint16_t port) {
+		if (mFd != 0) {
+			return false;
+		}
+
+		NetFD fd = 0;
+		if (FFL_OK != FFL_socketAnyAddrUdpServer(port, &fd)) {
+			return false;
+		}
+		setFd(fd, FFL::CSocket::PROTOCOL_UDP);
+		return true;
+	}
+	//
+	//  tcp相关的，连接到服务器上，如果设置过fd则返回false
+	//
+	bool CSocket::connect(const char* ip, uint16_t port) {
+		if (mFd != 0) {
+			return false;
+		}
+
+		NetFD fd = FFL_socketCreateTcp();;
+		if (fd == 0) {
+			return false;
+		}
+
+		FFL_socketSetSendTimeout(fd, 15 * 1000);
+		FFL_socketSetRecvTimeout(fd, 15 * 1000);
+		if (FFL_OK == FFL_socketNetworkTcpClient(ip, port, &fd)) {
+			mFd = fd;
+			mProto = PROTOCOL_TCP;
+			return true;
+		}
+
+		return false;
+	}
+	//
+	//  关闭这个句柄
+	//
+	void CSocket::close() {
+		if (mFd != 0) {
+			FFL_socketClose(mFd);
+			mFd = 0;
+		}
 	}
 	//
 	//  读数据到缓冲区
@@ -28,7 +120,13 @@ namespace FFL {
 	//  返回错误码  ： FFL_OK表示成功
 	//
 	status_t CSocket::read(uint8_t* buf, size_t count, size_t* pReaded) {
-		return FFL_socketRead(mFd, buf, count, pReaded);
+		if (mProto == PROTOCOL_TCP) {
+			return FFL_socketRead(mFd, buf, count, pReaded);
+		}
+
+		return FFL_socketReadFrom(mFd, buf, count, pReaded,
+			mUdpParmas->mReadFromIP,
+			&mUdpParmas->mReadFromPort);
 	}
 	//
 	//  写数据到文件中
@@ -38,7 +136,13 @@ namespace FFL {
 	//  返回错误码  ： FFL_OK表示成功
 	//
 	status_t CSocket::write(void* buf, size_t count, size_t* pWrite) {
-		return FFL_socketWrite(mFd, buf, count, pWrite);
+		if (mProto == PROTOCOL_TCP) {
+			return FFL_socketWrite(mFd, buf, count, pWrite);
+		}
+
+		return FFL_socketWriteTo(mFd, buf, count, pWrite,
+			mUdpParmas->mWriteToIP,
+			mUdpParmas->mWriteToPort);
 	}
 	//
 	//  写数据到文件中
@@ -54,9 +158,15 @@ namespace FFL {
 		for (int32_t i = 0; i < count; i++) {
 			const BufferVec* pBuf = bufVec + i;
 
-			if (FFL_OK !=
-				 (ret=FFL_socketWrite(mFd, pBuf->data, pBuf->size, &nWrite))
-				){				
+			if (mProto == PROTOCOL_TCP) {
+				ret = FFL_socketWrite(mFd, pBuf->data, pBuf->size, &nWrite);
+			} else {
+				ret = FFL_socketWriteTo(mFd, pBuf->data, pBuf->size, &nWrite,
+					mUdpParmas->mWriteToIP,
+					mUdpParmas->mWriteToPort);
+			}
+
+			if (FFL_OK != ret) {
 				break;
 			}
 			nWriteAll += nWrite;

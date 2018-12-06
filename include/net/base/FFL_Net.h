@@ -82,6 +82,12 @@ extern "C" {
      * 成功返回  FFL_ERROR_SUCCESS
      * */
 	SOCKET_STATUS FFL_socketRead(NetFD fd, void* buffer, size_t size,size_t* readed);
+	/*
+	*  udp上读
+	*  srcIp :源地址，需要保证长度啊 
+	*  srcPort :源端口
+	*/
+	SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* readed, char* srcIp,uint16_t* srcPort);
 
 	/*
 	 * 网络写 
@@ -90,6 +96,7 @@ extern "C" {
 	 * 成功返回  FFL_ERROR_SUCCESS
 	 * */
 	SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed);
+	SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* writed, const char* destIp, uint16_t destPort);
 
     /*
 	 * 设置发送，接收超时时间
@@ -112,6 +119,13 @@ extern "C" {
 	*  hostlist : 如果多个地址则使用;分割开
 	*/
 	int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize);
+	/*
+	*  select模式测试fdlist这一组socket是否有可以读的
+	*  fdNum : fd数量
+	*  flagList : 对应项如果有可以读的，对应位置置1 
+	*  返回 0：表示超时
+	*/
+	int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, int64_t timeoutUs);
 #ifdef __cplusplus 
 }
 #endif

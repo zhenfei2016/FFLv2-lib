@@ -30,4 +30,8 @@ TARGET_LINK_LIBRARIES(httpServer FFLv2)
 ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
 TARGET_LINK_LIBRARIES(memoryLeak FFLv2)
 
+ADD_EXECUTABLE(fdevent main.cpp;fdevent.cpp)
+TARGET_LINK_LIBRARIES(fdevent FFLv2)
+
+
 

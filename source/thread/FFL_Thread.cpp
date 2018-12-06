@@ -21,6 +21,7 @@ namespace FFL {
 		mExitPending(false), mRunning(false)		
 	{
 		mTid=-1;
+		mPriority = FFL_THREAD_PRIORITY_NORMAL;
 	}
 
 	Thread::~Thread()
@@ -39,6 +40,7 @@ namespace FFL {
 			return FFL_INVALID_OPERATION;
 		}
 
+		mPriority =(FFL_ThreadPriority) priority;
 		// reset status and exitPending to their default value, so we can
 		// try again after an error happened (either below, or in readyToRun())
 		mStatus = FFL_NO_ERROR;
@@ -56,7 +58,7 @@ namespace FFL {
 
 			return FFL_ERROR_FAILED;
 		}
-
+		
 		mThreadReadyCondition.signal();				
 		return FFL_NO_ERROR;
 	}
@@ -90,6 +92,10 @@ namespace FFL {
 			memcpy(threadName, tmpName, FFL_MIN(strlen(tmpName), 255));
 		}
 		FFL_LOG_DEBUG("Thread(%d)(%s) run", tid, threadName);
+
+		if (self->mPriority != FFL_THREAD_PRIORITY_NORMAL) {
+			FFL_SetThreadPriority(self->mPriority);
+		}
 
 
 		self->threadLoopStart();		

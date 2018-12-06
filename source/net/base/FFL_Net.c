@@ -128,7 +128,54 @@ SOCKET_STATUS FFL_socketRead(NetFD fd, void* buffer, size_t size,size_t* readed)
 
 	return FFL_ERROR_SOCKET_READ;
 }
+SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* readed, char* srcIp, uint16_t* srcPort) {
+	int socketError = 0;
+	int fromlen = sizeof(struct sockaddr_in);
+	struct sockaddr_in srcAddr;
+	FFL_zerop(&srcAddr);
 
+	int nbRead = recvfrom(fd, buffer, size, 0, (struct sockaddr *)(&srcAddr), &fromlen);
+	if (nbRead > 0) {
+		if (readed) {
+			*readed = nbRead;
+		}
+
+		if (srcIp) {
+			const char* peerIp = inet_ntoa(srcAddr.sin_addr);
+			int maxLen = FFL_MIN((strlen(peerIp)+1),16);
+			memcpy(srcIp, peerIp, maxLen);
+		}
+
+		if (srcPort) {
+			*srcPort = ntohs(srcAddr.sin_port);
+		}
+		return  FFL_SOCKET_OK;
+	}
+
+	if (nbRead < 0) {
+		socketError = SOCKET_ERRNO();
+		FFL_LOG_WARNING("FFL_socketRead error=%d", socketError);
+		//读写超时
+		if (socketError == SOCKET_AGAIN ||
+			socketError == SOCKET_ETIME ||
+			socketError == SOCKET_ECONNRESET) {
+			return FFL_ERROR_SOCKET_TIMEOUT;
+		}
+		else {
+			return FFL_ERROR_SOCKET_READ_EX + socketError;
+		}
+	}
+
+	/*
+	*  服务端关闭了
+	*/
+	if (nbRead == 0) {
+		FFL_LOG_WARNING("FFL_socketRead nb_read=0 error=%d", SOCKET_ECONNRESET);
+		return FFL_ERROR_SOCKET_READ_EX + SOCKET_ECONNRESET;
+	}
+
+	return FFL_ERROR_SOCKET_READ;
+}
 /*
  * 写 ,
  * writed : 写成功了多少数据
@@ -138,10 +185,11 @@ SOCKET_STATUS FFL_socketRead(NetFD fd, void* buffer, size_t size,size_t* readed)
 SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed){
 	int socketError=0;
 	int nbWrite = send(fd, buffer, size, 0);
-	if(nbWrite>0)
+	if (nbWrite > 0) {
 		if (writed)
 			*writed = nbWrite;
 		return  FFL_ERROR_SUCCESS;
+	}		
 
 	if (nbWrite < 0  )	{
 		socketError=SOCKET_ERRNO();
@@ -162,7 +210,43 @@ SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed
 	return FFL_ERROR_SOCKET_WRITE;
 }
 
+SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* writed, const char* destIp, uint16_t destPort) {
+	int socketError = 0;
+	struct sockaddr_in destAddr;
 
+	if (destIp == NULL || strlen(destIp) > 32) { 
+		return FFL_FAILED;
+	}
+
+	destAddr.sin_family = AF_INET;      
+	destAddr.sin_port = htons(destPort);	
+	destAddr.sin_addr.s_addr = inet_addr(destIp);
+
+	int nbWrite = sendto(fd, buffer, size, 0,&destAddr,sizeof(struct sockaddr_in));	
+	if (nbWrite > 0) {
+		if (writed)
+			*writed = nbWrite;
+		return  FFL_ERROR_SUCCESS;
+	}	
+
+	if (nbWrite < 0) {
+		socketError = SOCKET_ERRNO();
+		FFL_LOG_WARNING("FFL_socketWrite error=%d", socketError);
+		/*
+		* 读写超时
+		*/
+		if (socketError == SOCKET_AGAIN ||
+			socketError == SOCKET_ETIME ||
+			socketError == SOCKET_ECONNRESET) {
+			return FFL_ERROR_SOCKET_TIMEOUT;
+		}
+		else {
+			return FFL_ERROR_SOCKET_WRITE_EX + socketError;
+		}
+	}
+
+	return FFL_ERROR_SOCKET_WRITE;
+}
 /*
 *  设置接收超时值
 */
@@ -245,3 +329,68 @@ int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize) {
 	strncpy(hostlist, inet_ntoa(*addr), bufSize - 1);
 	return 1;
 }
+
+
+
+int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, int64_t timeoutUs) {
+	struct timeval tv;
+	NetFD maxfd = 64;
+	fd_set fdset;
+	size_t i = 0;
+	int status = 0;
+	int socketError = 0;
+
+	if (timeoutUs > 0) {
+		tv.tv_sec = (long)(timeoutUs / (1000 * 1000));
+		tv.tv_usec = (long)(timeoutUs % (1000 * 1000));
+	}
+	else {
+		tv.tv_sec = -1;
+		tv.tv_usec = -1;
+	}
+
+
+#if WIN32
+	if (fdNum > 64) {
+		return FFL_ERROR_SOCKET_SELECT;
+	}
+#else
+	maxfd = 0;
+	for (i = 0; i < fdNum; i++) {
+		if (fdList[i] > maxfd) {
+			maxfd=fdList[i];
+        }
+    }
+#endif
+	
+	FD_ZERO(&fdset);
+	for ( i = 0; i < fdNum; i++) {
+		FD_SET(fdList[i], &fdset);
+		flagList[i] = 0;
+	}
+
+	status = select(maxfd, &fdset, 0, 0, (timeoutUs == 0 ? NULL : (&tv)));
+	if (status < 0) {
+#if WIN32
+		return FFL_ERROR_SOCKET_SELECT;
+#else
+		socketError = SOCKET_ERRNO();
+		if (socketError == EINTR) {
+			//
+			//  当做超时处理，可能其他信号触发了这
+			//
+			return 0;
+		}
+#endif
+	}
+
+	if (status > 0) {
+		for (size_t i = 0; i < fdNum; i++) {
+			if (FD_ISSET(fdList[i], &fdset))
+				flagList[i] = 1;
+		}
+	}
+	return status;
+}
+
+

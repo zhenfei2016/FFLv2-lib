@@ -74,6 +74,29 @@ namespace FFL {
 		FFL::sp<ListenThread> mListenThread;
 
 	};
+
+	
+	//class UdpServerHandler
+	//{
+	//public:
+	//	virtual ~UdpServerHandler() {}
+	//	virtual void onAccepted(NetFD fd)=0;
+	//};
+
+
+	//class UdpServer {
+	//public:
+	//	UdpServer(UdpServerHandler handler);
+
+	//	void start();
+	//	void stop();
+	//	void eventLoop();
+
+	//private:
+	//	UdpServerHandler* mHandler;
+	//};
+
+
 }
 
 #endif

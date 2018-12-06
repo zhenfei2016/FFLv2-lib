@@ -169,6 +169,7 @@ ADD_SRC_FILE(FFL_Io.hpp)
 ADD_SRC_FILE(FFL_File.hpp)
 ADD_SRC_FILE(FFL_Singleton.hpp)
 ADD_SRC_FILE(FFL_Dictionary.hpp)
+ADD_SRC_FILE(FFL_Module.hpp)
 
 SET(LOCAL_SRC_DIR ./source/utils/)
 ADD_SRC_FILE(FFL_MemoryWatch.cpp)
@@ -186,6 +187,8 @@ ADD_SRC_FILE(FFL_Clock.cpp)
 ADD_SRC_FILE(FFL_File.cpp)
 ADD_SRC_FILE(FFL_Singleton.cpp)
 ADD_SRC_FILE(FFL_Dictionary.cpp)
+ADD_SRC_FILE(FFL_Module.cpp)
+
 
 SET(LOCAL_SRC_DIR ./include/pipeline/)
 ADD_SRC_FILE(FFL_NodeBase.hpp)
@@ -298,8 +301,8 @@ add_library( FFLv2 STATIC ${LOCAL_SRC_FILES})
 
 #IF(WIN32)
 #INSTALL(TARGETS FFL RUNTIME DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/bin/ 
-#        LIBRARY DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs
-#        ARCHIVE DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/libs)
+#        LIBRARY DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/lib
+#        ARCHIVE DESTINATION  ${PROJECT_SOURCE_DIR}/../install/FFLv2-lib/lib)
 
 #INSTALL(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/include)")
 #INSTALL(DIRECTORY ${EXECUTABLE_OUTPUT_PATH} DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../install/FFLv2-lib/)
@@ -327,6 +330,6 @@ ELSE()
    ADD_CUSTOM_TARGET(install_FFL 
      COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/cmakemode/ ${CMAKE_CURRENT_SOURCE_DIR}/../FFLv2-cmakemodule/
      COMMAND ${CMAKE_COMMAND} -E remove_directory ${FFLv2Lib_INSTALL_PATH}     
-     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBRARY_OUTPUT_PATH} ${FFLv2Lib_INSTALL_PATH}/libs/
+     COMMAND ${CMAKE_COMMAND} -E copy_directory ${LIBRARY_OUTPUT_PATH} ${FFLv2Lib_INSTALL_PATH}/lib/
      COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/include/ ${FFLv2Lib_INSTALL_PATH}/include)
 ENDIF()
