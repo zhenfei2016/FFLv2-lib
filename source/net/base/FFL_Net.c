@@ -154,7 +154,7 @@ SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* re
 
 	if (nbRead < 0) {
 		socketError = SOCKET_ERRNO();
-		FFL_LOG_WARNING("FFL_socketRead error=%d", socketError);
+		FFL_LOG_WARNING("FFL_socketReadFrom error=%d", socketError);
 		//读写超时
 		if (socketError == SOCKET_AGAIN ||
 			socketError == SOCKET_ETIME ||
@@ -221,7 +221,7 @@ SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* wri
 	destAddr.sin_family = AF_INET;      
 	destAddr.sin_port = htons(destPort);	
 	destAddr.sin_addr.s_addr = inet_addr(destIp);
-
+//EOPNOTSUPP
 	int nbWrite = sendto(fd, buffer, size, 0,(struct sockaddr*)&destAddr,sizeof(struct sockaddr_in));	
 	if (nbWrite > 0) {
 		if (writed)
@@ -231,7 +231,7 @@ SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* wri
 
 	if (nbWrite < 0) {
 		socketError = SOCKET_ERRNO();
-		FFL_LOG_WARNING("FFL_socketWrite error=%d", socketError);
+        FFL_LOG_WARNING("FFL_socketWriteTo error=%d  ip=%s:%d", socketError,destIp,destPort);
 		/*
 		* 读写超时
 		*/
@@ -332,66 +332,107 @@ int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize) {
 
 
 
+
+
+//#ifdef MACOSX
+//
+//int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, int64_t timeoutUs){
+//    struct pollfd fds[64];
+//    for (size_t i = 0 ; i < fdNum ; i++){
+//        fds[i].fd = fdList[i];
+//        fds[i].events = POLLIN;
+//        fds[i].revents = 0;
+//        flagList[i] = 0;
+//    }
+//
+//    int timeoutmsec = -1;
+//    if (timeoutUs >= 0)    {
+//
+//        timeoutmsec = (int)(timeoutUs/1000);
+//    }
+//
+//
+//    int status = poll(&(fds[0]), fdNum, timeoutmsec);
+//    if (status < 0) {
+//
+//        if (errno == EINTR)
+//            return 0;
+//        return -1;
+//    }
+//
+//
+//    if (status > 0){
+//        for (size_t i = 0 ; i < fdNum ; i++)
+//        {
+//            if (fds[i].revents)
+//                flagList[i] = 1;
+//        }
+//    }
+//    return status;
+//}
+//#else
 int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, int64_t timeoutUs) {
-	struct timeval tv;
-	NetFD maxfd = 64;
-	fd_set fdset;
-	size_t i = 0;
-	int status = 0;
-	int socketError = 0;
-
-	if (timeoutUs > 0) {
-		tv.tv_sec = (long)(timeoutUs / (1000 * 1000));
-		tv.tv_usec = (long)(timeoutUs % (1000 * 1000));
-	}
-	else {
-		tv.tv_sec = -1;
-		tv.tv_usec = -1;
-	}
-
-
+    struct timeval tv;
+    NetFD maxfd = 64;
+    fd_set fdset;
+    size_t i = 0;
+    int status = 0;
+    int socketError = 0;
+    
+    if (timeoutUs > 0) {
+        tv.tv_sec = (long)(timeoutUs / (1000 * 1000));
+        tv.tv_usec = (long)(timeoutUs % (1000 * 1000));
+    }
+    else {
+        tv.tv_sec = -1;
+        tv.tv_usec = -1;
+    }
+    
 #if WIN32
-	if (fdNum > 64) {
-		return FFL_ERROR_SOCKET_SELECT;
-	}
+    if (fdNum > 64) {
+        return FFL_ERROR_SOCKET_SELECT;
+    }
 #else
-	maxfd = 0;
-	for (i = 0; i < fdNum; i++) {
-		if (fdList[i] > maxfd) {
-			maxfd=fdList[i];
+    maxfd = 0;
+    for (i = 0; i < fdNum; i++) {
+        if (fdList[i] > maxfd) {
+            maxfd=fdList[i];
         }
     }
-	maxfd+=1;
+    maxfd+=1;
 #endif
-	
-	FD_ZERO(&fdset);
-	for ( i = 0; i < fdNum; i++) {
-		FD_SET(fdList[i], &fdset);
-		flagList[i] = 0;
-	}
-
-	status = select(maxfd, &fdset, 0, 0, (timeoutUs == 0 ? NULL : (&tv)));
-	if (status < 0) {
+    
+    FD_ZERO(&fdset);
+    for ( i = 0; i < fdNum; i++) {
+        FD_SET(fdList[i], &fdset);
+        flagList[i] = 0;
+    }
+    
+    status = select(maxfd, &fdset, 0, 0, (timeoutUs == 0 ? NULL : (&tv)));
+    if (status < 0) {
+        FFL_LOG_WARNING("FFL_socketSelect error=%d",SOCKET_ERRNO());
 #if WIN32
-		return FFL_ERROR_SOCKET_SELECT;
+        return FFL_ERROR_SOCKET_SELECT;
 #else
-		socketError = SOCKET_ERRNO();
-		if (socketError == EINTR) {
-			//
-			//  当做超时处理，可能其他信号触发了这
-			//
-			return 0;
-		}
+        socketError = SOCKET_ERRNO();
+        if (socketError == EINTR) {
+            //
+            //  当做超时处理，可能其他信号触发了这
+            //
+            return 0;
+        }
 #endif
-	}
-
-	if (status > 0) {
-		for (size_t i = 0; i < fdNum; i++) {
-			if (FD_ISSET(fdList[i], &fdset))
-				flagList[i] = 1;
-		}
-	}
-	return status;
+    }
+    
+    if (status > 0) {
+        for (size_t i = 0; i < fdNum; i++) {
+            if (FD_ISSET(fdList[i], &fdset))
+                flagList[i] = 1;
+        }
+    }
+    return status;
 }
+//#endif
+
 
 

@@ -1,5 +1,7 @@
 #include "FFL_SocketPair.hpp"
+
 #include <net/FFL_NetSocket.hpp>
+#include "base/internalSocket.h"
 #if ANDROID
 #include <arpa/inet.h>
 #endif
@@ -98,8 +100,11 @@ namespace FFL {
             return createLoopbackPair(mFd);
 #else
             int sockets[2];
-            socketpair(AF_UNIX, SOCK_SEQPACKET, 0, sockets);
-            if(sockets[0]!=NULL ){
+            if(0!=socketpair(AF_LOCAL, SOCK_STREAM, 0,sockets)){
+                int err=SOCKET_ERRNO();
+                return false;
+            }
+            if(sockets[0]!=INVALID_NetFD ){
                 mFd[0]=sockets[0];
                 mFd[1]=sockets[1];
             }

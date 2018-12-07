@@ -214,7 +214,7 @@ namespace FFL {
 			}
 
 			FFL_LOG_DEBUG("NetEventLoop: select failed");			
-			mOnlyTryControlFd = true;
+			mOnlyTryControlFd = false;
 			FFL_sleep(100);
 		}	
 
@@ -241,7 +241,7 @@ namespace FFL {
 					return false;
 				}
 			}
-			if (entry->mFd != NULL) {
+			if (entry->mFd != INVALID_NetFD) {
 				continue;
 			}
 

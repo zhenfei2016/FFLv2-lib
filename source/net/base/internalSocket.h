@@ -69,4 +69,8 @@ typedef int  socklen_t;
 #include <sys/types.h>
 #include <errno.h>
 
+#ifdef MACOSX
+#include <poll.h>
+#endif
+
 #endif
