@@ -45,7 +45,7 @@ namespace FFL {
 		//
 		//  文件大小
 		//
-		int32_t getSize();
+		size_t getSize();
 	private:
 		//
 		//  打开文件，FFL_OK成功

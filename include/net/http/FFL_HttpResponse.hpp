@@ -10,51 +10,94 @@
 *
 *  http应答
 */
-#ifndef _FFL_NET_RESPONSE_HTTP_HPP_
-#define _FFL_NET_RESPONSE_HTTP_HPP_
+#ifndef _FFL_HTTP_RESPONSE_HTTP_HPP_
+#define _FFL_HTTP_RESPONSE_HTTP_HPP_
 
 
 #include <FFL.h>
 #include <ref/FFL_Ref.hpp>
 #include <net/http/FFL_HttpHeader.hpp>
+#include <net/http/FFL_HttpStreamCallback.hpp>
 
 namespace FFL {
-	class HttpConnect;
-	class HttpRequest;
-	class File;
-	class HttpResponse : public RefBase{
-	public:
-		HttpResponse(HttpConnect* conn);
-		virtual ~HttpResponse();
-
-		//
-		//  设置返回的状态码
-		//
-		void setStatusCode(int32_t code);
-
-		bool writeHeader(HttpHeader* header,const char* content);
-		bool writeJson(const String& json);
-		void finish();
-
-		sp<HttpRequest>  createRequest();
+	class HttpClient;
+	class ByteBuffer;	
+	class HttpResponse : public RefBase{		
 	protected:
+	    friend class HttpClient;
+		friend class HttpRequest;
+		friend class HttpParserImpl;
+		friend class HttpResponseBuilder;
+		HttpResponse(FFL::sp<HttpClient> client);
+	public:
+		virtual ~HttpResponse();			
+	public:
+		//
+		//  获取，设置 状态码
+		//				
+		int32_t getStatusCode();
+		void setStatusCode(int32_t code);
+		//
+		//  获取，设置 头信息
+		//
+		void getHeader(HttpHeader& header);
+		void setHeader(HttpHeader& header);
+		//
+		//  设置内容，用于发送,如果内容比较短，可以使用这个的
+		//
+		void setContent(const char* data,size_t size);
+		//
+		//  开始发送应答，
+		//
+		bool send();
+	public:
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//
+		//  发送，接收高级模式
+	protected:
+		//
+		//  开始发送请求
+		//  callback:如果发送大批量的数据的回调
+		//  dataSize: 数据流总的大小
+		//				
+		bool sendStream(HttpStreamCallback* callback);
+		bool recvStream(HttpStreamCallback* callback);
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	protected:
+		//
+		//  读取内容,正常情况下当这个request parse完成后头信息已经读取完成
+		//
+		bool readContent(char* content, int32_t requestSize, size_t* readed);
+	protected:
+		//
+		//  请求内容
+		//  header :头内容		
+		//  content:内容
+		//
+		bool writeHeader();		
+		virtual bool writeContent();
+		bool writeContent(const char* content, int32_t requestSize);
+		//
+		//  结束应答,关闭这个连接
+		
+		void finish();
+	protected:
+		//
+		//  请求头
+		//
+		HttpHeader mHeader;
 		int32_t mStatusCode;
-
-		HttpConnect* mConn;
+		//
+		//  保存写的内容
+		//
+		ByteBuffer* mContentBuffer;
+		//
+		//  那个连接上的请求
+		//
+		FFL::sp<HttpClient> mClient;
 	};	
 
-	class HttpFileResponse : public HttpResponse {
-	public:
-		HttpFileResponse(HttpConnect* conn);
-		virtual ~HttpFileResponse();
-		
-		//
-		//  应答这个文件，返回是否有效的应答了
-		//
-		bool response(const char* file);
-	private:
-		
-	};
+	
 }
 
 #endif

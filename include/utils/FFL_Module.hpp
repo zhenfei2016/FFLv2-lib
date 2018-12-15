@@ -24,12 +24,12 @@ namespace FFL {
 
 		//
 		//  启动，
-		//  thread： 使用使用这个县城进行eventloop
+		//  thread： 使用使用这个线程进行eventloop
 		//           =NULL , 需要外部调用eventLoop 
 		//           !=NULL , 在这个thread中执行eventloop  
 		//  返回是否启动成功
 		//
-		bool start(ModuleThread* thread) ;
+		bool start(FFL::sp<ModuleThread> thread) ;
 		//
 		//   如果start使用了EventloopThread，则stop会阻塞到线程退出
 		//   否则则仅仅置一下标志

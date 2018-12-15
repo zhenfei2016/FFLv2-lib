@@ -1,4 +1,15 @@
-
+/*
+*  This file is part of FFL project.
+*
+*  The MIT License (MIT)
+*  Copyright (C) 2017-2018 zhufeifei All rights reserved.
+*
+*  FFL_NetUtils.cpp
+*  Created by zhufeifei(34008081@qq.com) on 2018/07/14
+*  https://github.com/zhenfei2016/FFLv2-lib.git
+*  °ï×éº¯Êý
+*
+*/
 
 #include <utils/FFL_StringHelper.hpp>
 

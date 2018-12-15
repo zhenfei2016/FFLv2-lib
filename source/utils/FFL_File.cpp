@@ -92,8 +92,8 @@ int readFile(FileHandle* fd, uint8_t* buf, int32_t size) {
 	return 0;
 }
 
-int getFileSize(FileHandle* fd) {
-	return 0;
+size_t getFileSize(FileHandle* fd) {
+	return ::GetFileSize(fd->fd,NULL);
 }
 #else
 //
@@ -279,8 +279,12 @@ namespace FFL {
 	//
 	//  文件大小
 	//
-	int32_t File::getSize() {
-		return 0;
+	size_t File::getSize() {
+		if (mFd) {
+			return getFileSize((FileHandle*)mFd);
+		}
+
+		return 0;			 
 	}
 	//
 	//  文件是否创建了

@@ -25,7 +25,7 @@
  *  
 */
 #define FFL_VERSION_MAJOR  2
-#define FFL_VERSION_MINOR  0
+#define FFL_VERSION_MINOR  2
 #define FFL_VERSION_MICRO  0
 
 /*

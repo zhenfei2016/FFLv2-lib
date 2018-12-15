@@ -7,7 +7,7 @@
 *  FFL_NetFdEvent.hpp   
 *  Created by zhufeifei(34008081@qq.com) on 2018/12/1 
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  网路服务器基类
+*  网络读写的时间驱动类
 *
 */
 #ifndef _FFL_NET_FDEVENT_HPP_
@@ -21,19 +21,19 @@
 #include <utils/FFL_List.hpp>
 
 namespace FFL {
-	class NetEventHandler {
-	public:
-		//
-		//  返回是否还继续读写
-		//  priv:透传数据
-		//
-		virtual bool onNetEvent(NetFD fd,bool readable,bool writeable,bool exception,void* priv)=0;
-	};
-	typedef void(*NetEventHandlerFree)(NetEventHandler* h);
-
 	class SocketPair;
 	class EventPacket;
 	class NetEventLoop : public FFL::Module {
+	public:
+		class Callback {
+		public:
+			//
+			//  返回是否还继续读写
+			//  priv:透传数据
+			//
+			virtual bool onNetEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv) = 0;
+		};
+		typedef void(*CallbackFree)(Callback* h);
 	public:
 		//
 		//  evenloopWaitUs:句柄多长时间轮训一次，默认0，一直轮训
@@ -47,8 +47,8 @@ namespace FFL {
 		// priv :透传到fdReady中
 		// 
 		bool addFd(NetFD fd,
-			NetEventHandler* readHandler,
-			NetEventHandlerFree readHandlerFree=NULL,
+			NetEventLoop::Callback* readHandler,
+			NetEventLoop::CallbackFree readHandlerFree=NULL,
 			void* priv=NULL);
 		//
 		//  移除这个句柄的处理handler
@@ -88,16 +88,16 @@ namespace FFL {
 			//
 			//  读写处理handler
 			//
-			NetEventHandler* mReadHandler;
-			NetEventHandlerFree mReadHandlerFree;
+			NetEventLoop::Callback* mReadHandler;
+			NetEventLoop::CallbackFree mReadHandlerFree;
 			void* mPriv;
 
 		};
 		FdEntry* findFdEntry(NetFD fd);
 
 		bool processAddFd(NetFD fd,
-			NetEventHandler* readHandler,
-			NetEventHandlerFree readHandlerFree,
+			NetEventLoop::Callback* readHandler,
+			NetEventLoop::CallbackFree readHandlerFree,
 			void* priv);
 		//
 		//  移除这个句柄的处理handler

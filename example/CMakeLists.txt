@@ -24,14 +24,16 @@ if (MSVC)
         string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
     endforeach()
 endif(MSVC)
-ADD_EXECUTABLE(httpServer  ${LOCAL_SRC_FILES})
+ADD_EXECUTABLE(httpServer  main.cpp;httpServer.cpp)
 TARGET_LINK_LIBRARIES(httpServer FFLv2)
+
+ADD_EXECUTABLE(httpClient  main.cpp;httpClient.cpp)
+TARGET_LINK_LIBRARIES(httpClient FFLv2)
+
+
 
 ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
 TARGET_LINK_LIBRARIES(memoryLeak FFLv2)
-
-ADD_EXECUTABLE(fdevent main.cpp;fdevent.cpp)
-TARGET_LINK_LIBRARIES(fdevent FFLv2)
 
 
 

@@ -62,7 +62,7 @@ namespace FFL {
 
 		};
 		HTTPState mState;	
-		NetHttpHeader* mHeader;
+		HttpHeader* mHeader;
 	};
 }
 

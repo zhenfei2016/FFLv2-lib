@@ -110,14 +110,75 @@ namespace FFL{
 			else {
 				url = mUrl;
 			}
-			request->fill(url,stream);
-			request->mKeepAlive=haveKeepAlive(&mParser);
+			request->mUrl.parse(url.c_str());		
+
+			String contentType;
+			mHeader->getKey(HTTP_KEY_CONTENTYPE, contentType);
+			mHeader->setContentType(contentType);
+
+			int32_t len = 0;
+			mHeader->getKeyInt32(HTTP_KEY_CONTENTLEN, len, 0);
+			mHeader->setContentLength(len);
 		}
 
 		return FFL_OK;
 	}
 	status_t HttpParserImpl::parseResponse(NetStreamReader* stream,HttpResponse* response) {
-		return FFL_FAILED;
+		status_t ret = FFL_OK;
+		mHeader = &(response->mHeader);
+
+		while (true) {
+			const uint8_t* data = stream->getData() + stream->getPosition();
+			uint32_t size = stream->getSize();
+			size_t nParsed = 0;
+
+			//
+			// 找到http头结束位置，开始分析到头结束位置
+			//
+			if (size > 4) {
+				for (int32_t i = 0; i <= (int32_t)size - 4; i++) {
+					const uint8_t* src = data + i;
+					if (src[0] == KEYSET_CR &&src[1] == KEYSET_LF &&src[2] == KEYSET_CR &&src[3] == KEYSET_LF) {
+						nParsed = http_parser_execute(&mParser, &mSettings, (const char*)data, i + 4);
+						break;
+					}
+				}
+			}
+
+			if (nParsed > 0 && (PARSE_HeaderComplete == mState ||
+				PARSE_COMPLETE == mState)) {
+				stream->skip(nParsed);
+				break;
+			}
+						
+			//
+			//  数据不够，拉取数据
+			//
+			if (nParsed == 0) {
+				if ((ret = stream->pull(-1)) != FFL_OK) {
+					return ret;
+				}
+			}
+		}
+
+		//
+		//  填充请求信息
+		//
+		if (response) {
+			String url;
+			String host;
+			if (mHeader->getKey("Host", host)) {
+				url = "http://" + host + mUrl;
+			}
+			else {
+				url = mUrl;
+			}
+			//response->mUrl.parse(url.c_str());
+		}
+
+		mHeader = NULL;
+
+		return FFL_OK;
 	}
 
 	static HttpParserImpl* getThis(http_parser* parser) {
@@ -179,7 +240,7 @@ namespace FFL{
 	int HttpParserImpl::onMessageComplete(http_parser* parser) {
 		HttpParserImpl* pThis = getThis(parser);
 		pThis->mState = PARSE_COMPLETE;
-		//FFL_LOG_DEBUG("HttpParser: onMessageComplete");
+		//FFL_LOG_DEBUG("HttpParser: onMessageComplete");		
 		return 0;
 	}
 

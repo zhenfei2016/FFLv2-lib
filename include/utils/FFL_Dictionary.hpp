@@ -14,6 +14,7 @@
 #define _FFL_DICTIONARY_HPP_
 
 #include "FFL_String.hpp"
+#include <map>
 
 namespace FFL {
 	class DictionaryImpl;
@@ -35,6 +36,7 @@ namespace FFL {
 		//
 		bool getKey(const String& key, String& value);
 		bool getKey(const char* key, String& value);
+		void getAll(std::map<String,String>& pair);
 		
 		void setKeyInt64(const String& key,int64_t value);
 		void setKeyInt64(const char* key,int64_t value);
@@ -46,8 +48,10 @@ namespace FFL {
 		bool getKeyInt32(const String& key, int32_t& value, int32_t def);
 		bool getKeyInt32(const char* key, int32_t& value, int32_t def);
 
+		Dictionary(const Dictionary & r);
+		Dictionary &operator=(const Dictionary & r);
 	private:
-		DictionaryImpl* mImpl;
+		mutable DictionaryImpl* mImpl;
 	};
 }
 

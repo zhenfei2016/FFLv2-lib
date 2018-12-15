@@ -32,7 +32,14 @@ namespace FFL{
 	Dictionary::~Dictionary(){
 		FFL_SafeFree(mImpl);
 	}
-
+	Dictionary::Dictionary(const Dictionary & r) {
+		*mImpl = *r.mImpl;
+	}
+	Dictionary & Dictionary::operator=(const Dictionary & r) {
+		mImpl = new DictionaryImpl();
+		*mImpl = *(r.mImpl);
+		return *this;
+	}
 	//
 	//  写一条key/value
 	//
@@ -60,6 +67,12 @@ namespace FFL{
 			return true;
 		}
 		return false;
+	}
+	void Dictionary::getAll(std::map<String, String>& pair) {
+		PDIC_MAP pos = mImpl->mDic.begin();
+		for (; pos != mImpl->mDic.end();pos++) {
+			pair.insert(std::map<String, String>::value_type(pos->first,pos->second));
+		}
 	}
 	//
 	// 移除一条

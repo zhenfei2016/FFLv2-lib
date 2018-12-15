@@ -25,7 +25,7 @@ namespace FFL {
 	//           !=NULL , 在这个thread中执行eventloop  
 	//  返回是否启动成功
 	//
-	bool Module::start(ModuleThread* thread) {
+	bool Module::start(FFL::sp<ModuleThread> thread) {
 		CMutex::Autolock l(mLock);
 		if (!mStarted) {
 			if (!onStart()) {

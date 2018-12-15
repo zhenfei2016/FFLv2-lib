@@ -17,6 +17,7 @@
 
 namespace FFL {
 	CSocket::CSocket(NetFD fd):mFd(fd){
+		FFL_socketInit();
 		mProto = PROTOCOL_TCP;
 		mUdpParmas = NULL;
 	}

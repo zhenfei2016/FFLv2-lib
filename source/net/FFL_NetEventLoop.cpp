@@ -7,7 +7,7 @@
 *  FFL_NetFdEvent.cpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/12/1
 *  https://github.com/zhenfei2016/FFLv2-lib.git
-*  网路服务器基类
+*  网络读写的时间驱动类
 *
 */
 #include <net/FFL_NetEventLoop.hpp>
@@ -32,8 +32,8 @@ namespace FFL {
 		//  传输的参数
 		//
 		NetFD fd;
-		NetEventHandler* readHandler;
-		NetEventHandlerFree readHandlerFree;
+		NetEventLoop::Callback* readHandler;
+		NetEventLoop::CallbackFree readHandlerFree;
 		void* priv;
 	};
 
@@ -63,8 +63,8 @@ namespace FFL {
 	// 添加一个监听的句柄， readHandler如果不等NULL，则在removeFd的时候会调用 readHandlerFree进行清理
 	// 
 	bool NetEventLoop::addFd(NetFD fd,
-		NetEventHandler* readHandler,
-		NetEventHandlerFree readHandlerFree,
+		NetEventLoop::Callback* readHandler,
+		NetEventLoop::CallbackFree readHandlerFree,
 		void* priv) {
 		if (fd == INVALID_NetFD || readHandler ==NULL ) {
 			return false;
@@ -177,7 +177,8 @@ namespace FFL {
 				
 		FFL_LOG_DEBUG("NetEventLoop: select fdNum=%d mOnlyTryControlFd=%d",numFd, mOnlyTryControlFd?1:0);
 		int8_t flagList[FD_LIST_MAX_SIZE] = {};
-		if (FFL_socketSelect(fdList, flagList, numFd, mWaitUs) > 0) {
+		int32_t selectRet=FFL_socketSelect(fdList, flagList, numFd, mWaitUs);
+		if (selectRet > 0) {
 			//
 			// 派发可读消息
 			//
@@ -185,8 +186,9 @@ namespace FFL {
 				return false;
 			}
 			mOnlyTryControlFd = false;
-		}
-		else {
+		}else  if (selectRet == 0) {
+			FFL_LOG_DEBUG("NetEventLoop: select timeout waitUs=%" lld64, mWaitUs);
+		}else {
 			//
 			//  不使用锁，没问题
 			//
@@ -223,8 +225,8 @@ namespace FFL {
 
 
 	bool NetEventLoop::processAddFd(NetFD fd,
-		NetEventHandler* readHandler,
-		NetEventHandlerFree readHandlerFree,
+		NetEventLoop::Callback* readHandler,
+		NetEventLoop::CallbackFree readHandlerFree,
 		void* priv) {
 
 		for (int32_t i = 0; i < FD_LIST_MAX_SIZE; i++) {

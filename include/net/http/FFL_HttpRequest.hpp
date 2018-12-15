@@ -10,8 +10,8 @@
 *
 *  http请求
 */
-#ifndef _FFL_NET_REQUEST_HTTP_HPP_
-#define _FFL_NET_REQUEST_HTTP_HPP_
+#ifndef _FFL_HTTP_REQUEST_HPP_
+#define _FFL_HTTP_REQUEST_HPP_
 
 
 #include <FFL.h>
@@ -22,67 +22,71 @@
 
 
 namespace FFL {
-	class HttpConnect;
+	class HttpClient;
 	class HttpResponse;
+	class HttpResponseBuilder;
+	class HttpRequestBuilder;
+
 	class HttpRequest : public RefBase {
+	protected:
+		friend class HttpClient;
 		friend class HttpParserImpl;
+		friend class HttpResponseBuilder;
+		friend class HttpRequestBuilder;
+		HttpRequest(FFL::sp<HttpClient> client);
 	public:
-		HttpRequest(HttpConnect* conn);
-		virtual ~HttpRequest();
-		//
-		// 重置这个请求
-		//
-		void reset();
-		//
-		// 获取content类型
-		//
-		void getContentType(String& type) const;
-		//
-		// 获取content的长度
-		//
-		int32_t getContentLength() const;
-		//
-		//  是否Keep_Alive
-		//
-		bool isKeepAlive() const;
+		virtual ~HttpRequest();	
+		FFL::sp<HttpResponse> makeResponse();
+	public:	
 
-		const HttpUrl& getUrl() const {
-			return mUrl;
-		} 
+		void setHttpClient(FFL::sp<HttpClient> client);
+		FFL::sp<HttpClient> getHttpClient();
 
-		void getPath(String& path);
-		void getQuery(String& query);
-		void getQueryParams(List<String>& query);
+		//
+		//  请求参数相关
+		//				
+		void getUrl(HttpUrl& url);
+		void setUrl(HttpUrl& url);		
+		//
+		//  头信息
+		//
+		void getHeader(HttpHeader& header);
+		void setHeader(HttpHeader& header);
+		//
+		//  开始发送请求，
+		//
+		bool send();
+	protected:
+		//
+		//  读取内容,正常情况下当这个request parse完成后头信息已经读取完成
+		//
+		bool readContent(char* content, int32_t requestSize, size_t* readed);
+
+	protected:
 	public:
 		//
-		//  创建应答
+		//  请求内容
+		//  header :头内容		
+		//  content:内容
 		//
-		sp<HttpResponse>  createResponse();
-	private:
+		bool writeHeader();
+		bool writeContent(const char* content, int32_t requestSize);
 		//
-		//  填充一下数据
+		//  结束应答,关闭这个连接
 		//
-		void fill(const String& url,NetStreamReader* reader);
-	private:
+		void finish();	
+	protected:
 		//
 		//  请求头
 		//
-		NetHttpHeader mHeader;
-		String mContentType;
-		int32_t mContentLength;
-		bool mKeepAlive;
-
+		HttpHeader mHeader;	
 		// parse uri to schema/server:port/path?query
 		HttpUrl mUrl;	
-
-		//
-		//  读取网络流接口
-		//
-		NetStreamReader* mReader;
+	public:
 		//
 		//  那个连接上的请求
 		//
-		HttpConnect* mConn;
+		FFL::sp<HttpClient> mClient;
 	};
 }
 

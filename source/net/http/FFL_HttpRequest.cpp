@@ -12,69 +12,106 @@
 */
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
-#include <net/http/FFL_HttpConnect.hpp>
+#include <net/http/FFL_HttpClient.hpp>
 
-namespace FFL {
-	HttpRequest::HttpRequest(HttpConnect* conn):
-		mConn(conn){
-		reset();
+namespace FFL {	
+	HttpRequest::HttpRequest(FFL::sp<HttpClient> client):mClient(client)
+		{
 	}
-	HttpRequest::~HttpRequest() {		
+	HttpRequest::~HttpRequest() {
 	}
-	void HttpRequest::reset() {
-		mReader = NULL;
-		mContentType="";
-		mContentLength = 0;
-		mKeepAlive = false;
+	void HttpRequest::setHttpClient(FFL::sp<HttpClient> client) {
+		mClient = client;
 	}
-	//
-	// 获取content类型
-	//
-	void HttpRequest::getContentType(String& type) const {
-		type = mContentType;
-	}
-	//
-	// 获取content的长度
-	//
-	int32_t HttpRequest::getContentLength() const {
-		return mContentLength;
-	}
-	//
-	//  是否Keep_Alive
-	//
-	bool HttpRequest::isKeepAlive() const {
-		return mKeepAlive;
-	}
-	//
-	//  填充一下数据
-	//
-	void HttpRequest::fill(const String& url, NetStreamReader* reader) {
-		mUrl.parse(url);
-
-		mReader = reader;
-		mHeader.getKey("Content Type", mContentType);
-		mHeader.getKeyInt32("Content Length", mContentLength,0);
-
-		int32_t value=0;
-		mHeader.getKeyInt32("Keep-alive", value, 0);
-		mKeepAlive = value != 0;
+	FFL::sp<HttpClient> HttpRequest::getHttpClient() {
+		return mClient;
 	}
 
-	//
-	//  创建应答
-	//
-	sp<HttpResponse>  HttpRequest::createResponse() {
-		HttpResponse* response = new HttpResponse(mConn);
+
+	FFL::sp<HttpResponse> HttpRequest::makeResponse() {
+		FFL::sp<HttpResponse> response = new HttpResponse(mClient);
 		return response;
 	}
-	void HttpRequest::getPath(String& path) {
-		path=mUrl.mPath;
+	//
+	//  请求参数相关
+	//				
+	void HttpRequest::getUrl(HttpUrl& url) {
+		url = mUrl;
 	}
-	void HttpRequest::getQuery(String& query) {
-		query = mUrl.mQuery;
+	void HttpRequest::setUrl(HttpUrl& url) {
+		mUrl = url;
+	}
+	void HttpRequest::getHeader(HttpHeader& header) {
+		header = mHeader;
+	}
+	void HttpRequest::setHeader(HttpHeader& header) {
+		mHeader = header;
+	}
+	//
+	//  开始发送请求，
+	//
+	bool HttpRequest::send() {
+		return true;
 	}	
-	void HttpRequest::getQueryParams(List<String>& query) {
-		query = mUrl.mQueryParams;
+	//
+	//  读取内容
+	//
+	bool HttpRequest::readContent(char* content, int32_t requestSize, size_t* readed) {
+		return mClient->read(content, requestSize, readed);
+	}
+	
+	//
+	//  请求内容
+	//  header :头内容		
+	//  content:内容
+	//
+	bool HttpRequest::writeHeader() {
+		//
+		//  发送的内容长度
+		//
+		int32_t contentLength = mHeader.getContentLength();
+		if (contentLength < 0) {
+			contentLength = 0;
+		}
+
+		String headerInfo;
+		{
+			String format;
+			format = "POST %s HTTP/1.1\r\n"
+				"%s: %s\r\n"
+				"%s: %d\r\n";
+
+			String type;
+			mHeader.getContentType(type);
+			formatString(headerInfo, format.c_str(), (mUrl.mPath + "?" +  mUrl.mQuery).c_str(),
+				HTTP_KEY_CONTENTYPE, type.c_str(),
+				HTTP_KEY_CONTENTLEN, contentLength);
+		}
+
+		std::map<String, String> keys;
+		mHeader.getAll(keys);
+		for (std::map<String, String>::iterator it = keys.begin(); it != keys.end(); it++) {
+			if (strcmp(HTTP_KEY_CONTENTYPE, it->first.c_str()) == 0) {
+				continue;
+			}
+			else if (strcmp(HTTP_KEY_CONTENTLEN, it->first.c_str()) == 0) {
+				continue;
+			}
+
+			headerInfo += it->first + ":" + it->second + "\r\n";
+		}
+
+		headerInfo += "\r\n";
+		return mClient->write(headerInfo.c_str(), headerInfo.size(), 0);
+	}
+	bool HttpRequest::writeContent(const char* content, int32_t requestSize) {
+		return mClient->write(content, requestSize,0);
+	}
+	//
+	//  结束应答,关闭这个连接
+	//
+	void HttpRequest::finish() {
+		mClient->close();
 	}
 }
 
