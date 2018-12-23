@@ -8,6 +8,11 @@ ENDFUNCTION()
 
 INCLUDE(./cmakemode/FFLv2Utils.cmake)
 
+# dubug:4 , info:3, warning:2,error:1
+SET(FFL_LOG_SET_LEVEL_COMPILE "3" CACHE PATH "Log Level")
+
+
+
 #printf("FULL_NAME :")
 #set(LOCAL_SRC_FILES "./CMakeLists.txt")
 #get_filename_component(FULL_NAME ${LOCAL_SRC_FILES}  ABSOLUTE)
@@ -179,17 +184,6 @@ ADD_SRC_FILE(FFL_File.cpp)
 ADD_SRC_FILE(FFL_Singleton.cpp)
 ADD_SRC_FILE(FFL_Dictionary.cpp)
 ADD_SRC_FILE(FFL_Module.cpp)
-
-
-
-
-#SET(LOCAL_SRC_DIR ./include/net/base/)
-#ADD_SRC_FILE(FFL_Net.h)
-#ADD_SRC_FILE(FFL_NetConst.h)
-
-
-#AUX_SOURCE_DIRECTORY(./source/logsender/ DIR_SRCS)
-#SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})
 
 AUX_SOURCE_DIRECTORY(./source/net/ DIR_SRCS)
 SET(LOCAL_SRC_FILES ${DIR_SRCS} ${LOCAL_SRC_FILES})

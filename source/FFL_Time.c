@@ -41,7 +41,7 @@ void FFL_sleep(int ms)
 		err = nanosleep(&tv, &elapsed);
 	} while (err);
 #else
-
+	FFL_ASSERT(0);
 #endif
 }
 

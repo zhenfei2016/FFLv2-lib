@@ -153,7 +153,7 @@ namespace FFL {
 	//
 	bool NetEventLoop::eventLoop(int32_t* waitTime){		
 		if (!isStarted()) {
-			FFL_LOG_WARNING("NetEventLoop: Failed to NetEventLoop::eventLoop. not start.");
+			FFL_LogWaring("NetEventLoop: Failed to NetEventLoop::eventLoop. not start.");
 			return false;
 		}		
 

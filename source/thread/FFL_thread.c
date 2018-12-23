@@ -11,8 +11,6 @@
  *
  */
 
-
-
 #include <thread/FFL_Thread.h>
 #include <thread/FFL_Mutex.h>
 #include "FFL_thread_sys.h"

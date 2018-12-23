@@ -50,17 +50,6 @@ NetFD FFL_socketCreate(int type) {
 void FFL_socketClose(NetFD fd) {
 	FFL_SOCKET_CLOSE(fd);
 }
-
-//static void fdCloseExec(NetFD fd)
-//{
-//#ifndef WIN32
-//    int flags = fcntl(fd, F_GETFD);
-//    flags |= FD_CLOEXEC;
-//    fcntl(fd, F_SETFD, flags);
-//#endif
-//}
-
-
 /*
 *  accept一个客户端上来
 */
@@ -88,7 +77,6 @@ SOCKET_STATUS FFL_socketAccept(NetFD serverfd, NetFD* clientFd){
 	}
 	return err;
 }
-
 /*
 * 读 ,
 * readed : 获取读取了数据量
@@ -250,8 +238,7 @@ SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* wri
 /*
 *  设置接收超时值
 */
-SOCKET_STATUS FFL_socketSetRecvTimeout(NetFD fd, int64_t ms)
-{
+SOCKET_STATUS FFL_socketSetRecvTimeout(NetFD fd, int64_t ms){
 	int32_t sec = 0;
 	int32_t usec = 0;
 	struct timeval tv = { (int32_t)(ms / 1000) , (int32_t)((ms % 1000)*1000) };
@@ -297,8 +284,8 @@ SOCKET_STATUS FFL_socketSetNodelay(NetFD fd, int yes)
 * host=www.123.com
 * port=4000
 */
-SOCKET_STATUS FFL_socketPaserHost(const char* hostport, char* host, int32_t* port){
-	const char* src = hostport;
+SOCKET_STATUS FFL_socketPaserHost(const char* url, char* host, int32_t* port){
+	const char* src = url;
 	while (*src) {
 		if (*src == ':') {
 			*port = atoi(src + 1);			
@@ -329,110 +316,3 @@ int32_t FFL_socketLocalAddr(char* hostlist, int32_t bufSize) {
 	strncpy(hostlist, inet_ntoa(*addr), bufSize - 1);
 	return 1;
 }
-
-
-
-
-
-//#ifdef MACOSX
-//
-//int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, int64_t timeoutUs){
-//    struct pollfd fds[64];
-//    for (size_t i = 0 ; i < fdNum ; i++){
-//        fds[i].fd = fdList[i];
-//        fds[i].events = POLLIN;
-//        fds[i].revents = 0;
-//        flagList[i] = 0;
-//    }
-//
-//    int timeoutmsec = -1;
-//    if (timeoutUs >= 0)    {
-//
-//        timeoutmsec = (int)(timeoutUs/1000);
-//    }
-//
-//
-//    int status = poll(&(fds[0]), fdNum, timeoutmsec);
-//    if (status < 0) {
-//
-//        if (errno == EINTR)
-//            return 0;
-//        return -1;
-//    }
-//
-//
-//    if (status > 0){
-//        for (size_t i = 0 ; i < fdNum ; i++)
-//        {
-//            if (fds[i].revents)
-//                flagList[i] = 1;
-//        }
-//    }
-//    return status;
-//}
-//#else
-int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, int64_t timeoutUs) {
-    struct timeval tv;
-    NetFD maxfd = 64;
-    fd_set fdset;
-    size_t i = 0;
-    int status = 0;
-    int socketError = 0;
-    
-    if (timeoutUs > 0) {
-        tv.tv_sec = (long)(timeoutUs / (1000 * 1000));
-        tv.tv_usec = (long)(timeoutUs % (1000 * 1000));
-    }
-    else {
-        tv.tv_sec = -1;
-        tv.tv_usec = -1;
-    }
-    
-#if WIN32
-    if (fdNum > 64) {
-        return FFL_ERROR_SOCKET_SELECT;
-    }
-#else
-    maxfd = 0;
-    for (i = 0; i < fdNum; i++) {
-        if (fdList[i] > maxfd) {
-            maxfd=fdList[i];
-        }
-    }
-    maxfd+=1;
-#endif
-    
-    FD_ZERO(&fdset);
-    for ( i = 0; i < fdNum; i++) {
-        FD_SET(fdList[i], &fdset);
-        flagList[i] = 0;
-    }
-    
-    status = select(maxfd, &fdset, 0, 0, (timeoutUs == 0 ? NULL : (&tv)));
-    if (status < 0) {
-        FFL_LOG_WARNING("FFL_socketSelect error=%d",SOCKET_ERRNO());
-#if WIN32
-        return FFL_ERROR_SOCKET_SELECT;
-#else
-        socketError = SOCKET_ERRNO();
-        if (socketError == EINTR) {
-            //
-            //  当做超时处理，可能其他信号触发了这
-            //
-            return 0;
-        }
-#endif
-    }
-    
-    if (status > 0) {
-        for (size_t i = 0; i < fdNum; i++) {
-            if (FD_ISSET(fdList[i], &fdset))
-                flagList[i] = 1;
-        }
-    }
-    return status;
-}
-//#endif
-
-
-
