@@ -26,7 +26,7 @@ namespace FFL {
    class HttpClient;
    class HttpRequestThread;
 
-   class HttpClientAccessManager : public NetEventLoop::Callback{
+   class FFLIB_API_IMPORT_EXPORT HttpClientAccessManager : public NetEventLoop::Callback{
 	   friend class HttpRequestBuilder;
    public:
 	   class Callback : public RefBase{

@@ -37,6 +37,9 @@ int FFL_main() {
 	FFL::HttpClientAccessManager clientMgr;
 	clientMgr.start();
 
+	FFL_LOG_DEBUG("saddsad");
+	FFL_LOG_DEBUG("saddsad %d",1);
+
 	{
 		FFL::sp<FFL::HttpRequest>  request = builder.createRequest(NULL);
 		FFL::HttpUrl url;

@@ -21,7 +21,7 @@ namespace FFL {
 	class HttpResponse;
 	class HttpClient;
 
-	class HttpRequestBuilder {
+	class FFLIB_API_IMPORT_EXPORT HttpRequestBuilder {
 	public:
 		HttpRequestBuilder();
 		~HttpRequestBuilder();

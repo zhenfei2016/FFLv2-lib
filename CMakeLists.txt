@@ -9,8 +9,10 @@ ENDFUNCTION()
 INCLUDE(./cmakemode/FFLv2Utils.cmake)
 
 # dubug:4 , info:3, warning:2,error:1
-SET(FFL_LOG_SET_LEVEL_COMPILE "3" CACHE PATH "Log Level")
-
+SET(FFLIB_COMPILE_LOG_LEVEL "3" CACHE PATH "Log Level")
+ADD_DEFINITIONS(-DFFLIB_COMPILE_LOG_LEVEL=3)
+# static lib
+SET(FFLIB_COMPILE_STATIC ON CACHE BOOL "build static library")
 
 
 #printf("FULL_NAME :")
@@ -92,7 +94,7 @@ ADD_SRC_FILE(FFL_Atomic.c)
 
 SET(LOCAL_SRC_DIR ./source/thread/)
 ADD_SRC_FILE(FFL_thread.c)
-ADD_SRC_FILE(FFL_threadpool.c)
+#ADD_SRC_FILE(FFL_threadpool.c)
 
 #SET(LOCAL_SRC_DIR ./source/thread/threadpool/)
 #ADD_SRC_FILE(threadpool.c)
@@ -154,7 +156,6 @@ ADD_SRC_FILE(FFL_RefBase.cpp)
 ADD_SRC_FILE(FFL_RefWakeimpl.cpp)
 
 SET(LOCAL_SRC_DIR ./include/utils/)
-ADD_SRC_FILE(FFL_MemoryWatch.hpp)
 ADD_SRC_FILE(FFL_Flags.hpp)
 
 ADD_SRC_FILE(FFL_ByteReader.hpp)
@@ -173,7 +174,6 @@ ADD_SRC_FILE(FFL_Dictionary.hpp)
 ADD_SRC_FILE(FFL_Module.hpp)
 
 SET(LOCAL_SRC_DIR ./source/utils/)
-ADD_SRC_FILE(FFL_MemoryWatch.cpp)
 ADD_SRC_FILE(FFL_Flags.cpp)
 ADD_SRC_FILE(FFL_ByteStream.cpp)
 ADD_SRC_FILE(FFL_ByteBuffer.cpp)
@@ -220,7 +220,13 @@ if (MSVC)
     endforeach()
 endif(MSVC)
 
+if (FFLIB_COMPILE_STATIC)
+ADD_DEFINITIONS(-DFFLIB_COMPILE_STATIC)
 add_library( FFLv2 STATIC ${LOCAL_SRC_FILES})
+else()
+ADD_DEFINITIONS(-DFFLIB_COMPILE_SHARED)
+add_library( FFLv2 SHARED ${LOCAL_SRC_FILES})
+endif()
  
 #printf("build-type:")
 #printf(${CMAKE_INSTALL_CONFIG_NAME})

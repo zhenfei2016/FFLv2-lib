@@ -27,18 +27,18 @@ extern "C" {
 	/*
 	 *  内存申请，释放
 	 */
-	void* FFL_malloc(size_t size);
-	void  FFL_free(void *mem);
+	FFLIB_API_IMPORT_EXPORT void* FFL_malloc(size_t size);
+	FFLIB_API_IMPORT_EXPORT void  FFL_free(void *mem);
 	/*
 	 *  内存申请，并且清空
 	*/
-	static void *FFL_mallocz(size_t size){
+	inline void *FFL_mallocz(size_t size){
 		void *mem = FFL_malloc(size);
 		if (mem)
 			memset(mem, 0, size);
 		return mem;
 	}
-	static void FFL_freep(void **mem){
+	inline void FFL_freep(void **mem){
 		if (mem && *mem) {
 			FFL_free(*mem);
 			*mem = 0;
@@ -48,17 +48,17 @@ extern "C" {
 	/*
 	 *   打印一下当前还没有释放的内存
 	 */
-	void  FFL_dumpMemoryLeak();
+	FFLIB_API_IMPORT_EXPORT void  FFL_dumpMemoryLeak();
 	/*
 	*  打印当前未释放的内存，到文件中
 	*/
-	void  FFL_dumpMemoryLeakFile(const char* path);
+	FFLIB_API_IMPORT_EXPORT void  FFL_dumpMemoryLeakFile(const char* path);
 	/*
  	 *  参考上一次释放的内存文件，打印对应的堆栈
 	 */
-	void  FFL_checkMemoryLeak(const char* path);
+	FFLIB_API_IMPORT_EXPORT void  FFL_checkMemoryLeak(const char* path);
 
-	int FFL_outofmemory();
+	FFLIB_API_IMPORT_EXPORT int FFL_outofmemory();
 	/*
 	 *   memory清零
 	 */
@@ -82,8 +82,8 @@ extern "C" {
 	} while( 0 )
 
 
-	char* FFL_CALL FFL_strdup(const char *s);
-	char* FFL_CALL FFL_strndup(const char *s, size_t len);
+	FFLIB_API_IMPORT_EXPORT char* FFL_CALL FFL_strdup(const char *s);
+	FFLIB_API_IMPORT_EXPORT char* FFL_CALL FFL_strndup(const char *s, size_t len);
 
 	//
 	//  内存字节序
@@ -103,7 +103,7 @@ extern "C" {
 	//
 	//  检测系统的大小端
 	//
-	int FFL_isLittleEndian();
+	FFLIB_API_IMPORT_EXPORT int FFL_isLittleEndian();
 #ifdef  __cplusplus
 }
 #endif

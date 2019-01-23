@@ -41,4 +41,25 @@
 
 #endif 
 
+
+#if defined(FFLIB_COMPILE_SHARED)
+/*  函数导出方式  */
+#if defined(WIN32)
+#define FFLIB_API_IMPORT_EXPORT __declspec(dllexport)
+#elif defined(MACOSX) || defined(ANDROID)
+#define FFLIB_API_IMPORT_EXPORT __attribute__((visibility("default")))
+#else
+#define FFLIB_API_IMPORT_EXPORT __attribute__((visibility("default")))
+#endif
+#elif defined(FFLIB_COMPILE_STATIC)
+#define FFLIB_API_IMPORT_EXPORT
+#else
+/*  函数导入方式  */
+#if defined(WIN32)
+#define FFLIB_API_IMPORT_EXPORT __declspec(dllimport)
+#el
+#define FFLIB_API_IMPORT_EXPORT 
+#endif
+
+#endif
 #endif

@@ -10,7 +10,7 @@
 *
 *  打印日志帮助类，
 *  增加支持的编译日志等级  2017/12/22
-*  FFL_LOG_SET_LEVEL_COMPILE = 3  对应FFL_LogLevel的值 
+*  FFLIB_COMPILE_LOG_LEVEL = 3  对应FFL_LogLevel的值 
 *
 */
 #ifndef __FFL_LOG_H__
@@ -38,9 +38,9 @@ typedef enum
 /************************************************************************
 * 设置日志等级
 ***********************************************************************/
-void FFL_LogSetLevel(FFL_LogLevel level);
-FFL_LogLevel FFL_LogGetLevel();
-const char* FFL_LogGetLevelString(int level);
+FFLIB_API_IMPORT_EXPORT void FFL_LogSetLevel(FFL_LogLevel level);
+FFLIB_API_IMPORT_EXPORT FFL_LogLevel FFL_LogGetLevel();
+FFLIB_API_IMPORT_EXPORT const char* FFL_LogGetLevelString(int level);
 
 /************************************************************************
 *  设置日志输出到哪里去，外部接管，还是指定文件中
@@ -80,7 +80,7 @@ void FFL_LogDebugTag(const char *tag, const char *format, ...);
 
 /************************************************************************
 *  是否定义了编译日志等级
-*  FFL_LOG_SET_LEVEL_COMPILE
+*  FFLIB_COMPILE_LOG_LEVEL
 ************************************************************************/
 
 #if 1
@@ -91,26 +91,26 @@ void FFL_LogDebugTag(const char *tag, const char *format, ...);
 /*
 * 是否外部指定了编译时候支持的日志级别，如果没有指定则编译所有等级的日志
 */
-#if !defined(FFL_LOG_SET_LEVEL_COMPILE)
-#define FFL_LOG_SET_LEVEL_COMPILE FFL_LOG_LEVEL_ALL
+#if !defined(FFLIB_COMPILE_LOG_LEVEL)
+#define FFLIB_COMPILE_LOG_LEVEL FFL_LOG_LEVEL_ALL
 #endif
 
-#if  FFL_LOG_SET_LEVEL_COMPILE>=FFL_LOG_LEVEL_ERROR
+#if  FFLIB_COMPILE_LOG_LEVEL>=FFL_LOG_LEVEL_ERROR
 #define FFL_LOG_ERROR(format,...)            FFL_LogPrint(FFL_LOG_LEVEL_ERROR,format,##__VA_ARGS__)
 #define FFL_LOG_ERROR_TAG(tag,format,...)    FFL_LogPrintTag(FFL_LOG_LEVEL_ERROR,tag,format,##__VA_ARGS__)
 #endif
 
-#if  FFL_LOG_SET_LEVEL_COMPILE>=FFL_LOG_LEVEL_WARNING
+#if  FFLIB_COMPILE_LOG_LEVEL>=FFL_LOG_LEVEL_WARNING
 #define FFL_LOG_WARNING(format,...)          FFL_LogPrint(FFL_LOG_LEVEL_WARNING,format,##__VA_ARGS__)
 #define FFL_LOG_WARNING_TAG(tag,format,...)  FFL_LogPrintTag(FFL_LOG_LEVEL_WARNING,tag,format,##__VA_ARGS__)
 #endif
 
-#if  FFL_LOG_SET_LEVEL_COMPILE>=FFL_LOG_LEVEL_INFO
+#if  FFLIB_COMPILE_LOG_LEVEL>=FFL_LOG_LEVEL_INFO
 #define FFL_LOG_INFO(format,...)            FFL_LogPrint(FFL_LOG_LEVEL_INFO,format,##__VA_ARGS__)
 #define FFL_LOG_INFO_TAG(tag,format,...)    FFL_LogPrintTag(FFL_LOG_LEVEL_INFO,tag,format,##__VA_ARGS__)
 #endif
 
-#if  FFL_LOG_SET_LEVEL_COMPILE>=FFL_LOG_LEVEL_DEBUG
+#if  FFLIB_COMPILE_LOG_LEVEL>=FFL_LOG_LEVEL_DEBUG
 #define FFL_LOG_DEBUG(format,...)           FFL_LogPrint(FFL_LOG_LEVEL_DEBUG,format,##__VA_ARGS__)
 #define FFL_LOG_DEBUG_TAG(tag,format,...)   FFL_LogPrintTag(FFL_LOG_LEVEL_DEBUG,tag,format,##__VA_ARGS__)
 #endif

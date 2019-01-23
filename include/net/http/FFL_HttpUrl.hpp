@@ -16,7 +16,7 @@
 #include <utils/FFL_String.hpp>
 
 namespace FFL {		
-	class HttpUrl{	
+	class FFLIB_API_IMPORT_EXPORT HttpUrl{
 	public:
 		HttpUrl();
 		~HttpUrl();
