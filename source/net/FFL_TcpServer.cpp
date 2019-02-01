@@ -85,6 +85,7 @@ namespace FFL {
 		class TcpListenerCb : public TcpListener::Callback {
 		public:
 			TcpListenerCb(TcpServerImpl* server);
+            virtual ~TcpListenerCb(){}
 			virtual void onAcceptClient(NetFD fd);
 			TcpServerImpl* mServer;
 		};

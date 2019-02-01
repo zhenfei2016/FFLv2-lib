@@ -55,15 +55,17 @@ ENDIF()
 #  生成日志等级宏FFL_LogConfig.h
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/include/FFL_LogConfig.h.in" "${PROJECT_BINARY_DIR}/FFL_LogConfig.h")
 ###############################################################################################################################
-
-
+IF(APPLE)
+SET(FFLIB_COMPILE_STATIC ON)
+#    仅仅支持静态库，需要修改CMAKE_SYSROOT路径指向ios sdk路径上
+ELSE()
 # static lib
 SET(FFLIB_COMPILE_STATIC ON CACHE BOOL "build static library")
+ENDIF()
 #是否生成example
 SET(FFLIB_COMPILE_EXAMPLE OFF CACHE BOOL "build static example")
 
 # 编译静态库还是动态库
-SET(FFLIB_COMPILE_STATIC ON CACHE BOOL "build static library")
 IF (FFLIB_COMPILE_STATIC)
     set(FFLIB_IMPORT "")
     set(FFLIB_EXPORT "")
@@ -321,4 +323,4 @@ SET(HEADERS
 	${PROJECT_BINARY_DIR}/FFL_LogConfig.h
    )
 install(FILES ${HEADERS} DESTINATION include/)
-#install(TARGETS FFL DESTINATION lib/)
+install(TARGETS FFL DESTINATION lib/)

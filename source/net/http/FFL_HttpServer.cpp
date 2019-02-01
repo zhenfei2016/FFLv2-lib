@@ -78,6 +78,7 @@ namespace FFL {
 			class TcpServerCallback : public TcpServer::Callback {
 			public:
 				TcpServerCallback(HttpServerImpl* server);
+                virtual ~TcpServerCallback(){}
 
 				//
 				//  aliveTimeUs:保活时长，如果超过这么长时间还没有数据则干掉这个client

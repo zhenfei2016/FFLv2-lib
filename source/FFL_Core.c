@@ -12,6 +12,7 @@
 *
 */
 #include <FFL_Core.h>
+#include <FFL_Version.h>
 
 
 
@@ -31,6 +32,7 @@ void FFL_CALL FFL_initialize(){
 	extern void initializeNetModule();
 	initializeNetModule();
 	
+    FFL_LOG_INFO("FFL version:%s",FFL_GetVersion());
 }
 /*
  *  结束FFL库的使用，调用后就不要再使用FFL的函数了

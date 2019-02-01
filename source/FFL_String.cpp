@@ -91,7 +91,7 @@ namespace FFL {
 	{
 		if (len > 0) {
 			SharedBuffer* buf = SharedBuffer::alloc(len + 1);
-			ALOG_ASSERT(buf, "Unable to allocate shared buffer");
+			FFL_ASSERT_LOG(buf, "Unable to allocate shared buffer");
 			if (buf) {
 				char* str = (char*)buf->data();
 				memcpy(str, in, len);
