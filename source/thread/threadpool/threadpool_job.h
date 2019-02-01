@@ -36,8 +36,8 @@
 #define _FFL_THREAD_POOL_JOB_H_
 
 
-#include <thread/FFL_Thread.h>
-#include <thread/FFL_Mutex.h>
+#include <FFL_Thread.h>
+#include <FFL_Mutex.h>
 
 
 typedef struct FFL_threadpool_job_t

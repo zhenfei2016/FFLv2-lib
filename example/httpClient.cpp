@@ -1,13 +1,5 @@
-#include <FFL.h>
-#include <net/http/FFL_Http.hpp>
 
-#include <utils/FFL_StringHelper.hpp>
-#include <utils/FFL_File.hpp>
-
-#include <net/FFL_TcpServer.hpp>
-#include <net/http/FFL_HttpRequestBuilder.hpp>
-#include <net/http/FFL_HttpClientAccess.hpp>
-#include <net/http/FFL_HttpHeader.hpp>
+#include <FFL_Netlib.hpp>
 
 class HttpCallback : public FFL::HttpClientAccessManager::Callback {
 public:
@@ -43,7 +35,7 @@ int FFL_main() {
 	{
 		FFL::sp<FFL::HttpRequest>  request = builder.createRequest(NULL);
 		FFL::HttpUrl url;
-		url.parse("http://127.0.0.1:5000/FFLv2?login");
+		url.parse(FFL::String("http://127.0.0.1:5000/FFLv2?login"));
 		request->setUrl(url);
 		clientMgr.post(request, new HttpCallback());
 	}
@@ -51,7 +43,7 @@ int FFL_main() {
 	{
 		FFL::sp<FFL::HttpRequest>  request = builder.createRequest(NULL);
 		FFL::HttpUrl url;
-		url.parse("http://127.0.0.1:5000/FFLv2?login&asdasd=asd");
+		url.parse(FFL::String("http://127.0.0.1:5000/FFLv2?login&asdasd=asd"));
 		request->setUrl(url);
 		clientMgr.post(request, new HttpCallback());
 	}

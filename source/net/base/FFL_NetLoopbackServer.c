@@ -20,7 +20,7 @@
 SOCKET_STATUS FFL_socketLoopbackServer(int port, int type, NetFD *fd){
     struct sockaddr_in addr;
     int s, n;
-	FFL_zerop(&addr);
+	FFL_Zerop(&addr);
     
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);

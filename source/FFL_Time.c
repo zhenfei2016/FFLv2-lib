@@ -11,8 +11,10 @@
 *
 */
 
-#include "FFL_Time.h"
-#include <string.h>
+#include <FFL_Core.h>
+#include <FFL_Time.h>
+#include <FFL_String.h>
+#include <stdio.h>
 //
 //  是否使用短类型的时间字符串
 //  短类型day hour min second ms us

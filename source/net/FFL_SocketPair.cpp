@@ -7,7 +7,7 @@
 *  FFL_SocketPair.cpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/11/24
 *  https://github.com/zhenfei2016/FFLv2-lib.git
-*  socketpairģ�ⶨ��
+*  socketpair模拟定义
 *
 */
 
@@ -114,7 +114,7 @@ namespace FFL {
 #else
             int sockets[2];
             if(0!=socketpair(AF_LOCAL, SOCK_STREAM, 0,sockets)){
-                int err=SOCKET_ERRNO();
+                //int err=SOCKET_ERRNO();
                 return false;
             }
             if(sockets[0]!=INVALID_NetFD ){

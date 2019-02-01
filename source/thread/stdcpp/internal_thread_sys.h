@@ -11,10 +11,10 @@
 
 
 #include <FFL_Atomic.h>
-#include <thread/FFL_ThreadConstant.h>
+#include <FFL_ThreadConstant.h>
 
 
-#include "FFL.h"
+#include <FFL_Core.h>
 
 #if FFL_THREADS_DISABLED
 #error Need thread implementation for this platform

@@ -12,8 +12,9 @@
 #ifndef _FFL_ASSERT_H_
 #define _FFL_ASSERT_H_
 #include <assert.h>
-#include "FFL_Core.h"
-#include "FFL_Log.h"
+#include <FFL_Core.h>
+#include <FFL_Log.h>
+
 #ifdef  __cplusplus
 extern "C" {
 #endif

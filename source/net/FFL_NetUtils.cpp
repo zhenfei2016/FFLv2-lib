@@ -7,29 +7,28 @@
 *  FFL_NetUtils.cpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/07/14
 *  https://github.com/zhenfei2016/FFLv2-lib.git
-*  帮组函数
+*  甯粍鍑芥暟
 *
 */
 
-#include <utils/FFL_StringHelper.hpp>
+#include <FFL_String.hpp>
 
 namespace FFL {
 
 	void FFL_parseHostport(const String& url, String& host, int32_t& port){
-		size_t pos = url.find(":");
-		if (pos != std::string::npos) {
-			String p = url.substr(pos + 1);
-			host = url.substr(0, pos);
-			port = ::atoi(p.c_str());
+		int pos = url.find(":");
+		if (pos >=0) {			
+			host.append(url.string(), pos - 1);
+			port = ::atoi(url.string()+pos+1);
 		}else {
 			host = url;
 		}
 	}
 
 	//
-	//  是否一个ip, 是的话返回FFL_Ok
+	//  鏄惁涓�涓猧p, 鏄殑璇濊繑鍥濬FL_Ok
 	//
 	status_t FFL_isIp(const String& ip) {
-		return ip.size() > 0 ?FFL_OK:FFL_FAILED;
+		return !ip.isEmpty() ?FFL_OK:FFL_FAILED;
 	}
 }

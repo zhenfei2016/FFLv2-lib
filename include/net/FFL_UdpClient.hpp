@@ -14,7 +14,7 @@
 #include <net/FFL_NetSocket.hpp>
 
 namespace FFL {
-	class UdpClient : public IOReader, public IOWriter {    
+	class FFLIB_API_IMPORT_EXPORT UdpClient : public IOReader, public IOWriter {
 	public:
 		UdpClient(NetFD fd);
 		virtual ~UdpClient();

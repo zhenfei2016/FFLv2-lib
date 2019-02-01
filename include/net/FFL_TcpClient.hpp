@@ -16,7 +16,7 @@
 #include <net/FFL_NetSocket.hpp>
 
 namespace FFL {
-	class TcpClient : public IOReader, public IOWriter {
+	class FFLIB_API_IMPORT_EXPORT TcpClient : public IOReader, public IOWriter {
     public:
         //
         //  tcp相关的，连接到服务器上，如果设置过fd则返回false

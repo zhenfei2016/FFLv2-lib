@@ -13,14 +13,14 @@
 #ifndef _FFL_HTTP_RESPONSE_BUILDER_HPP_
 #define _FFL_HTTP_RESPONSE_BUILDER_HPP_
 
-#include <ref/FFL_Ref.hpp>
+#include <FFL_Ref.hpp>
 
 namespace FFL {	
 	class HttpRequest;	
 	class HttpResponse;
 	class HttpResponseFile;
 
-	class HttpResponseBuilder {
+	class FFLIB_API_IMPORT_EXPORT HttpResponseBuilder {
 	public:
 		HttpResponseBuilder();
 		~HttpResponseBuilder();

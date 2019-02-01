@@ -1,4 +1,4 @@
-#include "thread/FFL_mutex.h"
+#include "FFL_mutex.h"
 
 struct FFL_cond_sys
 {

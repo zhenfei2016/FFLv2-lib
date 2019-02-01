@@ -12,8 +12,8 @@
 */
 #ifndef _HTTP_HTTP_URL_HPP_
 #define _HTTP_HTTP_URL_HPP_
-#include <FFL.h>
-#include <utils/FFL_String.hpp>
+#include <FFL_Core.h>
+#include <FFL_String.hpp>
 
 namespace FFL {		
 	class FFLIB_API_IMPORT_EXPORT HttpUrl{
@@ -31,7 +31,7 @@ namespace FFL {
 		String mHost;		
 		String mPath;
 		String mQuery;
-		List<String> mQueryParams;
+		//List<String> mQueryParams;
 		
 	};
 }

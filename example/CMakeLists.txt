@@ -25,15 +25,15 @@ if (MSVC)
     endforeach()
 endif(MSVC)
 ADD_EXECUTABLE(httpServer  main.cpp;httpServer.cpp)
-TARGET_LINK_LIBRARIES(httpServer FFLv2)
+TARGET_LINK_LIBRARIES(httpServer FFL)
 
 ADD_EXECUTABLE(httpClient  main.cpp;httpClient.cpp)
-TARGET_LINK_LIBRARIES(httpClient FFLv2)
+TARGET_LINK_LIBRARIES(httpClient FFL)
 
 
 
 ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
-TARGET_LINK_LIBRARIES(memoryLeak FFLv2)
+TARGET_LINK_LIBRARIES(memoryLeak FFL)
 
 
 

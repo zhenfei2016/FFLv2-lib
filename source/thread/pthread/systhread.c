@@ -1,5 +1,5 @@
 #include <pthread.h>
-#include "FFL.h"
+#include <FFL_Core.h>
 
 #if HAVE_PTHREAD_NP_H
 #include <pthread_np.h>

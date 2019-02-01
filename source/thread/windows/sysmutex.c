@@ -1,6 +1,6 @@
 #include <windows.h>
 
-#include "FFL.h"
+#include <FFL_Core.h>
 #include "internal_mutex_sys.h"
 typedef struct FFL_mutex_sys  FFL_mutex;
 

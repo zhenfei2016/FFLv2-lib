@@ -13,13 +13,13 @@
 #ifndef _FFL_NET_STREAM_READER_HPP_
 #define _FFL_NET_STREAM_READER_HPP_
 
-#include <utils/FFL_ByteReader.hpp>
+#include <FFL_ByteReader.hpp>
 #include <net/FFL_NetSocket.hpp>
 
 namespace FFL {
 	class ByteBuffer;
 
-	class NetStreamReader : public ByteReader {
+	class FFLIB_API_IMPORT_EXPORT NetStreamReader : public ByteReader {
 	public:
 		NetStreamReader(CSocket* socket );
         virtual ~NetStreamReader();
@@ -47,11 +47,11 @@ namespace FFL {
 		//
 		//  ByteReader 读写
 		//
-		bool read1Bytes(int8_t& val);
-		bool read2Bytes(int16_t& val);
-		bool read3Bytes(int32_t& val);
-		bool read4Bytes(int32_t& val);
-		bool read8Bytes(int64_t& val);
+		virtual int8_t read1Bytes(bool* suc);
+		virtual int16_t read2Bytes(bool* suc);
+		virtual int32_t read3Bytes(bool* suc);
+		virtual int32_t read4Bytes(bool* suc);
+		virtual int64_t read8Bytes(bool* suc);
 		bool readString(String& val, uint32_t len);
 		bool readBytes(int8_t* data, uint32_t size);
 		//

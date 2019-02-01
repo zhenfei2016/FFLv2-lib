@@ -17,6 +17,12 @@
 
 static int gSocketInited=0;
 
+void initializeNetModule() {
+	FFL_socketInit();
+}
+void terminateNetModule() {
+	FFL_socketUninit();
+}
 void FFL_socketInit(){
 	if (!gSocketInited) {
 		SOCKET_SETUP();
@@ -120,9 +126,11 @@ SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* re
 	int socketError = 0;
 	int fromlen = sizeof(struct sockaddr_in);
 	struct sockaddr_in srcAddr;
-	FFL_zerop(&srcAddr);
+	FFL_Zerop(&srcAddr);
 
-	int nbRead = recvfrom(fd, buffer, size, 0, (struct sockaddr *)(&srcAddr), &fromlen);
+	int nbRead = recvfrom(fd, buffer, size, 0,
+                          (struct sockaddr *)(&srcAddr),
+                          (socklen_t*) &fromlen);
 	if (nbRead > 0) {
 		if (readed) {
 			*readed = nbRead;
@@ -239,8 +247,6 @@ SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* wri
 *  设置接收超时值
 */
 SOCKET_STATUS FFL_socketSetRecvTimeout(NetFD fd, int64_t ms){
-	int32_t sec = 0;
-	int32_t usec = 0;
 	struct timeval tv = { (int32_t)(ms / 1000) , (int32_t)((ms % 1000)*1000) };
 	if (setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO,(const char*)( &tv), sizeof(tv)) == -1)
 	{
@@ -253,8 +259,6 @@ SOCKET_STATUS FFL_socketSetRecvTimeout(NetFD fd, int64_t ms){
 *  设置发送超时值
 */
 SOCKET_STATUS FFL_socketSetSendTimeout(NetFD fd, int64_t ms){
-	int32_t sec = 0;
-	int32_t usec = 0;
 	struct timeval tv = { (int32_t)(ms / 1000) , (int32_t)((ms % 1000)*1000) };
 	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, (const char*)(&tv), sizeof(tv)) == -1)
 	{

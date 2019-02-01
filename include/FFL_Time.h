@@ -12,14 +12,13 @@
 */
 #ifndef _FFL_TIME_H_
 #define _FFL_TIME_H_
-#include "FFL_Core.h"
 
+#include <FFL_Config.h>
+#include <FFL_Stdint.h>
 
 #ifdef  __cplusplus
 extern "C" {
 #endif
-
-
 	/*  
 	* sleep()
 	*/

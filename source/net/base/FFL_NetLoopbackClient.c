@@ -20,7 +20,7 @@
 SOCKET_STATUS FFL_socketLoopbackClientTimeout(int port, int type, NetFD*fd,int timeout_tm){
     struct sockaddr_in addr;
     int s;
-    FFL_zerop(&addr);
+    FFL_Zerop(&addr);
     
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);

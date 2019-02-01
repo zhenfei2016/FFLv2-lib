@@ -16,39 +16,115 @@
 #include <net/http/FFL_HttpResponseBuilder.hpp>
 #include <net/http/FFL_HttpParser.hpp>
 #include <net/http/FFL_HttpClient.hpp>
+#include <net/FFL_NetEventLoop.hpp>
+#include <FFL_BlockList.hpp>
+#include <list>
 
-namespace FFL {	
+namespace FFL {
 
+	class RequestContext : public RefBase {
+	public:
+		RequestContext();
+		~RequestContext();
+
+		int64_t mCreateTimeUs;
+		FFL::sp<HttpRequest> mRequest;
+		FFL::sp<HttpClientAccessManager::Callback> mCallback;
+
+		TcpClient* mTcpClient;
+		FFL::sp<HttpClient> mHttpClient;
+	};
+	RequestContext::RequestContext() :mCreateTimeUs(0), mTcpClient(NULL) {
+	}
+	RequestContext::~RequestContext() {
+
+	}
+
+	class HttpRequestThread;
+	class HttpClientAccessManagerImpl : public NetEventLoop::Callback {
+		friend class HttpRequestBuilder;
+	public:
+		HttpClientAccessManagerImpl();
+		virtual ~HttpClientAccessManagerImpl();
+	public:
+		//
+		//  启动，停止
+		//
+		bool start();
+		void stop();
+		//
+		//  发送一个请求
+		//
+		bool post(FFL::sp<HttpRequest>& request, FFL::sp<HttpClientAccessManager::Callback> callback);
+		/*  NetEventLoop::Callback  */
+		//
+		//  返回是否还继续读写
+		//  priv:透传数据
+		//
+		virtual bool onNetEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv);
+	protected:
+		//
+		//  请求队列
+		//		
+		FFL::BlockingList< FFL::sp<RequestContext> > mRequestQueue;
+
+		//
+		//  挂起，等待应答的请求列表
+		//
+		FFL::CMutex mPendingLock;
+		std::list<  FFL::sp<RequestContext> > mPendingRequstList;
+	protected:
+		//
+		//  处理这个请求
+		//
+		bool processRequest(FFL::sp<RequestContext> request);
+	protected:
+		//
+		//  处理网络消息
+		//
+		NetEventLoop mEventLoop;
+
+		//
+		//  请求线程 
+		//
+		friend class HttpRequestThread;
+		FFL::sp<HttpRequestThread> mHttpRequestThread;
+
+	};
 	//
 	//  请求，连接发送线程
 	//
 	class HttpRequestThread : public  FFL::Thread {
 	public:
-		HttpRequestThread(HttpClientAccessManager* client):mClient(client){}
+		HttpRequestThread(HttpClientAccessManagerImpl* client) :mClient(client) {}
 		bool threadLoop() {
 			int32_t errorNo = 0;
-			FFL::sp<HttpClientAccessManager::RequestContext> entry = mClient->mRequestQueue.next(&errorNo);
+			FFL::sp<RequestContext> entry = mClient->mRequestQueue.next(&errorNo);
 			if (errorNo != 0) {
 				//
 				//  退出请求线程
 				//
 				return false;
-			}			
+			}
 
 			if (!entry.isEmpty()) {
 				mClient->processRequest(entry);
 			}
 			return true;
 		}
-		HttpClientAccessManager* mClient;
+		HttpClientAccessManagerImpl* mClient;
 	};
 
 
-	HttpClientAccessManager::HttpClientAccessManager() :
-		  mEventLoop(30 * 1000 * 1000),
-		  mRequestQueue("httpRequestQueue") {		
+
+
+
+	HttpClientAccessManagerImpl::HttpClientAccessManagerImpl() :
+		mRequestQueue("httpRequestQueue"),
+        mEventLoop(30 * 1000 * 1000)
+		 {
 	}
-	HttpClientAccessManager::~HttpClientAccessManager() {
+	HttpClientAccessManagerImpl::~HttpClientAccessManagerImpl() {
 
 		FFL::CMutex::Autolock l(mPendingLock);
 		mPendingRequstList.clear();
@@ -56,35 +132,35 @@ namespace FFL {
 	//
 	//  启动，停止
 	//
-	bool HttpClientAccessManager::start() {
-		if (!mHttpRequestThread.isEmpty()) { 
-			FFL_LOG_DEBUG("HttpClientAccessManager: failed to start.");
+	bool HttpClientAccessManagerImpl::start() {
+		if (!mHttpRequestThread.isEmpty()) {
+			FFL_LOG_DEBUG("HttpClientAccessManagerImpl: failed to start.");
 			return false;
 		}
 
-		if (!mEventLoop.start(new ModuleThread("HttpClientAccessManager-eventloop"))) {
-			FFL_LOG_DEBUG("HttpClientAccessManager: failed to start eventloop .");
+		if (!mEventLoop.start(new ModuleThread("HttpClientAccessManagerImpl-eventloop"))) {
+			FFL_LOG_DEBUG("HttpClientAccessManagerImpl: failed to start eventloop .");
 			return false;
 		}
 
 		mHttpRequestThread = new HttpRequestThread(this);
-		mHttpRequestThread->run("HttpClientAccessManager-request");
+		mHttpRequestThread->run("HttpClientAccessManagerImpl-request");
 		mRequestQueue.start();
 		return true;
 	}
-	void HttpClientAccessManager::stop() {
+	void HttpClientAccessManagerImpl::stop() {
 		mRequestQueue.stop();
-		mEventLoop.stop();		
+		mEventLoop.stop();
 		if (!mHttpRequestThread.isEmpty()) {
 			mHttpRequestThread->requestExitAndWait();
 		}
 		mRequestQueue.clear();
 	}
-	
+
 	//
 	//  发送一个请求
 	//
-	bool HttpClientAccessManager::post(FFL::sp<HttpRequest>& request, FFL::sp<Callback> callback) {
+	bool HttpClientAccessManagerImpl::post(FFL::sp<HttpRequest>& request, FFL::sp<HttpClientAccessManager::Callback> callback) {
 		if (request.isEmpty()) {
 			return false;
 		}
@@ -103,7 +179,7 @@ namespace FFL {
 	//  返回是否还继续读写
 	//  priv:透传数据
 	//
-	bool HttpClientAccessManager::onNetEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv) {
+	bool HttpClientAccessManagerImpl::onNetEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv) {
 		//
 		//  找到请求
 		//
@@ -119,39 +195,39 @@ namespace FFL {
 					mPendingRequstList.erase(it);
 					break;
 				}
-			}						
+			}
 		}
-		
+
 		if (context.isEmpty()) {
 			return false;
 		}
-		
-        //
+
+		//
 		// 读应答
 		//
 		FFL::sp<HttpResponse> response = context->mHttpClient->readResponse();
-		FFL::sp<Callback> callback = context->mCallback;
+		FFL::sp<HttpClientAccessManager::Callback> callback = context->mCallback;
 		if (!callback.isEmpty()) {
 			if (response.isEmpty()) {
-				callback->onResponse(NULL, Callback::ERROR_UNKONW);
+				callback->onResponse(NULL, HttpClientAccessManager::Callback::ERROR_UNKONW);
 			}
 			else {
-				callback->onResponse(response, Callback::ERROR_SUC);
+				callback->onResponse(response, HttpClientAccessManager::Callback::ERROR_SUC);
 			}
-		}	
+		}
 		return false;
 	}
 
 	//
 	//  处理这个请求
 	//
-	bool HttpClientAccessManager::processRequest(FFL::sp<RequestContext> entry) {	
+	bool HttpClientAccessManagerImpl::processRequest(FFL::sp<RequestContext> entry) {
 		FFL::HttpUrl url;
 		entry->mRequest->getUrl(url);
-		
+
 		TcpClient* client = new TcpClient();
-		if (client->connect(url.mHost.c_str(), url.mPort, *client) == FFL_OK) {			
-			NetFD fd = client->getFd();		
+		if (client->connect(url.mHost.string(), url.mPort, *client) == FFL_OK) {
+			NetFD fd = client->getFd();
 			FFL::sp<HttpClient> httpClient = new HttpClient(client);
 			if (mEventLoop.addFd(fd, this, NULL, httpClient.get())) {
 				entry->mRequest->setHttpClient(httpClient);
@@ -166,19 +242,41 @@ namespace FFL {
 						mPendingRequstList.push_back(entry);
 					}
 					return true;
-				} 			
+				}
 				mEventLoop.removeFd(fd);
-			}			
+			}
 		}
 
-		entry->mCallback->onResponse(NULL, Callback::ERROR_CONNECT);
+		entry->mCallback->onResponse(NULL, HttpClientAccessManager::Callback::ERROR_CONNECT);
 		FFL_SafeFree(client);
 		return false;
 	}
+
 	
-	HttpClientAccessManager::RequestContext::RequestContext() :mCreateTimeUs(0), mTcpClient(NULL) {
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+
+	HttpClientAccessManager::HttpClientAccessManager() {
+		mImpl = new HttpClientAccessManagerImpl();
 	}
-	HttpClientAccessManager::RequestContext::~RequestContext() {
-		
+	HttpClientAccessManager::~HttpClientAccessManager(){
+		FFL_SafeFree(mImpl);
 	}
+   
+	//
+	//  启动，停止
+	//
+	bool HttpClientAccessManager::start() {
+		return mImpl->start();
+	}
+	void HttpClientAccessManager::stop() {
+		return mImpl->stop();
+	}
+	//
+	//  发送一个请求
+	//
+	bool HttpClientAccessManager::post(FFL::sp<HttpRequest>& request, FFL::sp<Callback> callback) {
+		return mImpl->post(request,callback);
+	}
+   
 }

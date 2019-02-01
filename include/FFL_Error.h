@@ -13,6 +13,9 @@
 #ifndef _FFL_ERROR_H_
 #define _FFL_ERROR_H_
 
+#include <FFL_Config.h>
+#include <FFL_Stdint.h>
+
 typedef enum  ERROR_NO
 {
 	/*  返回成功  */
@@ -93,6 +96,9 @@ extern "C" {
 
 	int FFL_set_error_no(int errorno, const char* s);
 	const int FFL_get_error_no();
+
+
+	FFLIB_API_IMPORT_EXPORT int FFL_outofmemory();
 
 #ifdef  __cplusplus
 }

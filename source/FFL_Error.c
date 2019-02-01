@@ -11,8 +11,8 @@
 *  错误，返回返回值定义
 */
 
-#include "FFL_Error.h"
-#include "FFL.h"
+#include <FFL_Error.h>
+#include <FFL_Core.h>
 
 /* 需要放到tls中 */
 static int s_errorNO=0;
@@ -44,3 +44,10 @@ const int FFL_get_error_no()
 	return s_errorNO;
 }
 
+
+int FFL_outofmemory()
+{
+	FFL_ASSERT(0);
+	FFL_LOG_ERROR("outofmemory");
+	return FFL_ERROR_SUCCESS;
+}

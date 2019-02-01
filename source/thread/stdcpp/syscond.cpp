@@ -9,13 +9,13 @@
 
 
 
-#include "FFL_core.h"
+#include <FFL_Core.h>
 #include <chrono>
 #include <ratio>
 #include <system_error>
 
 #include "internal_mutex_sys.h"
-#include "thread/FFL_mutex.h"
+#include <FFL_mutex.h>
 
 extern "C" FFL_cond * FFL_CreateCond(void)
 {    

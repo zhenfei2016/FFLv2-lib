@@ -12,7 +12,6 @@
 */
 
 #include <net/http/FFL_HttpUrl.hpp>
-#include <utils/FFL_StringHelper.hpp>
 #include "http-parser-2.1/http_parser.h"
 
 namespace FFL {	
@@ -34,7 +33,7 @@ namespace FFL {
 
 			int32_t off = parserUrl->field_data[field].off;
 			int32_t len = parserUrl->field_data[field].len;
-			val = url.substr(off, len);
+			val.append(url.string() + off, len);
 		}
 	}
 	//
@@ -44,7 +43,7 @@ namespace FFL {
 		mPort = 0;
 		FFL_LOG_DEBUG("HttpUrl::parse %s",url.c_str());
 		http_parser_url parserUrl;
-		if (http_parser_parse_url(url.c_str(), url.length(), 0, &parserUrl)!= 0) {			
+		if (http_parser_parse_url(url.string(), url.length(), 0, &parserUrl)!= 0) {			
 			return false;
 		}
 
@@ -54,20 +53,20 @@ namespace FFL {
 		getUrlField(url, mPath, &parserUrl, UF_PATH);
 		getUrlField(url, mQuery, &parserUrl, UF_QUERY);
 
-		mQueryParams.clear();
-		FFL::Vector<String> queryList=StringSplit(mQuery, "&");
-		if (queryList.size() >=2) {
-			mQuery = queryList[0];
-			for (int32_t i = 1; i < (int32_t)queryList.size(); i++) {
-				mQueryParams.push_back(queryList[i]);
-			}
-		}
+		//mQueryParams.clear();
+		//FFL::Vector<String> queryList=StringSplit(mQuery, "&");
+		//if (queryList.size() >=2) {
+		//	mQuery = queryList[0];
+		//	for (int32_t i = 1; i < (int32_t)queryList.size(); i++) {
+		//		mQueryParams.push_back(queryList[i]);
+		//	}
+		//}
 		FFL_LOG_DEBUG("HttpUrl::parse schema=%s  host=%s port=%d path=%s query=%s",
-			mSchema.c_str(),
-			mHost.c_str(),
+			mSchema.string(),
+			mHost.string(),
 			mPort,
-			mPath.c_str(),
-			mQuery.c_str());
+			mPath.string(),
+			mQuery.string());
 		return true;
 	}	
 }

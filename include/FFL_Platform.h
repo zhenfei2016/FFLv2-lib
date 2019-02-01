@@ -32,16 +32,16 @@ extern "C" {
  */
 #ifndef MACOSX
 #if defined(__MACOSX__) || defined(__APPLE__)
-#define MACOSX
+#define MACOSX 1
 #endif 
 #endif
 
 /* 
  *apple  ios平台 
  */
-#ifndef APPLE
+#ifndef IOS
 #if defined(__APPLE__)
-#define APPLE
+#define IOS 1
 #endif
 #endif
 
@@ -61,7 +61,7 @@ extern "C" {
 #define FFL_COMPILER_LOG(f) 
 #if defined(WIN32)
 	FFL_COMPILER_LOG(target platform win32)
-#elif defined(APPLE)
+#elif defined(IOS)
 	FFL_COMPILER_LOG(target platform ios)
 #elif defined(MACOSX)
 	FFL_COMPILER_LOG(target platform macosx)
@@ -70,7 +70,6 @@ extern "C" {
 #else
 	FFL_COMPILER_LOG(target platform not support)
 #endif
-
 
 #ifdef __cplusplus
 }

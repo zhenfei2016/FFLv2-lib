@@ -1,4 +1,4 @@
-#include <FFL.h>
+#include <FFL_Lib.h>
 
 class LeakObject {
 public:
@@ -28,19 +28,19 @@ int FFL_main() {
 	char exeName[1024] = {};
 	FFL_getCurrentProcessPath(exePath, 1023, exeName);
 
-	std::string path;
-	path = exePath;
+	FFL::String path(exePath);
+	//path = exePath;
 	path += "memoryLeank.log";
 
 	if (0) {
 		//
 		//  需要需要检测，则开启这个函数，当有上次标记的泄漏的时候会触发assert中断
 		//
-		FFL_checkMemoryLeak(path.c_str());
+		FFL_checkMemoryLeak(path.string());
 	}
 
 
 	testLeak();
-	FFL_dumpMemoryLeakFile(path.c_str());
+	FFL_dumpMemoryLeakFile(path.string());
 	return 0;
 }

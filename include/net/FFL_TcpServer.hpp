@@ -19,7 +19,8 @@
 #include <net/FFL_TcpClient.hpp>
 
 namespace FFL {    
-	class TcpServer : public Module{
+	class TcpServerImpl;
+	class FFLIB_API_IMPORT_EXPORT TcpServer : public Module{
 	public:
 		class Callback {
 		public:
@@ -44,17 +45,7 @@ namespace FFL {
 			      const char* name=NULL);
 		virtual ~TcpServer();
 
-	protected:
-
-		//
-		//  调用。start，stop会触发onStart,onStop的执行
-		//  onStart :表示准备开始了 ,可以做一些初始化工作
-		//  onStop :表示准备停止了 ,可以做停止前的准备，想置一下信号让eventloop别卡住啊 
-		//  在这些函数中，不要再调用自己的函数，例如：start,stop, isStarted等
-		//
-		virtual bool onStart();
-		virtual void onStop();
-	public:
+		
 		//
 		//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
 		//   waitTime:输出参数，下一次执行eventLoop等待的时长
@@ -62,69 +53,11 @@ namespace FFL {
 		//   false : 不需要继续执行eventloop
 		//
 		virtual bool eventLoop(int32_t* waitTime) ;
-	private:
-		//
-		//  处理超时
-		//
-		void processTimeout();
 	protected:
-		std::string mServerName;
-		class ClientContext :public FFL::RefBase {
-		public:
-			ClientContext(NetFD fd);
-			NetFD mFd;
-			TcpClient mClient;
-			//
-			// 最后一次发送接受的时间点
-			//
-			int64_t mLastSendRecvTimeUs;
-			//
-			// 多长时间没有数据就关闭这个连接
-			//
-			int64_t mTimeoutUs;
-		};
-
-		CMutex mCLientsLock;
-		std::list< FFL::sp<ClientContext> > mClients;
-		void addClient(FFL::sp<ClientContext> contex);
-		void removeClient(NetFD fd);
-
-		virtual bool onClientCreated(ClientContext* context);
-		virtual void onClientDestroyed(ClientContext* client);
-		virtual bool onClientReceived(ClientContext* context);
-
-
-		Callback* mHandler;
+		virtual bool onStart();
+		virtual void onStop();
 	private:
-		//
-		//  监听一个客户端连接上来
-		//
-		class TcpListenerCb : public TcpListener::Callback {
-		public:
-			TcpListenerCb(TcpServer* server);
-			virtual void onAcceptClient(NetFD fd);
-			TcpServer* mServer;
-		};
-		TcpListener* mTcpListener;
-		TcpListenerCb* mTcpListenerCallback;
-	private:
-		//
-		//  监听socket是否有可读的消息了
-		//
-		class TcpEventHandler : public NetEventLoop::Callback {
-		public:
-			TcpEventHandler(TcpServer* server) :mServer(server){}
-			//
-			//  返回是否还继续读写
-			//  priv:透传数据
-			//
-			virtual bool onNetEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv);
-			TcpServer* mServer;
-		};
-		NetEventLoop* mEventLoop;
-		TcpEventHandler* mEventHandler;		
-	
-        
+		TcpServerImpl* mImpl;
 	};
 }
 #endif

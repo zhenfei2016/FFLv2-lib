@@ -13,17 +13,13 @@
 #ifndef _FFL_NET_FDEVENT_HPP_
 #define _FFL_NET_FDEVENT_HPP_
 
-#include <FFL.h>
-#include <utils/FFL_Module.hpp>
-#include <thread/FFL_Thread.hpp>
-#include <thread/FFL_Mutex.hpp>
+#include <FFL_Core.h>
+#include <FFL_Module.hpp>
 #include <net/base/FFL_Net.h>
-#include <utils/FFL_List.hpp>
 
 namespace FFL {
-	class SocketPair;
-	class EventPacket;
-	class NetEventLoop : public FFL::Module {
+	class NetEventLoopImpl;
+	class FFLIB_API_IMPORT_EXPORT NetEventLoop : public FFL::Module {
 	public:
 		class Callback {
 		public:
@@ -72,73 +68,7 @@ namespace FFL {
 		//
 		virtual bool eventLoop(int32_t* waitTime);
 	protected:
-		struct  FdEntry {
-			//
-			// 句柄
-			//
-			NetFD mFd;
-			//
-			//  移除这个fd
-			//
-			bool mRemoved;
-			//
-			//  当前状态，可读 0x01  | 可写 0x010
-			//
-			int8_t mFlag;
-			//
-			//  读写处理handler
-			//
-			NetEventLoop::Callback* mReadHandler;
-			NetEventLoop::CallbackFree mReadHandlerFree;
-			void* mPriv;
-
-		};
-		FdEntry* findFdEntry(NetFD fd);
-
-		bool processAddFd(NetFD fd,
-			NetEventLoop::Callback* readHandler,
-			NetEventLoop::CallbackFree readHandlerFree,
-			void* priv);
-		//
-		//  移除这个句柄的处理handler
-		//
-		bool processRemoveFd(FdEntry* entry);
-		//
-		//  处理一下可读的fd,返回是否技术
-		//
-		bool processReadableFd(NetFD* fdList, int8_t* readableFlagList,int32_t numFd);		
-	private:
-		//
-		//  本系统的控制端口
-		//
-		FFL::SocketPair* mSocketPairControl;		
-		NetFD mControlFd;
-		bool mOnlyTryControlFd;
-		int64_t mEventNextId;
-		bool processControlEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv);
-	private:
-		//
-		//  停止的标志
-		//
-		volatile bool mStopLoop;
-		//
-		//  轮训等待时长
-		//
-		int64_t  mWaitUs;
-		//
-		//  管理的fd列表
-		//
-		FdEntry* mFdList;
-		int mFdNum;
-
-	private:
-		void addEvent(EventPacket* event);
-		void removeEvent(EventPacket* event);
-		//
-		//  当前所有的add,remove事件
-		//
-		FFL::CMutex mEventsLock;
-		List<EventPacket*> mPendingEvents;
+		NetEventLoopImpl* mImpl;
 	};
 }
 

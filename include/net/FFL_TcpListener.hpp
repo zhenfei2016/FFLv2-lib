@@ -13,9 +13,9 @@
 #ifndef _FFL_TCP_LISTENER_HPP_
 #define _FFL_TCP_LISTENER_HPP_
 
-#include <utils/FFL_Module.hpp>
+#include <FFL_Module.hpp>
 namespace FFL {
-	class TcpListener : public Module {
+	class FFLIB_API_IMPORT_EXPORT TcpListener : public Module {
 	public:
 		class Callback {
 		public:

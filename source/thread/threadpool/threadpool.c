@@ -33,8 +33,8 @@
  *  Copyright (C) 2017-2018 zhufeifei All rights reserved.
  *
 */
-#include <thread/FFL_Thread.h>
-#include <thread/FFL_Mutex.h>
+#include <FFL_Thread.h>
+#include <FFL_Mutex.h>
 #include "threadpool_job.h"
 #include "threadpool.h"
 
@@ -93,13 +93,19 @@ int sys_threadpool_init( sys_threadpool **p_pool, int threads,
 
     threads=FFL_MAX(threads,2);
     sys_threadpool *pool;
-    CHECKED_MALLOCZERO(pool,sizeof(sys_threadpool));
+    pool=FFL_mallocz(sizeof(sys_threadpool));
+	if (pool == 0) {
+		goto fail;
+	}
     *p_pool = pool;
 
     pool->init_func = init_func;
     pool->init_arg  = init_arg;
     pool->threads   = threads;
-    CHECKED_MALLOC( pool->thread_handle, pool->threads * sizeof(FFL_Thread*) );
+	pool->thread_handle=FFL_mallocz( pool->threads * sizeof(FFL_Thread*) );
+	if (pool->thread_handle == 0) {
+		goto fail;
+	}
 
     if( FFL_job_list_init( &pool->uninit, pool->threads ) ||
             FFL_job_list_init( &pool->run, pool->threads ))
@@ -108,7 +114,10 @@ int sys_threadpool_init( sys_threadpool **p_pool, int threads,
     for( int i = 0; i < pool->threads; i++ )
     {
        FFL_threadpool_job *job;
-       CHECKED_MALLOC( job, sizeof(FFL_threadpool_job) );
+       job= FFL_mallocz(sizeof(FFL_threadpool_job));
+	   if (job == NULL) {
+		   return -1;
+	   }
         FFL_job_list_push( &pool->uninit, job );
     }
     for( int i = 0; i < pool->threads; i++ ) {

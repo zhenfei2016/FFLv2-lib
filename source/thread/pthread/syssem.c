@@ -1,4 +1,4 @@
-#include "FFL.h"
+#include <FFL_Core.h>
 
 #if defined(MACOSX) || defined(IPHONEOS)
 /* Mac OS X doesn't support sem_getvalue() as of version 10.4 */

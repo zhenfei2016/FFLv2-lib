@@ -7,16 +7,17 @@
 *  FFL_SocketPair.hpp
 *  Created by zhufeifei(34008081@qq.com) on 2018/11/24
 *  https://github.com/zhenfei2016/FFLv2-lib.git
-*  socketpair模拟定义
+*  socketpair妯℃嫙瀹氫箟
 *
 */
 
 #ifndef _FFL_SOCKET_PAIR_HPP_
 #define _FFL_SOCKET_PAIR_HPP_
 #include <net/base/FFL_Net.h>
+#include <FFL_Core.h>
 
 namespace FFL{
-	class  SocketPair{		
+	class FFLIB_API_IMPORT_EXPORT SocketPair{		
 	public:
 		SocketPair();
 		~SocketPair();
@@ -28,11 +29,11 @@ namespace FFL{
 		NetFD getFd1() const;
 
 		//
-		//  fd0上写
+		//  fd0涓婂啓
 		//
 		bool writeFd0(const uint8_t* data,size_t size,size_t* writedSize);
 		//
-		//  fd1上读
+		//  fd1涓婅
 		//
 		bool readFd1(uint8_t* data, size_t size, size_t* readedSize);
 	private:

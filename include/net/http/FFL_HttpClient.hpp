@@ -16,13 +16,13 @@
 
 #include <net/FFL_TcpClient.hpp>
 #include <net/FFL_NetStream.hpp>
-#include <ref/FFL_RefBase.hpp>
+#include <FFL_RefBase.hpp>
 
 namespace FFL {   
    class HttpRequest;
    class HttpResponse;  
   
-   class HttpClient : public RefBase{
+   class FFLIB_API_IMPORT_EXPORT HttpClient : public RefBase{
     public:
 		HttpClient(TcpClient* client);
 		~HttpClient();
@@ -62,5 +62,7 @@ namespace FFL {
 	   TcpClient* mClient;
 	   NetStreamReader mData;
    };  
+
+   template class FFLIB_API_IMPORT_EXPORT FFL::sp<HttpClient>;
 }
 #endif

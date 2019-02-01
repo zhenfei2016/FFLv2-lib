@@ -8,8 +8,8 @@
  */
 
 
-#include "FFL.h"
-#include "thread/FFL_Mutex.h"
+#include <FFL_Core.h>
+#include <FFL_Mutex.h>
 
 #define FFL_MUTEX_MAXWAIT   (~(uint32_t)0)
 void FFL_DestroySemaphore(FFL_sem * sem);

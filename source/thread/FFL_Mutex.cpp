@@ -11,7 +11,7 @@
 *  锁，条件变量包装
 */
 
-#include <thread/FFL_Mutex.hpp>
+#include <FFL_Mutex.hpp>
 
 namespace FFL {
 	CMutex::CMutex() 

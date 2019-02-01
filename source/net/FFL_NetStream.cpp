@@ -12,7 +12,7 @@
 */
 #include <net/base/FFL_Net.h>
 #include <net/FFL_NetStream.hpp>
-#include <utils/FFL_ByteBuffer.hpp>
+#include <FFL_ByteBuffer.hpp>
 
 namespace FFL {
 	NetStreamReader::NetStreamReader(CSocket* socket) :mSocket(socket) {
@@ -76,21 +76,27 @@ namespace FFL {
 	//
 	//  ByteReader 读
 	//
-	bool NetStreamReader::read1Bytes(int8_t& val) {
-		return false;
-    }
-	bool NetStreamReader::read2Bytes(int16_t& val) {
-		return false;
+	int8_t NetStreamReader::read1Bytes(bool* suc) {
+		if (suc) *suc = false;
+		return 0;
 	}
-	bool NetStreamReader::read3Bytes(int32_t& val){
-		return false;
+	int16_t NetStreamReader::read2Bytes(bool* suc) {
+		if (suc) *suc = false;
+		return 0;
 	}
-	bool NetStreamReader::read4Bytes(int32_t& val) {
-		return false;
+	int32_t NetStreamReader::read3Bytes(bool* suc) {
+		if (suc) *suc = false;
+		return 0;
 	}
-	bool NetStreamReader::read8Bytes(int64_t& val) {
-		return false;
+	int32_t NetStreamReader::read4Bytes(bool* suc) {
+		if (suc) *suc = false;
+		return 0;
 	}
+	int64_t NetStreamReader::read8Bytes(bool* suc){
+		if (suc) *suc = false;
+		return 0;
+	}
+
 	bool NetStreamReader::readString(String& val, uint32_t len) {
 		return false;
 	}

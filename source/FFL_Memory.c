@@ -12,55 +12,23 @@
 */
 
 #include "FFL_Memory.h"
-#include "FFL.h"
 #if  CHECK_FOR_MEMORY_LEAKS
 #include "memoryLeak.c"
 #else
 #include "memory.c"
 #endif
 
-
-int FFL_outofmemory()
-{
-	FFL_ASSERT(0);
-	FFL_LOG_ERROR("outofmemory");
-	return FFL_ERROR_SUCCESS;
+/*
+*  内存申请，并且清空
+*/
+void *FFL_mallocz(size_t size) {
+	void *mem = FFL_malloc(size);
+	if (mem)
+		memset(mem, 0, size);
+	return mem;
 }
 
-char* FFL_CALL FFL_strdup(const char *s)
-{
-	char *ptr = NULL;
-	if (s) {
-		size_t len = strlen(s) + 1;
-		ptr = FFL_mallocz(len);
-		if (ptr)
-			memcpy(ptr, s, len);
-	}
-	return ptr;
-}
-
-char* FFL_CALL FFL_strndup(const char *s, size_t len)
-{
-	char *ret = NULL, *end;
-
-	if (!s)
-		return NULL;
-
-	end = memchr(s, 0, len);
-	if (end)
-		len = end - s;
-
-	ret = FFL_mallocz(len + 1);
-	if (!ret)
-		return NULL;
-
-	memcpy(ret, s, len);
-	ret[len] = 0;
-	return ret;
-}
-
-int FFL_isLittleEndian()
-{
+int FFL_isLittleEndian(){
 	static int littleEndian = -1;
 	if (littleEndian == -1) {
 		union {

@@ -76,33 +76,37 @@ namespace FFL {
 
 		String headerInfo;
 		{
-			String format;
-			format = "POST %s HTTP/1.1\r\n"
+			static const char* format =
+				"POST %s HTTP/1.1\r\n"
 				"%s: %s\r\n"
 				"%s: %d\r\n";
 
 			String type;
 			mHeader.getContentType(type);
-			formatString(headerInfo, format.c_str(), (mUrl.mPath + "?" +  mUrl.mQuery).c_str(),
-				HTTP_KEY_CONTENTYPE, type.c_str(),
+
+			headerInfo = String::format(format, 
+				(mUrl.mPath + "?" + mUrl.mQuery).string(),
+				HTTP_KEY_CONTENTYPE, type.string(),
 				HTTP_KEY_CONTENTLEN, contentLength);
 		}
 
-		std::map<String, String> keys;
-		mHeader.getAll(keys);
-		for (std::map<String, String>::iterator it = keys.begin(); it != keys.end(); it++) {
-			if (strcmp(HTTP_KEY_CONTENTYPE, it->first.c_str()) == 0) {
-				continue;
-			}
-			else if (strcmp(HTTP_KEY_CONTENTLEN, it->first.c_str()) == 0) {
-				continue;
-			}
+		int32_t buffCount = 20;
+		FFL::Dictionary::Pair pairs[20];
+		mHeader.getAll(pairs, &buffCount);
 
-			headerInfo += it->first + ":" + it->second + "\r\n";
+		for (int32_t i = 0; i < buffCount; i++) {
+			if (strcmp(HTTP_KEY_CONTENTYPE, pairs[i].key.string()) == 0) {
+				continue;
+			}
+			else if (strcmp(HTTP_KEY_CONTENTLEN, pairs[i].key.string()) == 0) {
+				continue;
+			}
+			headerInfo += pairs[i].key + ":" + pairs[i].value + "\r\n";
 		}
 
+
 		headerInfo += "\r\n";
-		return mClient->write(headerInfo.c_str(), headerInfo.size(), 0);
+		return mClient->write(headerInfo.string(), headerInfo.size(), 0);
 	}
 	bool HttpRequest::writeContent(const char* content, int32_t requestSize) {
 		return mClient->write(content, requestSize,0);

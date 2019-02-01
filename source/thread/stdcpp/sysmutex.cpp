@@ -8,11 +8,11 @@
  */
 
 
-#include "FFL_core.h"
+#include <FFL_core.h>
 #include <system_error>
 
 #include "internal_mutex_sys.h"
-#include "thread/FFL_mutex.h"
+#include <FFL_mutex.h>
 
 
 /* Create a mutex */

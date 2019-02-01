@@ -1,4 +1,4 @@
-#include <FFL.h>
+#include <FFL_lib.h>
 
 extern int FFL_main();
 extern "C" int main(int argc ,const char* argv[]) {	

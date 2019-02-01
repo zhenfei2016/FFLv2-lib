@@ -12,9 +12,7 @@
 */
 
 #include <net/http/FFL_HttpResponseFile.hpp>
-
-#include <utils/FFL_StringHelper.hpp>
-#include <utils/FFL_File.hpp>
+#include <FFL_File.hpp>
 #include <net/http/FFL_HttpClient.hpp>
 
 namespace FFL {
@@ -45,7 +43,7 @@ namespace FFL {
 		};
 
 		for (int32_t i = 0; i < FFL_ARRAY_ELEMS(sMap); i++) {
-			if (stringEndsWith(filePath, sMap[i].ext)) {
+			if (filePath.endWith(sMap[i].ext)) {
 				fileType = sMap[i].contentType;
 				return true;
 			}
@@ -104,7 +102,7 @@ namespace FFL {
 	}
 	bool HttpResponseFile::guessFileType(const char* fileName) {
 		String contentType;
-		if (isSupportFile(fileName, contentType)) {
+		if (isSupportFile(String(fileName), contentType)) {
 			mHeader.setContentType(contentType);
 			return true;
 		}

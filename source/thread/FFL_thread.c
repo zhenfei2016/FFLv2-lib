@@ -11,8 +11,8 @@
  *
  */
 
-#include <thread/FFL_Thread.h>
-#include <thread/FFL_Mutex.h>
+#include <FFL_Thread.h>
+#include <FFL_Mutex.h>
 #include "FFL_thread_sys.h"
 
 typedef struct

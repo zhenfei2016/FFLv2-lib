@@ -15,18 +15,19 @@
 #define _FFL_HTTP_SERVER_HPP_
 
 #include <net/FFL_TcpServer.hpp>
-#include <utils/FFL_ByteStream.hpp>
+#include <FFL_ByteStream.hpp>
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
 #include <net/http/FFL_HttpResponseFile.hpp>
 #include <net/http/FFL_HttpResponseBuilder.hpp>
 
 namespace FFL {        
-	class HttpClient;
-    class HttpServer : public Module{
+	class HttpServerImpl;
+    class FFLIB_API_IMPORT_EXPORT HttpServer : public Module{
 	public:
 		class Callback: public RefBase {
 		public:
+			virtual ~Callback();
 			//
 			//  返回false则强制关闭这个连接
 			//
@@ -47,23 +48,6 @@ namespace FFL {
         void registerApi(const HttpApiKey& key, FFL::sp<HttpServer::Callback> handler);
         FFL::sp<HttpServer::Callback> unregisterApi(const HttpApiKey& key);
         FFL::sp<HttpServer::Callback> getRegisterApi(const HttpApiKey& key);
-
-	protected:
-
-		struct ApiEntry {
-			HttpApiKey mKey;
-			FFL::sp<HttpServer::Callback> mHandler;
-		};
-		std::list<ApiEntry*> mApiList;
-		CMutex mApiListLock;
-
-		bool onHttpClientCreate(TcpClient* client, int64_t* aliveTimeUs);
-		void onHttpClientDestroy(TcpClient* client, int reason);
-		bool onHttpClientReceived(TcpClient* client);
-		//
-		//  处理http请求
-		//
-		bool processHttpRequest(FFL::sp<HttpRequest> request);
 	protected:
 		//
 		//  调用。start，stop会触发onStart,onStop的执行
@@ -81,32 +65,9 @@ namespace FFL {
 		//   false : 不需要继续执行eventloop
 		//
 		virtual bool eventLoop(int32_t* waitTime);
-	protected:
-		class HttpContext {
-		public:
-			HttpContext(TcpClient* client);
-			~HttpContext();
 
-			TcpClient* mTcpClient;
-			FFL::sp<HttpClient> mHttpClient;
-		};
 	private:
-		class TcpServerCallback : public TcpServer::Callback {
-		public:
-			TcpServerCallback(HttpServer* server);
-			
-			//
-			//  aliveTimeUs:保活时长，如果超过这么长时间还没有数据则干掉这个client
-			//              <0 一直存活， 
-			//
-			virtual bool onClientCreate(TcpClient* client, int64_t* aliveTimeUs);
-			virtual void onClientDestroy(TcpClient* client, int reason) ;
-			virtual bool onClientReceived(TcpClient* client);
-
-			HttpServer* mServer;
-		};
-		TcpServer* mTcpServer;
-		TcpServerCallback* mTcpCallback;
+		HttpServerImpl* mImpl;
 	};
 }
 

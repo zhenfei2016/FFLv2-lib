@@ -1,4 +1,5 @@
-function(group_by_dir src_dir)
+#分组源文件 
+FUNCTION(group_by_dir src_dir)
   foreach(FILE ${ARGN})
     # 获取文件绝对路径
     get_filename_component(FULL_NAME "${FILE}" ABSOLUTE)
@@ -22,6 +23,30 @@ function(group_by_dir src_dir)
     source_group("${GROUP}" FILES "${FILE}")
   endforeach()
 endfunction(group_by_dir)
+
+#打印参数
+FUNCTION(printf arg)
+   message("message:" ${ARGV0})
+ENDFUNCTION()
+
+
+# mt编译
+FUNCTION(MSVC_mt)
+if (MSVC)
+    add_definitions("/wd4819")
+    set(CompilerFlags
+        CMAKE_CXX_FLAGS
+        CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        )
+    foreach(CompilerFlag ${CompilerFlags})
+        string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+    endforeach()
+endif(MSVC)
+ENDFUNCTION()
 
 #group_by_dir("${CMAKE_CURRENT_SOURCE_DIR}" ${INC_LIST})
 #group_by_dir("${CMAKE_CURRENT_SOURCE_DIR}" ${SRC_LIST})

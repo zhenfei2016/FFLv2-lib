@@ -8,7 +8,7 @@
 *  Created by zhufeifei(34008081@qq.com) on 2018/12/08
 *  https://github.com/zhenfei2016/FFL-v2.git
 *
-*  httpÓ¦´ğÎÄ¼şÇëÇóµÄ
+*  httpåº”ç­”æ–‡ä»¶è¯·æ±‚çš„
 */
 
 #include <net/http/FFL_HttpResponseBuilder.hpp>
@@ -28,14 +28,14 @@ namespace FFL {
 
 	}
 	//
-	//  ¹¹ÔìÒ»¸öÓ¦´ğ
+	//  æ„é€ ä¸€ä¸ªåº”ç­”
 	//
 	FFL::sp<HttpResponse> HttpResponseBuilder::createResponse(HttpRequest* request) {
 		FFL::sp<HttpResponse> response = new HttpResponse(request->mClient);
 		return response;
 	}
 	//
-	//  ¹¹ÔìÒ»¸öÎÄ¼şÓ¦´ğ
+	//  æ„é€ ä¸€ä¸ªæ–‡ä»¶åº”ç­”
 	//
 	FFL::sp<HttpResponseFile> HttpResponseBuilder::createResponseFile(HttpRequest* request) {
 		FFL::sp<HttpResponseFile> response = new HttpResponseFile(request->mClient);

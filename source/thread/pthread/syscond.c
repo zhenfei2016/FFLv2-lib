@@ -23,9 +23,9 @@
 #include <pthread.h>
 #include <errno.h>
 
-#include "FFL.h"
+#include <FFL_Core.h>
 #include "internal_mutex_sys.h"
-#include "thread/FFL_Mutex.h"
+#include <FFL_Mutex.h>
 
 
 /* Create a condition variable */

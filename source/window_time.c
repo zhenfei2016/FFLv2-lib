@@ -1,9 +1,9 @@
 #include <windows.h>
 #include<time.h>
 /*
- * gStarted£ºÊÇ·ñ³õÊ¼»¯ÁË
- * gFreq   £ºcpuÆµÂÊ²ÎÊı
- * gStartUs£º³õÊ¼»¯µÄÊ±ºòµÄ³õÊ¼Öµ
+ * gStartedï¼šæ˜¯å¦åˆå§‹åŒ–äº†
+ * gFreq   ï¼šcpué¢‘ç‡å‚æ•°
+ * gStartUsï¼šåˆå§‹åŒ–çš„æ—¶å€™çš„åˆå§‹å€¼
  */
 static int gStarted=0;
 static LARGE_INTEGER gFreq;

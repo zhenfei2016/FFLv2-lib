@@ -15,8 +15,8 @@
 #define _FFL_HTTp_HEADER_HPP_
 
 
-#include <FFL.h>
-#include <utils/FFL_Dictionary.hpp>
+#include <FFL_Core.h>
+#include <FFL_Dictionary.hpp>
 
 namespace FFL {	
 	//
@@ -28,7 +28,7 @@ namespace FFL {
 	//
     #define HTTP_KEY_CONTENTYPE  "Content-Type"
 
-	class HttpHeader : public Dictionary {
+	class FFLIB_API_IMPORT_EXPORT HttpHeader : public Dictionary {
 	public:
 		HttpHeader();
 		~HttpHeader();

@@ -10,7 +10,7 @@
 *
 *  路径处理
 */
-#include <FFL.h>
+#include <FFL_Path.h>
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -60,6 +60,8 @@ status_t FFL_getWorkPath(char* workPath, size_t len) {
 #if WIN32
     GetCurrentDirectory(len, workPath);
     separator='\\';
+#elif IOS
+    return  FFL_FAILED;
 #else
     getcwd(workPath,len);
     separator='/';

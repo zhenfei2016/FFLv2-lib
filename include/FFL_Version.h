@@ -13,9 +13,7 @@
 #ifndef _FFL_VERSION_H_
 #define _FFL_VERSION_H_
 
-
-#include "FFL_Utility.h"
-
+#include <FFL_Core.h>
 
 #define FFL_VERSION_INT(a, b, c) ((a)<<16 | (b)<<8 | (c))
 #define FFL_VERSION_DOT(a, b, c) a ##.## b ##.## c
@@ -24,8 +22,8 @@
  *  对应版本号的3段
  *  
 */
-#define FFL_VERSION_MAJOR  2
-#define FFL_VERSION_MINOR  2
+#define FFL_VERSION_MAJOR  3
+#define FFL_VERSION_MINOR  0
 #define FFL_VERSION_MICRO  0
 
 /*
@@ -45,12 +43,12 @@ extern "C" {
 /*
 *  获取版本号，字符串类型
 */
-const char* FFL_CALL FFL_GetVersion();
+FFLIB_API_IMPORT_EXPORT const char* FFL_CALL FFL_GetVersion();
 
 /*
  *  获取版本号，整形
  */
-int FFL_CALL FFL_GetVersion_int();
+FFLIB_API_IMPORT_EXPORT int FFL_CALL FFL_GetVersion_int();
 
 #ifdef  __cplusplus
 }

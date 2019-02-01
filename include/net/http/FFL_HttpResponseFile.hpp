@@ -15,12 +15,12 @@
 
 #include <net/http/FFL_HttpResponse.hpp>
 #include <net/http/FFL_HttpStreamCallback.hpp>
-#include <utils/FFL_Io.hpp>
+#include <FFL_Io.hpp>
 
 namespace FFL {	
 
 	class HttpClient;
-	class HttpResponseFile : public HttpResponse,
+	class FFLIB_API_IMPORT_EXPORT HttpResponseFile : public HttpResponse,
 	   public HttpStreamCallback  {
 	protected:
 		friend class HttpResponseBuilder;

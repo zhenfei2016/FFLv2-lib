@@ -14,15 +14,15 @@
 #define _FFL_HTTP_RESPONSE_HTTP_HPP_
 
 
-#include <FFL.h>
-#include <ref/FFL_Ref.hpp>
+#include <FFL_Core.h>
+#include <FFL_Ref.hpp>
 #include <net/http/FFL_HttpHeader.hpp>
 #include <net/http/FFL_HttpStreamCallback.hpp>
 
 namespace FFL {
 	class HttpClient;
 	class ByteBuffer;	
-	class HttpResponse : public RefBase{		
+	class FFLIB_API_IMPORT_EXPORT HttpResponse : public RefBase{
 	protected:
 	    friend class HttpClient;
 		friend class HttpRequest;

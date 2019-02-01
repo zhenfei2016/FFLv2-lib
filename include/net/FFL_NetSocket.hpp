@@ -13,10 +13,10 @@
 #ifndef _FFL_SOCKET_HPP_
 #define _FFL_SOCKET_HPP_
 
-#include <utils/FFL_Io.hpp>
+#include <FFL_Io.hpp>
 
 namespace FFL {
-	class CSocket : public IOReader,public IOWriter {
+	class FFLIB_API_IMPORT_EXPORT CSocket : public IOReader,public IOWriter {
 	public:
 		enum Protocol{
 			PROTOCOL_TCP = 0,

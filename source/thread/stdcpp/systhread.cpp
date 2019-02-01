@@ -6,16 +6,11 @@
  *  Copyright (C) 2017-2018 zhufeifei All rights reserved.
  *  stl11库中的thread,主要移植于SDL库
  */
-
-
-
 #include "internal_thread_sys.h"
 typedef struct FFL_Thread_sys FFL_Thread;
 
-//#include "sysmutex.hpp"
 #include <thread>
 #include <system_error>
-#include <FFL_cpp_auto_delete.hpp>
 #ifdef WIN32
 #include <windows.h>
 #else

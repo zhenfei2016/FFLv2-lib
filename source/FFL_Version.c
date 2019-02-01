@@ -11,8 +11,8 @@
 *
 */
 
-#include "FFL_Version.h"
-#include "FFL_Utility.h"
+#include <FFL_Version.h>
+
 
 static const char* s_ffl_version = FFL_TOSTRING( FFLLIB_VERSION_STRING);
 /*

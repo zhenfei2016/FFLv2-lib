@@ -33,7 +33,7 @@ namespace FFL {
 
 		FFL_SafeFree(mUdpParmas);
 		mUdpParmas = new UdpParam();
-		memset(mUdpParmas, 0, sizeof(mUdpParmas));
+		memset((void*)mUdpParmas, 0, sizeof(mUdpParmas));
 
 	}
 	NetFD CSocket::getFd() const {

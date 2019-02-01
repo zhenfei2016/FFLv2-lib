@@ -1,8 +1,7 @@
 #ifndef _FFL_SOCKET_DEF_H_
 #define _FFL_SOCKET_DEF_H_
 
-#include "FFL_Platform.h"
-#include "FFL_Config.h"
+#include <FFL_Core.h>
 
 #ifdef WIN32
 #define _WINSOCK_DEPRECATED_NO_WARNINGS

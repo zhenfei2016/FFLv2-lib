@@ -11,9 +11,9 @@
 *  分析http请求，分离header /body等
 */
 
-#include <utils/FFL_String.hpp>
-#include <utils/FFL_Dictionary.hpp>
-#include <utils/FFL_ByteStream.hpp>
+#include <FFL_String.hpp>
+#include <FFL_Dictionary.hpp>
+#include <FFL_ByteStream.hpp>
 #include <net/http/FFL_HttpParser.hpp>
 #include <net/FFL_NetStream.hpp>
 #include "httpParserImpl.hpp"

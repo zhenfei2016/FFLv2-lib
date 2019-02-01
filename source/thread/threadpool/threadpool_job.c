@@ -40,7 +40,10 @@ int FFL_job_list_init( FFL_sync_job_list *slist, int max_size )
         return -1;
     slist->i_max_size = max_size;
     slist->i_size = 0;
-    CHECKED_MALLOCZERO( slist->list, (max_size+1) * sizeof(FFL_threadpool_job*) );
+    slist->list= FFL_mallocz ((max_size+1) * sizeof(FFL_threadpool_job*) );
+	if (slist->list == 0) {
+		return -1;
+	}
     slist->mutex=FFL_CreateMutex();
     slist->cv_fill=FFL_CreateCond();
     slist->cv_empty=FFL_CreateCond();
@@ -55,8 +58,6 @@ int FFL_job_list_init( FFL_sync_job_list *slist, int max_size )
         return -1;
     }
     return 0;
-fail:
-    return -1;
 }
 
 void FFL_job_list_delete( FFL_sync_job_list *slist )

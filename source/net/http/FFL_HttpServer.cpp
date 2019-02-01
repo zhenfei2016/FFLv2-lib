@@ -8,7 +8,7 @@
 *  Created by zhufeifei(34008081@qq.com) on 2018/11/08
 *  https://github.com/zhenfei2016/FFLv2-lib.git
 *
-*  http������������һ�汾�������޸ĵ�
+*  http服务器，在上一版本基础上修改的
 */
 
 #include <net/http/FFL_HttpServer.hpp>
@@ -18,21 +18,93 @@
 #include <net/FFL_TcpClient.hpp>
 #include <net/FFL_TcpServer.hpp>
 #include <net/http/FFL_HttpClient.hpp>
+#include <list>
 
 namespace FFL {
 
-	HttpServer::HttpServer(const char* ip, int32_t port){
+	class HttpServerImpl {		
+		public:
+			class Callback : public RefBase {
+			public:
+				//
+				//  返回false则强制关闭这个连接
+				//
+				virtual bool onHttpQuery(HttpRequest* request) = 0;
+			};
+		public:
+			HttpServerImpl(const char* ip, int32_t port);
+			virtual ~HttpServerImpl();
+		public:		
+			//
+			//  注册处理指定http ，请求的处理句柄
+			//
+			void registerApi(const HttpServer::HttpApiKey& key, FFL::sp<HttpServer::Callback> handler);
+			FFL::sp<HttpServer::Callback> unregisterApi(const HttpServer::HttpApiKey& key);
+			FFL::sp<HttpServer::Callback> getRegisterApi(const HttpServer::HttpApiKey& key);
+
+	
+			struct ApiEntry {
+				HttpServer::HttpApiKey mKey;
+				FFL::sp<HttpServer::Callback> mHandler;
+			};
+			std::list<ApiEntry*> mApiList;
+			CMutex mApiListLock;
+
+			bool onHttpClientCreate(TcpClient* client, int64_t* aliveTimeUs);
+			void onHttpClientDestroy(TcpClient* client, int reason);
+			bool onHttpClientReceived(TcpClient* client);
+			//
+			//  处理http请求
+			//
+			bool processHttpRequest(FFL::sp<HttpRequest> request);
+	
+			//
+			//  调用。start，stop会触发onStart,onStop的执行
+			//  onStart :表示准备开始了 ,可以做一些初始化工作
+			//  onStop :表示准备停止了 ,可以做停止前的准备，想置一下信号让eventloop别卡住啊 
+			//  在这些函数中，不要再调用自己的函数，例如：start,stop, isStarted等
+			//
+			bool onStart();
+			void onStop();
+	
+			//
+			//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
+			//   waitTime:输出参数，下一次执行eventLoop等待的时长
+			//   true  : 继续进行下一次的eventLoop
+			//   false : 不需要继续执行eventloop
+			//
+			bool eventLoop(int32_t* waitTime);
+		private:
+			class TcpServerCallback : public TcpServer::Callback {
+			public:
+				TcpServerCallback(HttpServerImpl* server);
+
+				//
+				//  aliveTimeUs:保活时长，如果超过这么长时间还没有数据则干掉这个client
+				//              <0 一直存活， 
+				//
+				virtual bool onClientCreate(TcpClient* client, int64_t* aliveTimeUs);
+				virtual void onClientDestroy(TcpClient* client, int reason);
+				virtual bool onClientReceived(TcpClient* client);
+
+				HttpServerImpl* mServer;
+			};
+			TcpServer* mTcpServer;
+			TcpServerCallback* mTcpCallback;		
+	};
+
+	HttpServerImpl::HttpServerImpl(const char* ip, int32_t port){
 		mTcpCallback = new TcpServerCallback(this);
 		mTcpServer = new TcpServer(ip,port, mTcpCallback);
 	}
-	HttpServer::~HttpServer(){
+	HttpServerImpl::~HttpServerImpl(){
 		FFL_SafeFree(mTcpServer);
 		FFL_SafeFree(mTcpCallback);
 	}
 	//
-	//  ע�ᴦ��ָ��http ������Ĵ������
+	//  注册处理指定http ，请求的处理句柄
 	//
-	void HttpServer::registerApi(const HttpApiKey& key, FFL::sp<HttpServer::Callback> handler) {
+	void HttpServerImpl::registerApi(const HttpServer::HttpApiKey& key, FFL::sp<HttpServer::Callback> handler) {
 		if (handler == NULL) {
 			return;
 		}
@@ -44,7 +116,7 @@ namespace FFL {
 		FFL::CMutex::Autolock l(mApiListLock);
 		mApiList.push_back(entry);
 	}
-	FFL::sp<HttpServer::Callback> HttpServer::unregisterApi(const HttpApiKey& key) {
+	FFL::sp<HttpServer::Callback> HttpServerImpl::unregisterApi(const HttpServer::HttpApiKey& key) {
 		FFL::CMutex::Autolock l(mApiListLock);
 		std::list<ApiEntry*>::iterator it = mApiList.begin();
 		for (; it != mApiList.end(); it++) {
@@ -56,7 +128,7 @@ namespace FFL {
 		}
 		return NULL;
 	}
-	FFL::sp<HttpServer::Callback> HttpServer::getRegisterApi(const HttpApiKey& key) {
+	FFL::sp<HttpServer::Callback> HttpServerImpl::getRegisterApi(const HttpServer::HttpApiKey& key) {
 		FFL::CMutex::Autolock l(mApiListLock);
 		std::list<ApiEntry*>::iterator it = mApiList.begin();
 		for (; it != mApiList.end(); it++) {
@@ -67,30 +139,40 @@ namespace FFL {
 		}
 		return NULL;
 	}
-	HttpServer::HttpContext::HttpContext(TcpClient* client):mTcpClient(client){
+
+	class HttpContext {
+	public:
+		HttpContext(TcpClient* client);
+		~HttpContext();
+
+		TcpClient* mTcpClient;
+		FFL::sp<HttpClient> mHttpClient;
+	};
+	HttpContext::HttpContext(TcpClient* client):mTcpClient(client){
 		mHttpClient = new HttpClient(client);
 	}
-	HttpServer::HttpContext::~HttpContext() {				
+	HttpContext::~HttpContext() {				
 		mTcpClient = NULL;
 
 	}
-	bool HttpServer::onHttpClientCreate(TcpClient* client, int64_t* aliveTimeUs) {
+
+	bool HttpServerImpl::onHttpClientCreate(TcpClient* client, int64_t* aliveTimeUs) {
 		HttpContext* contex = new HttpContext(client);
 		client->setUserdata(contex);
 		return true;
 	}
-	void HttpServer::onHttpClientDestroy(TcpClient* client, int reason) {
+	void HttpServerImpl::onHttpClientDestroy(TcpClient* client, int reason) {
 		HttpContext* contex = (HttpContext*)client->getUserdata();
 		client->setUserdata(NULL);
 		FFL_SafeFree(contex);
 	}
-	bool HttpServer::onHttpClientReceived(TcpClient* client) {
+	bool HttpServerImpl::onHttpClientReceived(TcpClient* client) {
 		HttpContext* contex = (HttpContext*)client->getUserdata();
 		FFL::sp<HttpRequest> request=contex->mHttpClient->readRequest();
 		if (!request.isEmpty()) {
 			if (!processHttpRequest(request)) {
 				//
-				//  �ر��������
+				//  关闭这个连接
 				//
 
 				return false;
@@ -102,13 +184,13 @@ namespace FFL {
 	}
 
 	//
-	//  ����http����
+	//  处理http请求
 	//
-	bool HttpServer::processHttpRequest(FFL::sp<HttpRequest> request) {
+	bool HttpServerImpl::processHttpRequest(FFL::sp<HttpRequest> request) {
 		HttpUrl url;
 		request->getUrl(url);
 
-		HttpApiKey key;
+		HttpServer::HttpApiKey key;
 		key.mPath = url.mPath;
 		key.mQuery = url.mQuery;
 		FFL::sp<HttpServer::Callback> apiHandler=getRegisterApi(key);
@@ -116,7 +198,7 @@ namespace FFL {
 			return apiHandler->onHttpQuery(request.get());
 		} else {
 			//
-			//  404����
+			//  404错误
 			//
 			FFL::sp<HttpResponse> response=request->makeResponse();
 			response->setStatusCode(404);
@@ -126,43 +208,90 @@ namespace FFL {
 		return true;
 	}
 	//
-	//  ���á�start��stop�ᴥ��onStart,onStop��ִ��
-	//  onStart :��ʾ׼����ʼ�� ,������һЩ��ʼ������
-	//  onStop :��ʾ׼��ֹͣ�� ,������ֹͣǰ��׼��������һ���ź���eventloop��ס�� 
-	//  ����Щ�����У���Ҫ�ٵ����Լ��ĺ��������磺start,stop, isStarted��
+	//  调用。start，stop会触发onStart,onStop的执行
+	//  onStart :表示准备开始了 ,可以做一些初始化工作
+	//  onStop :表示准备停止了 ,可以做停止前的准备，想置一下信号让eventloop别卡住啊 
+	//  在这些函数中，不要再调用自己的函数，例如：start,stop, isStarted等
 	//
-	bool HttpServer::onStart() {
+	bool HttpServerImpl::onStart() {
 		mTcpServer->start(NULL);
 		return true;
 	}
-	void HttpServer::onStop() {
+	void HttpServerImpl::onStop() {
 		mTcpServer->stop();
 	}
 	
 	//
-	//   �������߳���ִ�е�eventloop,�����Ƿ��������eventLoop
-	//   waitTime:�����������һ��ִ��eventLoop�ȴ���ʱ��
-	//   true  : ����������һ�ε�eventLoop
-	//   false : ����Ҫ����ִ��eventloop
+	//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
+	//   waitTime:输出参数，下一次执行eventLoop等待的时长
+	//   true  : 继续进行下一次的eventLoop
+	//   false : 不需要继续执行eventloop
 	//
-	bool HttpServer::eventLoop(int32_t* waitTime) {
+	bool HttpServerImpl::eventLoop(int32_t* waitTime) {
 		return mTcpServer->eventLoop(waitTime);
 	}
 
-	HttpServer::TcpServerCallback::TcpServerCallback(HttpServer* server):
+	HttpServerImpl::TcpServerCallback::TcpServerCallback(HttpServerImpl* server):
 	          mServer(server){
 	}
 	//
-	//  aliveTimeUs:����ʱ�������������ô��ʱ�仹û��������ɵ����client
-	//              <0 һֱ�� 
+	//  aliveTimeUs:保活时长，如果超过这么长时间还没有数据则干掉这个client
+	//              <0 一直存活， 
 	//
-	bool HttpServer::TcpServerCallback::onClientCreate(TcpClient* client, int64_t* aliveTimeUs) {
+	bool HttpServerImpl::TcpServerCallback::onClientCreate(TcpClient* client, int64_t* aliveTimeUs) {
 		return mServer->onHttpClientCreate(client, aliveTimeUs);
 	}
-	void HttpServer::TcpServerCallback::onClientDestroy(TcpClient* client, int reason) {
+	void HttpServerImpl::TcpServerCallback::onClientDestroy(TcpClient* client, int reason) {
 		mServer->onHttpClientDestroy(client,reason);
 	}
-	bool HttpServer::TcpServerCallback::onClientReceived(TcpClient* client) {
+	bool HttpServerImpl::TcpServerCallback::onClientReceived(TcpClient* client) {
 		return mServer->onHttpClientReceived(client);
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	HttpServer::HttpServer(const char* ip, int32_t port) {
+		mImpl = new HttpServerImpl(ip, port);
+	}
+	HttpServer::~HttpServer() {
+		FFL_SafeFree(mImpl);
+	}
+
+	HttpServer::Callback::~Callback() {
+	}
+
+	//
+	//  注册处理指定http ，请求的处理句柄
+	//
+	void HttpServer::registerApi(const HttpApiKey& key, FFL::sp<HttpServer::Callback> handler) {
+		mImpl->registerApi(key, handler);
+	}
+	FFL::sp<HttpServer::Callback> HttpServer::unregisterApi(const HttpApiKey& key) {
+		return mImpl->unregisterApi(key);
+	}
+	FFL::sp<HttpServer::Callback> HttpServer::getRegisterApi(const HttpApiKey& key) {
+		return mImpl->getRegisterApi(key);
+	}
+	
+	//
+	//  调用。start，stop会触发onStart,onStop的执行
+	//  onStart :表示准备开始了 ,可以做一些初始化工作
+	//  onStop :表示准备停止了 ,可以做停止前的准备，想置一下信号让eventloop别卡住啊 
+	//  在这些函数中，不要再调用自己的函数，例如：start,stop, isStarted等
+	//
+	bool HttpServer::onStart() {
+		return mImpl->onStart();
+	}
+	void HttpServer::onStop() {
+		mImpl->onStop();
+	}
+	
+	//
+	//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
+	//   waitTime:输出参数，下一次执行eventLoop等待的时长
+	//   true  : 继续进行下一次的eventLoop
+	//   false : 不需要继续执行eventloop
+	//
+	bool HttpServer::eventLoop(int32_t* waitTime) {
+		return mImpl->eventLoop(waitTime);
 	}
 }

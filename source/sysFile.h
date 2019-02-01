@@ -7,7 +7,7 @@
 *  sysFile.h
 *  Created by zhufeifei(34008081@qq.com) on 2018/07/26
 *  https://github.com/zhenfei2016/FFL-v2.git
-*  ÎÄ¼ş²Ù×÷£¬°ü×°ÏµÍ³º¯Êı
+*  æ–‡ä»¶æ“ä½œï¼ŒåŒ…è£…ç³»ç»Ÿå‡½æ•°
 *
 */
 #ifndef _INETRNAL_FILE_H_

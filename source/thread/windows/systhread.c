@@ -1,4 +1,4 @@
-#include "FFL.h"
+#include <FFL_Core.h>
 #include "internal_thread_sys.h"
 typedef struct FFL_Thread_sys FFL_Thread;
 
@@ -140,7 +140,7 @@ void FFL_SYS_SetThreadName(const char *name)
         //}
 
         /* This magic tells the debugger to name a thread if it's listening. */
-        FFL_zerop(&inf);
+        FFL_Zerop(&inf);
         inf.dwType = 0x1000;
         inf.szName = name;
         inf.dwThreadID = (DWORD) -1;

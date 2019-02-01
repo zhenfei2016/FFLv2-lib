@@ -12,9 +12,8 @@
 */
 
 #include <net/http/FFL_HttpResponse.hpp>
-#include <utils/FFL_StringHelper.hpp>
-#include <utils/FFL_ByteBuffer.hpp>
-#include <utils/FFL_ByteStream.hpp>
+#include <FFL_ByteBuffer.hpp>
+#include <FFL_ByteStream.hpp>
 #include <net/http/FFL_HttpClient.hpp>
 
 namespace FFL {
@@ -131,33 +130,33 @@ namespace FFL {
 		}
 
 		String headerInfo;
-		{
-			String format;
-			format = "HTTP/1.1 %d OK \r\n"
+		{			
+			static const char* kFormat= "HTTP/1.1 %d OK \r\n"
 				"%s: %s\r\n"
 				"%s: %d\r\n";
 			String type;
 			mHeader.getContentType(type);
-			formatString(headerInfo, format.c_str(), mStatusCode,
-				HTTP_KEY_CONTENTYPE,type.c_str(),
+			headerInfo.appendFormat(kFormat,mStatusCode,
+				HTTP_KEY_CONTENTYPE,type.string(),
 				HTTP_KEY_CONTENTLEN,contentLength);
 		}
+				
+		int32_t buffCount = 20;
+		FFL::Dictionary::Pair pairs[20];
+		mHeader.getAll(pairs,&buffCount);
 
-		std::map<String, String> keys;
-		mHeader.getAll(keys);
-		for (std::map<String, String>::iterator it = keys.begin(); it!= keys.end(); it++) {
-			if (strcmp(HTTP_KEY_CONTENTYPE, it->first.c_str()) == 0) {
+		for (int32_t i = 0; i < buffCount;i++) {
+			if (strcmp(HTTP_KEY_CONTENTYPE, pairs[i].key.string()) == 0) {
 				continue;
 			}
-			else if (strcmp(HTTP_KEY_CONTENTLEN, it->first.c_str()) == 0) {
+			else if (strcmp(HTTP_KEY_CONTENTLEN, pairs[i].key.string()) == 0) {
 				continue;
 			}
-
-			headerInfo += it->first + ":" + it->second + "\r\n";
+			headerInfo += pairs[i].key + ":" + pairs[i].value + "\r\n";
 		}
 		
 		headerInfo += "\r\n";		
-		return mClient->write(headerInfo.c_str(), headerInfo.size(),0);
+		return mClient->write(headerInfo.string(), headerInfo.size(),0);
 	}
 	bool HttpResponse::writeContent() {
 		if (mContentBuffer) {

@@ -19,7 +19,7 @@
 
 namespace FFL {	
 	class HttpParserImpl;	
-	class HttpParser
+	class FFLIB_API_IMPORT_EXPORT HttpParser
 	{	
 	public:
 		HttpParser();

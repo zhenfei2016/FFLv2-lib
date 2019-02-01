@@ -13,20 +13,21 @@
 #ifndef _FFL_HTTP_REQUEST_HPP_
 #define _FFL_HTTP_REQUEST_HPP_
 
-
-#include <FFL.h>
-#include <ref/FFL_Ref.hpp>
+#include <FFL_Core.h>
+#include <FFL_Ref.hpp>
 #include <net/http/FFL_HttpHeader.hpp>
 #include <net/http/FFL_HttpUrl.hpp>
+#include <net/http/FFL_HttpClient.hpp>
 #include <net/FFL_NetStream.hpp>
 
 
+
 namespace FFL {
-	class HttpClient;
+	//class HttpClient;
 	class HttpResponse;
 	class HttpResponseBuilder;
 	class HttpRequestBuilder;
-
+	
 	class FFLIB_API_IMPORT_EXPORT HttpRequest : public RefBase {
 	protected:
 		friend class HttpClient;

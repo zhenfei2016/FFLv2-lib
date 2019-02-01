@@ -1,11 +1,5 @@
-#include <FFL.h>
-#include <net/http/FFL_Http.hpp>
 
-#include <utils/FFL_StringHelper.hpp>
-#include <utils/FFL_File.hpp>
-
-#include <net/FFL_TcpServer.hpp>
-#include <net/http/FFL_HttpServer.hpp>
+#include <FFL_NetLib.hpp>
 
 
 class HttpApiLoginHandelr : public FFL::HttpServer::Callback {
@@ -14,26 +8,26 @@ public:
 
 		FFL::HttpUrl url;
 		request->getUrl(url);
-		if (url.mQueryParams.size()>0) {
-			FFL::sp<FFL::HttpResponse> response = request->makeResponse();
-			response->setStatusCode(200);
+		/*		if (url.mQueryParams.size()>0) {
+					FFL::sp<FFL::HttpResponse> response = request->makeResponse();
+					response->setStatusCode(200);
 
-			char* content = "hi world!";
-			int32_t len = strlen(content);
+					char* content = "hi world!";
+					int32_t len = strlen(content);
 
-			FFL::HttpHeader header;
-			header.setContentLength(len);
-			response->setHeader(header);
-			response->setContent(content, len);
-			response->send();
-		}
-		else {
+					FFL::HttpHeader header;
+					header.setContentLength(len);
+					response->setHeader(header);
+					response->setContent(content, len);
+					response->send();
+				}
+				else */ {
 
 			FFL::HttpResponseBuilder builder;
 			FFL::sp<FFL::HttpResponseFile> response =builder.createResponseFile(request);
 
 			FFL::File file;
-			file.open("d://test.txt");	
+			file.open(FFL::String("d://test.txt"));	
 
 			FFL::HttpHeader header;
 			header.setContentLength(file.getSize());
@@ -77,7 +71,7 @@ int FFL_main() {
 	char exeName[1024] = {};
 	FFL_getCurrentProcessPath(exePath, 1023, exeName);
 
-	if (0) {
+	if (1) {
 		TcpHandler handler;
 		FFL::TcpServer tcpServer("127.0.0.1",5000,&handler);
 		tcpServer.start(NULL);

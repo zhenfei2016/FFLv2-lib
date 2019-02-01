@@ -14,7 +14,7 @@
 #ifndef _FFL_HTTPPARSERIMPL_HPP_
 #define _FFL_HTTPPARSERIMPL_HPP_
 
-#include <FFL.h>
+#include <FFL_Core.h>
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
 #include "http-parser-2.1/http_parser.h"

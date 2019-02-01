@@ -14,7 +14,6 @@
 #define _FFL_ATOMIC_H_
 
 #include <FFL_Core.h>
-#include <FFL_Platform.h>
 
 #ifdef WIN32
 

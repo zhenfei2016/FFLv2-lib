@@ -16,10 +16,8 @@
 
 #include <stdlib.h>
 #include <memory.h>
-
-
-#include "FFL_Utility.h"
-#include "FFL_Config.h"
+#include <FFL_Config.h>
+#include <FFL_Stdint.h>
 
 #ifdef  __cplusplus
 extern "C" {
@@ -30,21 +28,33 @@ extern "C" {
 	FFLIB_API_IMPORT_EXPORT void* FFL_malloc(size_t size);
 	FFLIB_API_IMPORT_EXPORT void  FFL_free(void *mem);
 	/*
-	 *  内存申请，并且清空
+	* 申请内存并且清零
 	*/
-	inline void *FFL_mallocz(size_t size){
-		void *mem = FFL_malloc(size);
-		if (mem)
-			memset(mem, 0, size);
-		return mem;
-	}
-	inline void FFL_freep(void **mem){
-		if (mem && *mem) {
-			FFL_free(*mem);
-			*mem = 0;
-		}
-	}
+	FFLIB_API_IMPORT_EXPORT void* FFL_mallocz(size_t size);
+	
+#define FFL_freep(pp)  while(pp&&*pp){ FFL_free(*pp); *pp = 0; break;}
+	/*
+	*   memory清零
+	*/
+#define FFL_Zerop(x) do{memset((x), 0, sizeof(*(x)));} while(0)
+#define FFL_ZeroArray(x,c) do{memset((x), 0, (sizeof(*(x))*(c)));} while(0)
+	
+	/*
+	*  内存字节序
+	*大端模式，数据的低位保存在内存的高地址中
+	* 网络字节序
+	*/
+#define  FFL_BIG_ENDIAN 1
+	/*
+	*小端模式，数据的低位保存在内存的低地址中
+	*/
+#define  FFL_LITTLE_ENDIAN 2
+	/*
+	*  检测系统的大小端
+	*/
+	FFLIB_API_IMPORT_EXPORT int FFL_isLittleEndian();
 
+	/************************memoryleak相关*********************************************************************/
 	/*
 	 *   打印一下当前还没有释放的内存
 	 */
@@ -56,54 +66,7 @@ extern "C" {
 	/*
  	 *  参考上一次释放的内存文件，打印对应的堆栈
 	 */
-	FFLIB_API_IMPORT_EXPORT void  FFL_checkMemoryLeak(const char* path);
-
-	FFLIB_API_IMPORT_EXPORT int FFL_outofmemory();
-	/*
-	 *   memory清零
-	 */
-	#define FFL_zerop(x) memset((x), 0, sizeof(*(x)))
-	#define FFL_zero_array(x,c) memset((x), 0, (sizeof(*(x))*(c)))
-	
-	#define CHECKED_MALLOC( var, size )\
-	do {\
-		var = FFL_malloc( size );\
-		if( !var ){\
-			FFL_LOG_ERROR("alloc memory is null. %s %d ",__FILE__,__LINE__); \
-			goto fail;}\
-	} while( 0 )
-
-	#define CHECKED_MALLOCZERO( var, size )\
-	do {\
-	   var = FFL_mallocz( size );\
-		if( !var ){\
-			FFL_LOG_ERROR("alloc memory is null. %s %d ",__FILE__,__LINE__); \
-			goto fail;}\
-	} while( 0 )
-
-
-	FFLIB_API_IMPORT_EXPORT char* FFL_CALL FFL_strdup(const char *s);
-	FFLIB_API_IMPORT_EXPORT char* FFL_CALL FFL_strndup(const char *s, size_t len);
-
-	//
-	//  内存字节序
-	//
-
-	//
-	//大端模式，数据的低位保存在内存的高地址中
-	// 网络字节序
-	//
-    #define  FFL_BIG_ENDIAN 1
-
-	//
-	//小端模式，数据的低位保存在内存的低地址中
-	//
-    #define  FFL_LITTLE_ENDIAN 2
-
-	//
-	//  检测系统的大小端
-	//
-	FFLIB_API_IMPORT_EXPORT int FFL_isLittleEndian();
+	FFLIB_API_IMPORT_EXPORT void  FFL_checkMemoryLeak(const char* path);	
 #ifdef  __cplusplus
 }
 #endif

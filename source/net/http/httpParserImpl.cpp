@@ -105,12 +105,13 @@ namespace FFL{
 			String url;
 			String host;
 			if (mHeader->getKey("Host", host)) {
-				url = "http://" + host + mUrl;
+				url = "http://";
+				url +=host + mUrl;
 			}
 			else {
 				url = mUrl;
 			}
-			request->mUrl.parse(url.c_str());		
+			request->mUrl.parse(url);		
 
 			String contentType;
 			mHeader->getKey(HTTP_KEY_CONTENTYPE, contentType);
@@ -168,7 +169,8 @@ namespace FFL{
 			String url;
 			String host;
 			if (mHeader->getKey("Host", host)) {
-				url = "http://" + host + mUrl;
+				url = "http://";
+				url += host + mUrl;
 			}
 			else {
 				url = mUrl;

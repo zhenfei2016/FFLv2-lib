@@ -28,9 +28,9 @@
 #include <sys/time.h>
 #include <time.h>
 
-#include "FFL.h"
+#include <FFL_Core.h>
 #include "internal_mutex_sys.h"
-#include "thread/FFL_Mutex.h"
+#include <FFL_Mutex.h>
 
 struct FFL_semaphore_sys
 {
