@@ -131,7 +131,7 @@ void closeFile(FileHandle* fd) {
 
 int writeFile(FileHandle* fd,void* data,int32_t size) {
     if (fd && fd->fd>=0) {
-       int ret = write(fd->fd, data, size);
+       int ret = (int)write(fd->fd, data, size);
        if (ret < 0){}
 
        return ret;
@@ -140,7 +140,7 @@ int writeFile(FileHandle* fd,void* data,int32_t size) {
 }
 int readFile(FileHandle* fd, uint8_t* buf, int32_t size) {
     if (fd  && fd->fd >= 0) {
-       int ret = read(fd->fd, buf, size);
+       int ret = (int)read(fd->fd, buf, size);
        if (ret < 0){}
        return ret;
     }

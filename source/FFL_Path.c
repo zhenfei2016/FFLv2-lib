@@ -28,7 +28,7 @@
 */
 status_t FFL_getCurrentProcessPath(char* processdir, size_t len, char* processname) {
     char* pathEnd=NULL;
-    uint32_t bufSize=len;
+    uint32_t bufSize=(uint32_t)len;
     char separator='/';
 #if WIN32
 	GetModuleFileNameA(NULL, processdir, len);

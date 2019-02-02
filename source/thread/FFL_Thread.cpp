@@ -103,7 +103,7 @@ namespace FFL {
 		//
 		//  保存一下线程名称
 		//	
-        int tid=self->mThreadData->mTid = FFL_CurrentThreadID();
+        unsigned long tid=self->mThreadData->mTid = FFL_CurrentThreadID();
 		char threadName[256] = { 0 };
 		const  char* tmpName = FFL_GetThreadName(self->mThreadData->mThread);
 		if (tmpName != NULL && tmpName[0] != 0) {

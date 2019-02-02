@@ -56,8 +56,8 @@ ENDIF()
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/include/FFL_LogConfig.h.in" "${PROJECT_BINARY_DIR}/FFL_LogConfig.h")
 ###############################################################################################################################
 IF(APPLE)
-SET(FFLIB_COMPILE_STATIC ON)
-#    仅仅支持静态库，需要修改CMAKE_SYSROOT路径指向ios sdk路径上
+SET(FFLIB_COMPILE_STATIC ON CACHE BOOL "build static library")
+#    ios仅仅支持静态库，需要修改CMAKE_SYSROOT路径指向ios sdk路径上
 ELSE()
 # static lib
 SET(FFLIB_COMPILE_STATIC ON CACHE BOOL "build static library")

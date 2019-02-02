@@ -75,7 +75,7 @@ namespace FFL{
 	//
 	// 获取多小组数据
 	int32_t Dictionary::getCount() {
-		return mImpl->mDic.size();
+		return (int32_t)mImpl->mDic.size();
 	}
 	//
 	//获取数据到数组中

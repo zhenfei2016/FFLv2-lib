@@ -32,11 +32,12 @@ namespace FFL {
 		//  获取线程名称
 		//
 		const char* getName() const;
-	protected:
+    public:
 		/*  Thread  */
 		virtual status_t  run();
-		virtual void     requestExit();
+        virtual void     requestExit();
 		virtual status_t requestExitAndWait();
+    protected:
 		/*  Thread  */
 		virtual bool threadLoop();
 	private:
