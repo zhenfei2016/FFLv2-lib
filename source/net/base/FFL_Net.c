@@ -13,6 +13,7 @@
 
 #include "internalSocket.h"
 #include <net/base/FFL_Net.h>
+#include "internalLogConfig.h"
 
 
 static int gSocketInited=0;
@@ -67,7 +68,7 @@ SOCKET_STATUS FFL_socketAccept(NetFD serverfd, NetFD* clientFd){
 	int sockfd = accept(serverfd, (struct sockaddr *) &addr, (socklen_t*)&addrlen);
 	if (sockfd < 0) {
 		socketErr = SOCKET_ERRNO();
-		FFL_LOG_WARNING("FFL_socketAccept error=%d", socketErr);
+		INTERNAL_FFL_LOG_WARNING("FFL_socketAccept error=%d", socketErr);
 		//是否超时超时
 		if (socketErr == SOCKET_AGAIN ||
 			socketErr == SOCKET_ETIME ||
@@ -101,7 +102,7 @@ SOCKET_STATUS FFL_socketRead(NetFD fd, void* buffer, size_t size,size_t* readed)
 
 	if (nbRead < 0  )	{
 		socketError =SOCKET_ERRNO();	
-		FFL_LOG_WARNING("FFL_socketRead error=%d", socketError);
+		INTERNAL_FFL_LOG_WARNING("FFL_socketRead error=%d", socketError);
 		//读写超时
 		if (socketError == SOCKET_AGAIN ||
 			socketError == SOCKET_ETIME ||
@@ -116,7 +117,7 @@ SOCKET_STATUS FFL_socketRead(NetFD fd, void* buffer, size_t size,size_t* readed)
 	 *  服务端关闭了 
 	 */
 	if (nbRead == 0) {
-		FFL_LOG_WARNING("FFL_socketRead nb_read=0 error=%d",SOCKET_ECONNRESET);
+		INTERNAL_FFL_LOG_WARNING("FFL_socketRead nb_read=0 error=%d",SOCKET_ECONNRESET);
 		return FFL_ERROR_SOCKET_READ_EX + SOCKET_ECONNRESET;
 	}
 
@@ -124,11 +125,11 @@ SOCKET_STATUS FFL_socketRead(NetFD fd, void* buffer, size_t size,size_t* readed)
 }
 SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* readed, char* srcIp, uint16_t* srcPort) {
 	int socketError = 0;
+	int nbRead =0;
 	int fromlen = sizeof(struct sockaddr_in);
 	struct sockaddr_in srcAddr;
 	FFL_Zerop(&srcAddr);
-
-	int nbRead = recvfrom(fd, buffer, size, 0,
+	nbRead = recvfrom(fd,(char*)buffer, size, 0,
                           (struct sockaddr *)(&srcAddr),
                           (socklen_t*) &fromlen);
 	if (nbRead > 0) {
@@ -150,7 +151,7 @@ SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* re
 
 	if (nbRead < 0) {
 		socketError = SOCKET_ERRNO();
-		FFL_LOG_WARNING("FFL_socketReadFrom error=%d", socketError);
+		INTERNAL_FFL_LOG_WARNING("FFL_socketReadFrom error=%d", socketError);
 		//读写超时
 		if (socketError == SOCKET_AGAIN ||
 			socketError == SOCKET_ETIME ||
@@ -166,7 +167,7 @@ SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* re
 	*  服务端关闭了
 	*/
 	if (nbRead == 0) {
-		FFL_LOG_WARNING("FFL_socketRead nb_read=0 error=%d", SOCKET_ECONNRESET);
+		INTERNAL_FFL_LOG_WARNING("FFL_socketRead nb_read=0 error=%d", SOCKET_ECONNRESET);
 		return FFL_ERROR_SOCKET_READ_EX + SOCKET_ECONNRESET;
 	}
 
@@ -180,7 +181,7 @@ SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* re
  * */
 SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed){
 	int socketError=0;
-	int nbWrite = send(fd, buffer, size, 0);
+	int nbWrite = send(fd, (char*)buffer, size, 0);
 	if (nbWrite > 0) {
 		if (writed)
 			*writed = nbWrite;
@@ -189,7 +190,7 @@ SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed
 
 	if (nbWrite < 0  )	{
 		socketError=SOCKET_ERRNO();
-		FFL_LOG_WARNING("FFL_socketWrite error=%d", socketError);
+		INTERNAL_FFL_LOG_WARNING("FFL_socketWrite error=%d", socketError);
 		/*
 		 * 读写超时
 	 	 */
@@ -208,6 +209,7 @@ SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed
 
 SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* writed, const char* destIp, uint16_t destPort) {
 	int socketError = 0;
+	int nbWrite=0;
 	struct sockaddr_in destAddr;
 
 	if (destIp == NULL || strlen(destIp) > 32) { 
@@ -218,7 +220,7 @@ SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* wri
 	destAddr.sin_port = htons(destPort);	
 	destAddr.sin_addr.s_addr = inet_addr(destIp);
 //EOPNOTSUPP
-	int nbWrite = sendto(fd, buffer, size, 0,(struct sockaddr*)&destAddr,sizeof(struct sockaddr_in));	
+	nbWrite = sendto(fd,(char*) buffer, size, 0,(struct sockaddr*)&destAddr,sizeof(struct sockaddr_in));	
 	if (nbWrite > 0) {
 		if (writed)
 			*writed = nbWrite;

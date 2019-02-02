@@ -21,12 +21,8 @@ extern "C" {
 
 #define FFL_ASSERT(expr) assert((expr))
 
-#define FFL_ASSERT_LOG(expr,message) \
-    {if ( !(expr) )                    \
-    {                                  \
-        FFL_LOG_ERROR("assert: %s",message);\
-        assert((expr));\
-    }}           
+#define FFL_ASSERT_LOG(expr,message) FFL_ASSERT(expr)
+        
 
 
 #ifdef  __cplusplus

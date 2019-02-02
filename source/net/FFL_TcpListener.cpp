@@ -12,6 +12,7 @@
 */
 #include <net/FFL_TcpListener.hpp>
 #include <net/base/FFL_Net.h>
+#include "internalLogConfig.h"
 
 namespace FFL {
 	TcpListener::TcpListener(const char* ip, uint16_t port, TcpListener::Callback* listener) :mServerFd(0),mTcpListener(listener) {
@@ -33,7 +34,7 @@ namespace FFL {
 
 		mServerFd = 0;
 		if (FFL_socketAnyAddrTcpServer(mPort, &mServerFd) != FFL_SOCKET_OK) {
-			FFL_LOG_WARNING("Failed to create tcp server. %s:%d", mIP, mPort);
+			INTERNAL_FFL_LOG_WARNING("Failed to create tcp server. %s:%d", mIP, mPort);
 		}
 		return true;	
 	}
@@ -51,20 +52,20 @@ namespace FFL {
 	//
 	bool TcpListener::eventLoop(int32_t* waitTime){
 		if (mServerFd < 0) {
-			FFL_LOG_ERROR("Faile to TcpListener::eventLoop serverFd=NULL");
+			INTERNAL_FFL_LOG_ERROR("Faile to TcpListener::eventLoop serverFd=NULL");
 			return false;
 		}
 
 		NetFD clientFd = 0;
 		if (FFL_socketAccept(mServerFd, &clientFd) != FFL_SOCKET_OK) {
-			FFL_LOG_ERROR("Faile to TcpListener::FFL_socketAccept");
+			INTERNAL_FFL_LOG_ERROR("Faile to TcpListener::FFL_socketAccept");
 			return false;
 		}
 
 		if (mTcpListener) {
 			mTcpListener->onAcceptClient(clientFd);
 		}
-		FFL_LOG_INFO("accept client fd=%d", clientFd);		
+		INTERNAL_FFL_LOG_INFO("accept client fd=%d", clientFd);		
 
 		if (waitTime) {
 			*waitTime = 0;

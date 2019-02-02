@@ -19,6 +19,7 @@
 #include <net/FFL_NetEventLoop.hpp>
 #include <FFL_BlockList.hpp>
 #include <list>
+#include "internalLogConfig.h"
 
 namespace FFL {
 
@@ -134,12 +135,12 @@ namespace FFL {
 	//
 	bool HttpClientAccessManagerImpl::start() {
 		if (!mHttpRequestThread.isEmpty()) {
-			FFL_LOG_DEBUG("HttpClientAccessManagerImpl: failed to start.");
+			INTERNAL_FFL_LOG_DEBUG("HttpClientAccessManagerImpl: failed to start.");
 			return false;
 		}
 
 		if (!mEventLoop.start(new ModuleThread("HttpClientAccessManagerImpl-eventloop"))) {
-			FFL_LOG_DEBUG("HttpClientAccessManagerImpl: failed to start eventloop .");
+			INTERNAL_FFL_LOG_DEBUG("HttpClientAccessManagerImpl: failed to start eventloop .");
 			return false;
 		}
 

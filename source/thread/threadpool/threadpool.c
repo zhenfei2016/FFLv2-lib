@@ -86,13 +86,13 @@ static int FFL_CALL sys_threadpoolhread( void *arg)
 }
 
 int sys_threadpool_init( sys_threadpool **p_pool, int threads,
-                          void (*init_func)(void *), void *init_arg )
-{
+                          void (*init_func)(void *), void *init_arg ){
+	int i=0;
+	sys_threadpool *pool=0;
     if( threads <= 0 )
         return -1;
 
     threads=FFL_MAX(threads,2);
-    sys_threadpool *pool;
     pool=FFL_mallocz(sizeof(sys_threadpool));
 	if (pool == 0) {
 		goto fail;
@@ -111,7 +111,7 @@ int sys_threadpool_init( sys_threadpool **p_pool, int threads,
             FFL_job_list_init( &pool->run, pool->threads ))
         goto fail;
 
-    for( int i = 0; i < pool->threads; i++ )
+    for(  i = 0; i < pool->threads; i++ )
     {
        FFL_threadpool_job *job;
        job= FFL_mallocz(sizeof(FFL_threadpool_job));
@@ -120,7 +120,7 @@ int sys_threadpool_init( sys_threadpool **p_pool, int threads,
 	   }
         FFL_job_list_push( &pool->uninit, job );
     }
-    for( int i = 0; i < pool->threads; i++ ) {
+    for(  i = 0; i < pool->threads; i++ ) {
         pool->thread_handle[i] = FFL_CreateThread(sys_threadpoolhread, "threadpool", pool);
         if (pool->thread_handle[i] == 0)
             goto fail;
@@ -136,17 +136,17 @@ void sys_threadpool_run( sys_threadpool *pool, void *(*func)(void *), void *arg 
     FFL_threadpool_job *job = FFL_job_list_pop( &pool->uninit );
     job->func = func;
     job->arg  = arg;
-    FFL_job_list_push( &pool->run, (void*)job );
+    FFL_job_list_push( &pool->run,job );
 }
 
-void sys_threadpool_delete( sys_threadpool *pool )
-{
+void sys_threadpool_delete( sys_threadpool *pool ){
+	int i=0;
     FFL_LockMutex( pool->run.mutex );
     pool->exit = 1;
     FFL_CondBroadcast( pool->run.cv_fill );
     FFL_UnlockMutex( pool->run.mutex );
 
-    for( int i = 0; i < pool->threads; i++ )
+    for( i = 0; i < pool->threads; i++ )
         FFL_WaitThread( pool->thread_handle[i], NULL );
 
     FFL_job_list_delete( &pool->uninit );

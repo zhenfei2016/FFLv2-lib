@@ -47,7 +47,6 @@ const int FFL_get_error_no()
 
 int FFL_outofmemory()
 {
-	FFL_ASSERT(0);
-	FFL_LOG_ERROR("outofmemory");
+	FFL_ASSERT(0);	
 	return FFL_ERROR_SUCCESS;
 }

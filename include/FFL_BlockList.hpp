@@ -74,7 +74,7 @@ namespace FFL {
 		bool incoming(T& element) {
 			FFL::CMutex::Autolock l(mMutex);
 			if (!mIsStarted) {
-				FFL_LOG_WARNING("BlockingList(%s) not start. incoming",mName.string());
+				//FFL_LOG_WARNING("BlockingList(%s) not start. incoming",mName.string());
 				return false;
 			}
 
@@ -85,8 +85,8 @@ namespace FFL {
 			while (mMaxSize > 0 && mIsStarted) {
 				size = mDataList.size();
 				if (size >= mMaxSize) {
-					FFL_LOG_DEBUG("BlockingList(%s) full. incoming element maxSize=%u ,size=%u  ",
-						mName.string(), mMaxSize, mDataList.size());
+					//FFL_LOG_DEBUG("BlockingList(%s) full. incoming element maxSize=%u ,size=%u  ",
+					//	mName.string(), mMaxSize, mDataList.size());
 					mCond.wait(mMutex);
 				}
 			}
@@ -119,7 +119,7 @@ namespace FFL {
 					return elm;
 				}
 
-				FFL_LOG_DEBUG("BlockingList(%s) is empty.", mName.string());
+				//FFL_LOG_DEBUG("BlockingList(%s) is empty.", mName.string());
 				mCond.wait(mMutex);
 			}
 

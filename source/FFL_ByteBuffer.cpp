@@ -13,6 +13,8 @@
 
 #include <FFL_ByteBuffer.hpp>
 #include <FFL_ByteStream.hpp>
+#include "internalLogConfig.h"
+
 namespace FFL {
 	ByteBuffer::ByteBuffer():mData(0),mSize(0), mStream(0){
 		mStream = new ByteStream();
@@ -38,7 +40,7 @@ namespace FFL {
 
 		uint8_t* data = (uint8_t*)FFL_malloc(size);
 		if (!data) {
-			FFL_LOG_ERROR("ByteBuffer::alloc fail");
+			INTERNAL_FFL_LOG_ERROR("ByteBuffer::alloc fail");
 			return mSize;
 		}	
 
@@ -59,7 +61,7 @@ namespace FFL {
 
 		uint8_t* data=(uint8_t*)FFL_malloc(size);
 		if(!data){
-			FFL_LOG_ERROR("ByteBuffer::realloc fail");
+			INTERNAL_FFL_LOG_ERROR("ByteBuffer::realloc fail");
 			return mSize;
 		}
 

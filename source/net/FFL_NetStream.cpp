@@ -13,6 +13,7 @@
 #include <net/base/FFL_Net.h>
 #include <net/FFL_NetStream.hpp>
 #include <FFL_ByteBuffer.hpp>
+#include "internalLogConfig.h"
 
 namespace FFL {
 	NetStreamReader::NetStreamReader(CSocket* socket) :mSocket(socket) {
@@ -69,7 +70,7 @@ namespace FFL {
 			return ret;
 		}
 
-		FFL_LOG_INFO("read data fd=%d  size=%d", mSocket->getFd(),readed);
+		INTERNAL_FFL_LOG_INFO("read data fd=%d  size=%d", mSocket->getFd(),readed);
 		mSize += readed;
 		return FFL_OK;
 	}

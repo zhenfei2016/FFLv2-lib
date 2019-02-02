@@ -13,6 +13,7 @@
 #include <net/FFL_NetEventLoop.hpp>
 #include <net/base/FFL_Net.h>
 #include "FFL_SocketPair.hpp"
+#include "internalLogConfig.h"
 #include <list>
 
 namespace FFL {
@@ -266,7 +267,7 @@ namespace FFL {
 			}
 		}
 				
-		FFL_LOG_DEBUG("NetEventLoop: select fdNum=%d mOnlyTryControlFd=%d",numFd, mOnlyTryControlFd?1:0);
+		INTERNAL_FFL_LOG_DEBUG("NetEventLoop: select fdNum=%d mOnlyTryControlFd=%d",numFd, mOnlyTryControlFd?1:0);
 		int8_t flagList[FD_LIST_MAX_SIZE] = {};
 		int32_t selectRet=FFL_socketSelect(fdList, flagList, numFd, mWaitUs);
 		if (selectRet > 0) {
@@ -278,7 +279,7 @@ namespace FFL {
 			}
 			mOnlyTryControlFd = false;
 		}else  if (selectRet == 0) {
-			FFL_LOG_DEBUG("NetEventLoop: select timeout waitUs=%" lld64, mWaitUs);
+			INTERNAL_FFL_LOG_DEBUG("NetEventLoop: select timeout waitUs=%" lld64, mWaitUs);
 		}else {
 			//
 			//  不使用锁，没问题
@@ -306,7 +307,7 @@ namespace FFL {
 				}
 			}
 
-			FFL_LOG_DEBUG("NetEventLoop: select failed");			
+			INTERNAL_FFL_LOG_DEBUG("NetEventLoop: select failed");			
 			mOnlyTryControlFd = false;
 			FFL_sleep(100);
 		}	
@@ -344,7 +345,7 @@ namespace FFL {
 			entry->mPriv = priv;
 			entry->mRemoved = false;
 			mFdNum++;
-			FFL_LOG_DEBUG("NetEventLoop: add fdNum=%d",mFdNum+1);
+			INTERNAL_FFL_LOG_DEBUG("NetEventLoop: add fdNum=%d",mFdNum+1);
 			break;
 		}
 		return true;
@@ -362,7 +363,7 @@ namespace FFL {
 		}
 		memset(entry, 0, sizeof(NetEventLoopImpl::FdEntry));
 		mFdNum--;
-		FFL_LOG_DEBUG("NetEventLoopImpl: remove fdNum=%d", mFdNum+1);
+		INTERNAL_FFL_LOG_DEBUG("NetEventLoopImpl: remove fdNum=%d", mFdNum+1);
 		return true;
 	}
 
@@ -391,7 +392,7 @@ namespace FFL {
 				//
 				//  可以读了
 				//				
-				FFL_LOG_DEBUG("NetEventLoopImpl: onNetEvent  fd=%d", entry->mFd);
+				INTERNAL_FFL_LOG_DEBUG("NetEventLoopImpl: onNetEvent  fd=%d", entry->mFd);
 				if (!entry->mReadHandler->onNetEvent(entry->mFd, true, false, false, entry->mPriv)) {
 					//
 					//  返回false，则不需要了
@@ -401,7 +402,7 @@ namespace FFL {
 			}
 
 			if (entry->mRemoved) {
-				FFL_LOG_DEBUG("NetEventLoopImpl: onNetEvent return false. fd=%d", entry->mFd);
+				INTERNAL_FFL_LOG_DEBUG("NetEventLoopImpl: onNetEvent return false. fd=%d", entry->mFd);
 				processRemoveFd(entry);
 			}
 		}
@@ -436,7 +437,7 @@ namespace FFL {
 			//
 			//  退出系统
 			//
-			FFL_LOG_DEBUG("NetEventLoopImpl: processControlEvent quit");
+			INTERNAL_FFL_LOG_DEBUG("NetEventLoopImpl: processControlEvent quit");
 			return false;
 		}
 		if (readed != sizeof(packet) || packet ==NULL ) {

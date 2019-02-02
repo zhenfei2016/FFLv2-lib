@@ -14,6 +14,7 @@
 #include <net/FFL_TcpServer.hpp>
 #include <list>
 #include <string>
+#include "internalLogConfig.h"
 
 namespace FFL {
 	const static int64_t kEventLoopTimeout = 5000 * 1000;
@@ -55,6 +56,8 @@ namespace FFL {
 		class ClientContext :public FFL::RefBase {
 		public:
 			ClientContext(NetFD fd);
+			virtual ~ClientContext() {}
+
 			NetFD mFd;
 			TcpClient mClient;
 			//
@@ -142,7 +145,7 @@ namespace FFL {
 		std::string name = mServerName;
 		name += "_listener";
 		if (!mTcpListener->start(new ModuleThread(name.c_str()))) {
-			FFL_LOG_WARNING("Failed to start tcp server.");
+			INTERNAL_FFL_LOG_WARNING("Failed to start tcp server.");
 			return false;
 		}
 

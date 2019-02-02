@@ -13,6 +13,7 @@
 
 #include <net/http/FFL_HttpUrl.hpp>
 #include "http-parser-2.1/http_parser.h"
+#include "internalLogConfig.h"
 
 namespace FFL {	
 	HttpUrl::HttpUrl() {
@@ -41,7 +42,7 @@ namespace FFL {
 	//            mSchema:mHost mPort mPath mQuery
 	bool HttpUrl::parse(const String &url){		
 		mPort = 0;
-		FFL_LOG_DEBUG("HttpUrl::parse %s",url.c_str());
+		INTERNAL_FFL_LOG_DEBUG("HttpUrl::parse %s",url.string());
 		http_parser_url parserUrl;
 		if (http_parser_parse_url(url.string(), url.length(), 0, &parserUrl)!= 0) {			
 			return false;
@@ -61,7 +62,7 @@ namespace FFL {
 		//		mQueryParams.push_back(queryList[i]);
 		//	}
 		//}
-		FFL_LOG_DEBUG("HttpUrl::parse schema=%s  host=%s port=%d path=%s query=%s",
+		INTERNAL_FFL_LOG_DEBUG("HttpUrl::parse schema=%s  host=%s port=%d path=%s query=%s",
 			mSchema.string(),
 			mHost.string(),
 			mPort,

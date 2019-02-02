@@ -77,33 +77,33 @@ ELSE(FFLIB_COMPILE_STATIC)
 	   set(FFLIB_IMPORT "__declspec(dllimport)")
 	   set(FFLIB_EXPORT "__declspec(dllexport)")
     endif ()
-ENDIF (FFLIB_COMPILE_STATIC)
+ENDIF (FFLIB_COMPILE_STATIC )
 
 #使用哪一个线程库
 IF(WIN32)
-OPTION(USING_THREAD_WIN32 "using win32 system thread" ON )	
-OPTION(USING_THREAD_STD "using std thread" OFF )
+OPTION(FFLIB_USING_THREAD_WIN32 "using win32 system thread" ON )	
+OPTION(FFLIB_USING_THREAD_STD "using std thread" OFF )
 ELSE()
-OPTION(USING_THREAD_PTHREAD "using pthread" ON )	
-OPTION(USING_THREAD_STD "using std thread" OFF )
+OPTION(FFLIB_USING_THREAD_PTHREAD "using pthread" ON )	
+OPTION(FFLIB_USING_THREAD_STD "using std thread" OFF )
 ENDIF()
 
-if(USING_THREAD_WIN32)
+if(FFLIB_USING_THREAD_WIN32)
 SET(HAVE_THREAD_WIN "#define FFL_THREAD_WINDOWS 1")
-SET(USING_THREAD_STD OFF)
+SET(FFLIB_USING_THREAD_STD OFF)
 else()
 SET(HAVE_THREAD_WIN "#define FFL_THREAD_WINDOWS 0")
 endif()
 
 
-if(USING_THREAD_PTHREAD)
+if(FFLIB_USING_THREAD_PTHREAD)
 SET(HAVE_THREAD_PTHREAD "#define FFL_THREAD_PTHREAD 1")
 else()
 SET(HAVE_THREAD_PTHREAD "#define FFL_THREAD_PTHREAD 0")
 endif()
 
 
-if(USING_THREAD_STD)
+if(FFLIB_USING_THREAD_STD)
 SET(HAVE_THREAD_STDCPP "#define FFL_THREAD_STDCPP 1")
 else()
 SET(HAVE_THREAD_STDCPP "#define FFL_THREAD_STDCPP 0")
@@ -111,7 +111,7 @@ endif()
 
 #生成配置文件 FFL_Config.h
 CONFIGURE_FILE("${PROJECT_SOURCE_DIR}/include/FFL_Config.h.in" "${PROJECT_BINARY_DIR}/FFL_Config.h")
-INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR};include)
+INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR};include;source)
 
 
 IF(WIN32)
@@ -168,8 +168,7 @@ SET(HEADER_FILES
    ./include/FFL_Ref.hpp
    ./include/FFL_RefAtomic.hpp
    ./include/FFL_RefBase.hpp
-   ./include/FFL_RefCount.hpp
-   ./include/FFL_RefLog.hpp
+   ./include/FFL_RefCount.hpp   
    ./include/FFL_RefSp.hpp
    ./include/FFL_RefWeakimpl.hpp
    ./include/FFL_RefWp.hpp
@@ -242,7 +241,7 @@ SET(SOURCE_FILES
   ./source/FFL_RefWakeimpl.cpp
 )
 
-IF(USING_THREAD_WIN32)
+IF(FFLIB_USING_THREAD_WIN32)
 SET(SOURCE_FILES ${SOURCE_FILES}
   ./source/thread/windows/sysmutex.c
   ./source/thread/windows/systhread.c
@@ -251,7 +250,7 @@ SET(SOURCE_FILES ${SOURCE_FILES}
 )
 ENDIF()
 
-IF(USING_THREAD_STD)
+IF(FFLIB_USING_THREAD_STD)
 SET(SOURCE_FILES ${SOURCE_FILES}
   ./source/thread/stdcpp/syscond.cpp
   ./source/thread/stdcpp/sysmutex.cpp
@@ -260,7 +259,7 @@ SET(SOURCE_FILES ${SOURCE_FILES}
 )
 ENDIF()
 
-IF(USING_THREAD_PTHREAD)
+IF(FFLIB_USING_THREAD_PTHREAD)
 SET(SOURCE_FILES ${SOURCE_FILES}
   ./source/thread/pthread/syscond.c
   ./source/thread/pthread/sysmutex.c

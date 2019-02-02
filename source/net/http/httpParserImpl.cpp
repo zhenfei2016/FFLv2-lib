@@ -13,6 +13,7 @@
 #include "httpParserImpl.hpp"
 #include <net/http/FFL_HttpHeader.hpp>
 #include <net/FFL_NetStream.hpp>
+#include "internalLogConfig.h"
 
 namespace FFL{
 	HttpParserImpl::HttpParserImpl() {
@@ -231,7 +232,7 @@ namespace FFL{
 	int HttpParserImpl::onHeadersComplete(http_parser* parser) {
 		HttpParserImpl* pThis = getThis(parser);
 		pThis->mState = PARSE_HeaderComplete;
-		FFL_LOG_DEBUG("HttpParser: onHeadersComplete");
+		INTERNAL_FFL_LOG_DEBUG("HttpParser: onHeadersComplete");
 		return 0;
 	}
 	int HttpParserImpl::onBody(http_parser* parser, const char* at, size_t length) {

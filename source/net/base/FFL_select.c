@@ -1,12 +1,13 @@
 #include "internalSocket.h"
 #include <net/base/FFL_Net.h>
+#include "internalLogConfig.h"
 
 
 int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, int64_t timeoutUs) {
     struct timeval tv;
     NetFD maxfd = 64;
     fd_set fdset;
-    size_t i = 0;
+    size_t i = 0;	
     int status = 0;
     int socketError = 0;
     
@@ -41,7 +42,7 @@ int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, in
     
     status = select(maxfd, &fdset, 0, 0, (timeoutUs == 0 ? NULL : (&tv)));
     if (status < 0) {
-        FFL_LOG_WARNING("FFL_socketSelect error=%d",SOCKET_ERRNO());
+        INTERNAL_FFL_LOG_WARNING("FFL_socketSelect error=%d",SOCKET_ERRNO());
 #if WIN32
         return FFL_ERROR_SOCKET_SELECT;
 #else
@@ -56,7 +57,7 @@ int32_t FFL_socketSelect(const NetFD *fdList, int8_t *flagList, size_t fdNum, in
     }
     
     if (status > 0) {
-        for (size_t i = 0; i < fdNum; i++) {
+        for ( i = 0; i < fdNum; i++) {
             if (FD_ISSET(fdList[i], &fdset))
                 flagList[i] = 1;
         }

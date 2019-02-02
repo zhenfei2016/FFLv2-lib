@@ -14,22 +14,26 @@
 #include <FFL_Core.h>
 #include <FFL_Version.h>
 
+extern void initializeSharedBuffer();
+extern void terminateSharedBuffer();
+
+extern void initialize_string8();
+extern void terminate_string8();
+
+extern void initializeNetModule();
+extern void terminateNetModule();
 
 
 /*
  *  初始化函数
  *
  * */
+
 void FFL_CALL FFL_initialize(){
 	FFL_LOG_INFO("FFL_initialize call");
-
-	extern void initializeSharedBuffer();
-	initializeSharedBuffer();
 	
-	extern void initialize_string8();
+	initializeSharedBuffer();
 	initialize_string8();
-
-	extern void initializeNetModule();
 	initializeNetModule();
 	
     FFL_LOG_INFO("FFL version:%s",FFL_GetVersion());
@@ -40,14 +44,9 @@ void FFL_CALL FFL_initialize(){
  * */
 void FFL_CALL FFL_terminate(){
 	FFL_LOG_INFO("FFL_terminate call");
-		
-	extern void terminateSharedBuffer();
+	
 	terminateSharedBuffer();
-
-	extern void terminate_string8();
 	terminate_string8();
-
-	extern void terminateNetModule();
 	terminateNetModule();
 
 }

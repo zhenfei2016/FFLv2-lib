@@ -12,6 +12,7 @@
 */
 
 #include <FFL_Thread.hpp>
+#include "internalLogConfig.h"
 
 namespace FFL {
 	class Thread::ThreadData {
@@ -102,13 +103,13 @@ namespace FFL {
 		//
 		//  保存一下线程名称
 		//	
-        self->mThreadData->mTid = FFL_CurrentThreadID();
+        int tid=self->mThreadData->mTid = FFL_CurrentThreadID();
 		char threadName[256] = { 0 };
 		const  char* tmpName = FFL_GetThreadName(self->mThreadData->mThread);
 		if (tmpName != NULL && tmpName[0] != 0) {
 			memcpy(threadName, tmpName, FFL_MIN(strlen(tmpName), 255));
 		}
-		FFL_LOG_DEBUG("Thread(%d)(%s) run", tid, threadName);
+		INTERNAL_FFL_LOG_DEBUG("Thread(%d)(%s) run", tid, threadName);
 
 		if (self->mThreadData->mPriority != FFL_THREAD_PRIORITY_NORMAL) {
 			FFL_SetThreadPriority(self->mThreadData->mPriority);
@@ -172,7 +173,7 @@ namespace FFL {
 		if(!exec_thread_exit)
 		   self->threadLoopExit(0);
 
-		FFL_LOG_DEBUG("Thread(%d)(%s) exit", tid, threadName);
+		INTERNAL_FFL_LOG_DEBUG("Thread(%d)(%s) exit", tid, threadName);
 		return 0;
 	}
 
@@ -186,7 +187,7 @@ namespace FFL {
 	{
 		CMutex::Autolock _l(mThreadData->mLock);
 		if (mThreadData->mTid == FFL_CurrentThreadID()) {
-			FFL_LOG_WARNING(
+			INTERNAL_FFL_LOG_WARNING(
 				"Thread (this=%p): don't call waitForExit() from this "
 				"Thread object's thread. It's a guaranteed deadlock!",
 				this);
@@ -210,7 +211,7 @@ namespace FFL {
 	{
 		CMutex::Autolock _l(mThreadData->mLock);
 		if (mThreadData->mTid == FFL_CurrentThreadID()) {
-			FFL_LOG_WARNING(
+			INTERNAL_FFL_LOG_WARNING(
 				"Thread (this=%p): don't call join() from this "
 				"Thread object's thread. It's a guaranteed deadlock!",
 				this);
@@ -237,7 +238,7 @@ namespace FFL {
 			tid = FFL_GetThreadID(mThreadData->mThread);
 		}
 		else {
-			FFL_LOG_WARNING("Thread (this=%p): getTid() is undefined before run()", this);
+			INTERNAL_FFL_LOG_WARNING("Thread (this=%p): getTid() is undefined before run()", this);
 			tid = -1;
 		}
 		return tid;
