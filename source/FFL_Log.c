@@ -33,16 +33,14 @@ static FFL_LogLevel gLogMaxLevel = FFL_LOG_LEVEL_ERROR;
 static int defaultPrintLog(int level,const char* tag, const char *format, va_list vl);
 static FFL_LogHookFun gLogHookFun = NULL;
 static void* gLogHookFunUserdata = 0;
-
-
-static FILE *gLogFd;
-
-
+/*
+ * 默认日志输出到这个fd上
+*/
+static FILE *gDefaultLogFd=0;
 /*
  *  所有的打印函数入口
  */
-static void internalPrintLog(int level,const char* tag,int enableHook, const char *format,va_list args)
-{
+static void internalPrintLog(int level,const char* tag,int enableHook, const char *format,va_list args){
 	if (level <= gLogMaxLevel) {
 		if (enableHook && gLogHookFun && (gLogHookFun(level, tag, format, args, gLogHookFunUserdata) > 0)) {
 			return;
@@ -79,10 +77,6 @@ const char* FFL_LogGetLevelString(int level) {
 	return s_levels_string[level];
 }
 
-void FFL_LogSetOutput(FILE *file){
-	gLogFd = file;
-}
-
 void FFL_LogHook(FFL_LogHookFun callback, void* userdata){
 	gLogHookFun = callback;
 	gLogHookFunUserdata = userdata;
@@ -90,28 +84,26 @@ void FFL_LogHook(FFL_LogHookFun callback, void* userdata){
 
 /*
 *  每条的输出日志日志最长
+*  调用这个函数的时候需要保证level值是一个有效值
 */
-#define MAX_LOG_LENGTH	2048
+#define MAX_LOG_LENGTH	4096
 static int defaultPrintLog(int level,const char* tag, const char *format, va_list vl){
 	char str[MAX_LOG_LENGTH] = {0};
 	char timeFormat[64] = { 0 };	
-	if (level > gLogMaxLevel) {
-		return 1;
-	}
-
+	
 	vsnprintf(str, MAX_LOG_LENGTH - 1, format, vl);
-	if ( !gLogFd) 
-		gLogFd = stdout;
+	if ( !gDefaultLogFd) 
+		gDefaultLogFd = stdout;
 	
 	{
 		FFL_getNowString(timeFormat,63);
-#ifdef WIN32
-		fprintf(gLogFd, "%s:%s tid=%d %s \n", s_levels_string[level], timeFormat, (int)FFL_CurrentThreadID(),  str);	
+#ifdef WIN32		
+		fprintf(gDefaultLogFd, "%s:%s tid=%d %s \n", s_levels_string[level], timeFormat, (int)FFL_CurrentThreadID(),  str);	
 #else
-        fprintf(gLogFd, "%s:%s tid=%d %s \n", s_levels_string[level], timeFormat, (int)FFL_CurrentThreadID(),  str);
+        fprintf(gDefaultLogFd, "%s:%s tid=%d %s \n", s_levels_string[level], timeFormat, (int)FFL_CurrentThreadID(),  str);
 #endif
 #ifdef _DEBUG
-		fflush(gLogFd);
+		fflush(gDefaultLogFd);
 #endif
 	}
 	return 1;
@@ -119,92 +111,30 @@ static int defaultPrintLog(int level,const char* tag, const char *format, va_lis
 /*
 * 打印日志
 */
-void FFL_LogPrint(int level, const char *format, ...) {
+FFLIB_API_IMPORT_EXPORT int FFL_LogPrint(int level, const char *format, ...) {
 	if (level >= 0 && level < gLogMaxLevel) {
 		va_list args;
 		va_start(args, format);
 		internalPrintLog(level, 0,1, format, args);
 		va_end(args);
+		return 0;
 	}
+	return -1;
 }
-void FFL_LogPrintTag(int level, const char *tag, const char *format, ...) {
+FFLIB_API_IMPORT_EXPORT int FFL_LogPrintTag(int level, const char *tag, const char *format, ...) {
 	if (level >= 0 && level < gLogMaxLevel) {
 		va_list args;
 		va_start(args, format);
 		internalPrintLog(level, tag, 1, format, args);
 		va_end(args);
+		return 0;
 	}
+	return -1;
 }
-void FFL_LogPrintV(int level, const char *format, va_list args) {
+FFLIB_API_IMPORT_EXPORT int FFL_LogPrintV(int level, const char *format, va_list args) {
 	if (level >= 0 && level < gLogMaxLevel) {		
 		internalPrintLog(level, 0, 1, format, args);
+		return 0;
 	}
-}
-
-/*  是否允许进入hook中 */
-static int gInternalInHook = 1;
-void FFL_LogCri(const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_CRIT, 0, gInternalInHook, format, args);
-	va_end(args);
-}
-
-void FFL_LogError(const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_ERROR, 0, gInternalInHook, format, args);
-	va_end(args);
-}
-void FFL_LogWaring(const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_WARNING, 0, gInternalInHook, format, args);
-	va_end(args);
-}
-void FFL_LogInfo(const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_INFO, 0, gInternalInHook, format, args);
-	va_end(args);
-}
-void FFL_LogDebug(const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_DEBUG, 0, gInternalInHook, format, args);
-	va_end(args);
-}
-
-/*
- *   带tag标志的日志函数
- */
-void FFL_LogCriTag(const char *tag,const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_CRIT, tag, gInternalInHook, format, args);
-	va_end(args);
-}
-void FFL_LogErrorTag(const char *tag,const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_ERROR, tag, gInternalInHook, format, args);
-	va_end(args);
-}
-void FFL_LogWaringTag(const char *tag,const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_WARNING, tag, gInternalInHook, format, args);
-	va_end(args);
-}
-void FFL_LogInfoTag(const char *tag,const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_INFO, tag, gInternalInHook, format, args);
-	va_end(args);
-}
-void FFL_LogDebugTag(const char *tag,const char *format, ...){
-	va_list args;
-	va_start(args, format);
-	internalPrintLog(FFL_LOG_LEVEL_DEBUG, tag, gInternalInHook, format, args);
-	va_end(args);
+	return -1;
 }

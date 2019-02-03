@@ -164,6 +164,7 @@ SET(HEADER_FILES
    ./include/FFL_String.hpp   
    ./include/FFL_Utils.hpp   
    ./include/FFL_SharedBuffer.hpp   
+   ./include/FFL_File.hpp
   
    ./include/FFL_Ref.hpp
    ./include/FFL_RefAtomic.hpp

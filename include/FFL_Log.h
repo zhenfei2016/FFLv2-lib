@@ -18,7 +18,8 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include "FFL_Core.h"
+#include <FFL_Config.h>
+
 #ifdef  __cplusplus
 extern "C" {
 #endif	
@@ -53,30 +54,16 @@ FFLIB_API_IMPORT_EXPORT const char* FFL_LogGetLevelString(int level);
  *  userdata :透传数据
  */
 typedef int (*FFL_LogHookFun)(int level,const char* tag,const char *format, va_list args,void* userdata);
-void FFL_LogHook(FFL_LogHookFun callback, void* userdata);
-/*
- *  设置输出日志到这个文件中
- */
-void FFL_LogSetOutput(FILE *file);
-
+FFLIB_API_IMPORT_EXPORT void FFL_LogHook(FFL_LogHookFun callback, void* userdata);
 /************************************************************************
   通用输出，特定等级输出，特定等级并且带tag的输出
+  返回0表示成功
+
+  默认的情况下一条日志的最大长度为4k
 ************************************************************************/
-void FFL_LogPrint(int level, const char *format, ...);
-void FFL_LogPrintTag(int level, const char *tag, const char *format, ...);
-void FFL_LogPrintV(int level, const char *format, va_list args);
-
-void FFL_LogCri(const char *format, ...);
-void FFL_LogError(const char *format, ...);
-void FFL_LogWaring(const char *format, ...);
-void FFL_LogInfo(const char *format, ...);
-void FFL_LogDebug(const char *format, ...);
-
-void FFL_LogCriTag(const char *tag, const char *format, ...);
-void FFL_LogErrorTag(const char *tag, const char *format, ...);
-void FFL_LogWaringTag(const char *tag, const char *format, ...);
-void FFL_LogInfoTag(const char *tag, const char *format, ...);
-void FFL_LogDebugTag(const char *tag, const char *format, ...);
+FFLIB_API_IMPORT_EXPORT int FFL_LogPrint(int level, const char *format, ...);
+FFLIB_API_IMPORT_EXPORT int FFL_LogPrintTag(int level, const char *tag, const char *format, ...);
+FFLIB_API_IMPORT_EXPORT int FFL_LogPrintV(int level, const char *format, va_list args);
 
 #ifdef  __cplusplus
 }

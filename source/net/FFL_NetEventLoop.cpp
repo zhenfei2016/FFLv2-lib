@@ -245,7 +245,7 @@ namespace FFL {
 	//
 	bool NetEventLoopImpl::eventLoop(int32_t* waitTime){
 		if (!mEventLoop->isStarted()) {
-			FFL_LogWaring("NetEventLoop: Failed to NetEventLoop::eventLoop. not start.");
+			INTERNAL_FFL_LOG_WARNING("NetEventLoop: Failed to NetEventLoop::eventLoop. not start.");
 			return false;
 		}		
 

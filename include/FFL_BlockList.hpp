@@ -11,10 +11,10 @@
 *  一个锁同步的List,方便多线程操作列表
 * typedef struct Data ｛
 * ｝ Data;
-* 
+*
 *  BlockingList<Data*> dataList;
 *  dataList.start();
-*  
+*
 *  thread1Loop(){
 *     dataList.incoming(data);
 *  }
@@ -40,14 +40,12 @@ namespace FFL {
 		typename std::list<T>::iterator ListIt;
 	public:
 		BlockingList(const char* name) :mIsStarted(false), mMaxSize(0) {
-			//mName = name ? name : "";
 		}
 		//
 		//  name：list的名称，
 		//  maxSize : 最多保存几个元素
 		//
 		BlockingList(const char* name, uint32_t maxSize) :mIsStarted(false), mMaxSize(maxSize) {
-			//mName = name ? name : "";
 		}
 		~BlockingList() {
 			clear();
@@ -88,6 +86,9 @@ namespace FFL {
 					//FFL_LOG_DEBUG("BlockingList(%s) full. incoming element maxSize=%u ,size=%u  ",
 					//	mName.string(), mMaxSize, mDataList.size());
 					mCond.wait(mMutex);
+				}
+				else {
+					break;
 				}
 			}
 			if (!mIsStarted) {
@@ -144,7 +145,7 @@ namespace FFL {
 			typename std::list<T> it = mDataList.begin();
 			for (; it != mDataList.end(); it++) {
 				tmp.push_back(*it);
-			}			  
+			}
 			mDataList.clear();
 		}
 
@@ -156,8 +157,6 @@ namespace FFL {
 			return mDataList.size();
 		}
 	private:
-        String mName;
-
 		FFL::CMutex mMutex;
 		volatile bool mIsStarted;
 		uint32_t mMaxSize;
