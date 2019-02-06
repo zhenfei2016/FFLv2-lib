@@ -6,7 +6,7 @@ namespace FFL {
 	//
 	//  分解url中的host和port
 	//  host:port
-	FFLIB_API_IMPORT_EXPORT void FFL_parseHostport(const String& url, String& host, int32_t& port);
+	FFLIB_API_IMPORT_EXPORT void FFL_parseHostport(const String& url, String& host, int16_t& port);
 	//
 	//  是否一个ip, 是的话返回FFL_Ok
 	//

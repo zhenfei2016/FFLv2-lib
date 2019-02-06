@@ -16,7 +16,7 @@
 #include <FFL_Core.h>
 
 #define FFL_VERSION_INT(a, b, c) ((a)<<16 | (b)<<8 | (c))
-#define FFL_VERSION_DOT(a, b, c) a ##.## b ##.## c
+#define FFL_VERSION_DOT(a, b, c) FFL_TOSTRING(a)##"."## FFL_TOSTRING(b) ##"."## FFL_TOSTRING(c)
 
 /*
  *  对应版本号的3段

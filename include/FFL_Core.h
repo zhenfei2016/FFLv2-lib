@@ -118,6 +118,9 @@
 typedef int NetFD;
 #define INVALID_NetFD 0
 
+#ifdef  __cplusplus
+extern "C"{
+#endif
 /*
 *  初始化函数
 *
@@ -129,6 +132,10 @@ FFLIB_API_IMPORT_EXPORT void FFL_CALL FFL_initialize();
 *
 * */
 FFLIB_API_IMPORT_EXPORT void FFL_CALL FFL_terminate();
+
+#ifdef  __cplusplus
+}
+#endif
 
 #endif
 

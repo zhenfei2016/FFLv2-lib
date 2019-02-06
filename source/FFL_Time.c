@@ -64,7 +64,7 @@ int32_t FFL_getNowMs() {
 
 
 void FFL_getNowString(char* s, int32_t bufSize) {
-	internalGetTimeString(s,bufSize);
+	internalGetTimeString(internalGetUs(),s,bufSize);
 }
 
 
@@ -72,32 +72,5 @@ void FFL_getNowString(char* s, int32_t bufSize) {
 *  毫米转化为string，
 */
 void FFL_usToString(int64_t timeUs, char* s, int32_t bufSize) {
-	int second = (int)(timeUs / (1000 * 1000 ));
-	int mod = (int)(timeUs % (1000 * 1000));
-
-	int hour = 0;
-	int mintue = 0;
-	int ms=0;
-	int us=0;
-	if (second >= 60) {
-		mintue = second / 60;
-		second = second % 60;
-		if (mintue >= 60) {
-			hour = mintue / 60;
-			mintue = mintue % 60;
-		}
-	}	
-	ms = mod / 1000;
-	us = mod % 1000;
-
-	if (hour > 0) {
-		snprintf(s, bufSize, "%2d:%02d:%02d:%03d:%03d", hour, mintue, second, ms, us);
-	}else if(mintue>0){
-		snprintf(s, bufSize, "%2d:%02d:%03d:%03d", mintue, second, ms, us);
-	}else if (second > 0) {
-		snprintf(s, bufSize, "%2d:%03d:%03d", second, ms, us);
-	}else{
-		// <1s
-		snprintf(s, bufSize, "00:%03d:%03d",us / 1000, us % 1000);
-	}
+	internalGetTimeString(timeUs, s,bufSize);
 }

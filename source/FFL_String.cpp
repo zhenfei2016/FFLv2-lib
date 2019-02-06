@@ -590,6 +590,21 @@ namespace FFL {
 
 		return memcmp(string()+size() - subLength, sub, subLength) == 0;
 	}
+	bool String8::equal(const char* other) {
+		if (other == NULL || other[0] == NULL) {
+			return size() == 0;
+		}
+
+		size_t otherLength = strlen(other);
+		if (otherLength != size()) {
+			return false;
+		}
+
+		return memcmp(string(), other, otherLength) == 0;
+	}
+	bool String8::equal(const String8& other) {
+		return equal(other.string());
+	}
 	size_t String8::length() const
 	{
 		return SharedBuffer::sizeFromData(mString) - 1;

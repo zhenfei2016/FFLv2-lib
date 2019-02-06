@@ -137,7 +137,9 @@ namespace FFL {
 		//
 		bool startWith(const char* sub);
 		bool endWith(const char*sub);
-		
+
+		bool equal(const char* other);
+		bool equal(const String8& other);
 		/*
 		* These methods operate on the string as if it were a path name.
 		*/

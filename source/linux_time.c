@@ -35,9 +35,7 @@ int64_t internalGetUs(){
 	return nowUs;
 }
 
-void internalGetTimeString(char* s, int32_t bufSize) {
-	int64_t current = internalGetUs();
-
+void internalGetTimeString(int64_t current,char* s, int32_t bufSize) {
 	time_t ts = gStartTime + (current / 1000000);
 	struct tm* t = 0;
 	t = localtime(&ts);

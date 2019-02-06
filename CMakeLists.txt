@@ -173,10 +173,14 @@ SET(HEADER_FILES
    ./include/FFL_RefSp.hpp
    ./include/FFL_RefWeakimpl.hpp
    ./include/FFL_RefWp.hpp
+
+   )
+
+   SET(HEADER_NET_FILES 
 #网络部分
    ./include/net/base/FFL_Net.h
    ./include/net/base/FFL_NetConst.h
-   
+      
    ./include/net/FFL_NetEventLoop.hpp
    ./include/net/FFL_NetSocket.hpp
    ./include/net/FFL_NetStream.hpp
@@ -186,6 +190,10 @@ SET(HEADER_FILES
    ./include/net/FFL_TcpServer.hpp
    ./include/net/FFL_UdpClient.hpp
    ./include/net/FFL_UdpServer.hpp
+   
+   )
+
+    SET(HEADER_HTTP_FILES 
 #http
     ./include/net/http/FFL_Http.hpp
 	./include/net/http/FFL_HttpClient.hpp
@@ -283,8 +291,13 @@ SET(SOURCE_FILES ${DIR_SRCS} ${SOURCE_FILES})
 AUX_SOURCE_DIRECTORY(./source/net/http/http-parser-2.1 DIR_SRCS)
 SET(SOURCE_FILES ${DIR_SRCS} ${SOURCE_FILES})
 
+SET(LOCAL_SRC_FILES 
+  ${SOURCE_FILES}
+  ${HEADER_FILES}
+  ${HEADER_NET_FILES}
+  ${HEADER_HTTP_FILES})
 
-group_by_dir(${CMAKE_SOURCE_DIR} ${LOCAL_SRC_FILES}";"${SOURCE_FILES}";"${HEADER_FILES})
+group_by_dir(${CMAKE_SOURCE_DIR} ${LOCAL_SRC_FILES})
 
 if (MSVC)
     add_definitions("/wd4819 /wd4996")
@@ -304,9 +317,9 @@ endif(MSVC)
 
 #编译对应库文件
 if (FFLIB_COMPILE_STATIC)   
-   ADD_LIBRARY( FFL STATIC ${LOCAL_SRC_FILES} ${SOURCE_FILES} ${HEADER_FILES})
+   ADD_LIBRARY( FFL STATIC ${LOCAL_SRC_FILES})
 else()   
-   ADD_LIBRARY( FFL SHARED ${LOCAL_SRC_FILES} ${SOURCE_FILES} ${HEADER_FILES}) 
+   ADD_LIBRARY( FFL SHARED ${LOCAL_SRC_FILES}) 
 endif()
 SET_TARGET_PROPERTIES(FFL PROPERTIES CLEAN_DIRECT_OUTPUT 1)
 
@@ -323,4 +336,7 @@ SET(HEADERS
 	${PROJECT_BINARY_DIR}/FFL_LogConfig.h
    )
 install(FILES ${HEADERS} DESTINATION include/)
+install(FILES ${HEADER_NET_FILES} DESTINATION include/net/)
+install(FILES ${HEADER_HTTP_FILES} DESTINATION include/net/http/)
+
 install(TARGETS FFL DESTINATION lib/)

@@ -21,7 +21,7 @@ static void internalTimeInit()
 	}
 }
 
-static double internalGetUs()
+static int64_t internalGetUs()
 {
 	LARGE_INTEGER now;
 	double dt=0;
@@ -29,12 +29,10 @@ static double internalGetUs()
 	QueryPerformanceCounter(&now);
 
 	dt = (now.QuadPart - gStartUs.QuadPart) / (double)gFreq.QuadPart;
-	return dt * 1000000;
+	return (int64_t)(dt * 1000000);
 }
 
-static void internalGetTimeString(char* s,int32_t bufSize) {
-	int64_t current= (int64_t)internalGetUs();
-
+static void internalGetTimeString(int64_t current,char* s,int32_t bufSize) {
 	time_t ts = gStartTime +(current / 1000000);
 	int tus=current % 1000000;
 
