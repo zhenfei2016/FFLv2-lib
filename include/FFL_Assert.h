@@ -20,10 +20,13 @@ extern "C" {
 #endif
 
 #define FFL_ASSERT(expr) assert((expr))
-
-#define FFL_ASSERT_LOG(expr,message) FFL_ASSERT(expr)
-        
-
+	
+#define FFL_ASSERT_LOG(expr,format,...)\
+		do { if (!(expr)){\
+				FFL_LOG_WARNING_TAG("assert","Assertion %s failed at %s:%d",FFL_TOSTRING(expr),__FILE__, __LINE__);                 \
+				abort();                                                        \
+			  }\
+           }while(0)
 
 #ifdef  __cplusplus
 }

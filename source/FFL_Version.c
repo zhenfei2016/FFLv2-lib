@@ -4,10 +4,10 @@
 *  The MIT License (MIT)
 *  Copyright (C) 2017-2018 zhufeifei All rights reserved.
 *
-*  FFL_Version
+*  FFL_Version.c
 *  Created by zhufeifei(34008081@qq.com) on 2018/1/7.
 *  https://github.com/zhenfei2016/FFLv2-lib.git
-*  版本相关信息 ,参考的ffmpeg中的宏定义，基本都是copy的
+*  版本相关信息
 *
 */
 
