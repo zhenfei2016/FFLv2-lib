@@ -13,7 +13,7 @@
 
 #ifndef _FFL_SOCKET_PAIR_HPP_
 #define _FFL_SOCKET_PAIR_HPP_
-#include <net/base/FFL_Net.h>
+#include <net/FFL_Net.h>
 #include <FFL_Core.h>
 
 namespace FFL{

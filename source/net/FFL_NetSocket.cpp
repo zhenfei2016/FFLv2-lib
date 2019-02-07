@@ -11,7 +11,7 @@
 *
 */
 
-#include <net/base/FFL_Net.h>
+#include <net/FFL_Net.h>
 #include <net/FFL_NetSocket.hpp>
 
 

@@ -51,6 +51,9 @@ namespace FFL {
 		getUrlField(url,mSchema, &parserUrl, UF_SCHEMA);
 		getUrlField(url, mHost, &parserUrl, UF_HOST);		
 		mPort=parserUrl.port;
+		if (mPort == 0) {
+			mPort = 80;
+		}
 		getUrlField(url, mPath, &parserUrl, UF_PATH);
 		getUrlField(url, mQuery, &parserUrl, UF_QUERY);
 

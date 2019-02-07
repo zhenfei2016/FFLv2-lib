@@ -15,7 +15,7 @@
 
 #include <FFL_Core.h>
 #include <FFL_Module.hpp>
-#include <net/base/FFL_Net.h>
+#include <net/FFL_Net.h>
 
 namespace FFL {
 	class NetEventLoopImpl;

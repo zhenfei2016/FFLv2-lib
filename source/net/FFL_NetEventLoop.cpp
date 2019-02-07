@@ -11,7 +11,7 @@
 *
 */
 #include <net/FFL_NetEventLoop.hpp>
-#include <net/base/FFL_Net.h>
+#include <net/FFL_Net.h>
 #include "FFL_SocketPair.hpp"
 #include "internalLogConfig.h"
 #include <list>

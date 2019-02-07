@@ -178,8 +178,8 @@ SET(HEADER_FILES
 
    SET(HEADER_NET_FILES 
 #网络部分
-   ./include/net/base/FFL_Net.h
-   ./include/net/base/FFL_NetConst.h
+   ./include/net/FFL_Net.h
+   ./include/net/FFL_NetConst.h
       
    ./include/net/FFL_NetEventLoop.hpp
    ./include/net/FFL_NetSocket.hpp

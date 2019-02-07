@@ -18,7 +18,7 @@ namespace FFL {
 	void FFL_parseHostport(const String& url, String& host, int16_t& port){
 		int pos = url.find(":");
 		if (pos >=0) {			
-			host.append(url.string(), pos - 1);
+			host.append(url.string(), pos );
 			port = ::atoi(url.string()+pos+1);
 		}else {
 			host = url;

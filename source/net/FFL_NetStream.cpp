@@ -10,7 +10,7 @@
 *  网络流，读取接口，内部缓存数据，方便进行parser
 *
 */
-#include <net/base/FFL_Net.h>
+#include <net/FFL_Net.h>
 #include <net/FFL_NetStream.hpp>
 #include <FFL_ByteBuffer.hpp>
 #include "internalLogConfig.h"

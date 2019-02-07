@@ -15,7 +15,7 @@
 #define _FFL_SOCKET_H_
 
 #include <FFL_Core.h>
-#include <net/base/FFL_NetConst.h>
+#include <net/FFL_NetConst.h>
 
 #ifdef WIN32
 #include <winsock2.h>

@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
+#include "internalLogConfig.h"
 
 #define OS_PATH_SEPARATOR  '/'
 #define NO_MEMORY -1
@@ -57,32 +58,40 @@ namespace FFL {
 	extern int gDarwinCantLoadAllObjects;
 	int gDarwinIsReallyAnnoying;
 
-	static inline char* getEmptyString()
-	{
-		gEmptyStringBuf->acquire();
-		return gEmptyString;
-	}
 
-    extern "C" void initialize_string8()
-	{
+
+    extern "C" void initialize_string8(){
 		// HACK: This dummy dependency forces linking libutils Static.cpp,
 		// which is needed to initialize String8/String16 classes.
 		// These variables are named for Darwin, but are needed elsewhere too,
 		// including static linking on any platform.
 		//gDarwinIsReallyAnnoying = gDarwinCantLoadAllObjects;
-
-		SharedBuffer* buf = SharedBuffer::alloc(1);
-		char* str = (char*)buf->data();
-		*str = 0;
-		gEmptyStringBuf = buf;
-		gEmptyString = str;
+		if (!gEmptyStringBuf) {
+			SharedBuffer* buf = SharedBuffer::alloc(1);
+			char* str = (char*)buf->data();
+			*str = 0;
+			gEmptyStringBuf = buf;
+			gEmptyString = str;
+		}
 	}
 
-	extern "C" void terminate_string8()
+	extern "C" void terminate_string8(){
+		if (gEmptyStringBuf) {
+			SharedBuffer::bufferFromData(gEmptyString)->release();
+			gEmptyStringBuf = NULL;
+			gEmptyString = NULL;
+		}
+	}
+
+	static inline char* getEmptyString()
 	{
-		SharedBuffer::bufferFromData(gEmptyString)->release();
-		gEmptyStringBuf = NULL;
-		gEmptyString = NULL;
+		if (gEmptyStringBuf == NULL) {
+			INTERNAL_FFL_LOG_WARNING("String8 not call initialize_string8()");
+			initialize_string8();
+		}
+
+		gEmptyStringBuf->acquire();
+		return gEmptyString;
 	}
 
 	// ---------------------------------------------------------------------------

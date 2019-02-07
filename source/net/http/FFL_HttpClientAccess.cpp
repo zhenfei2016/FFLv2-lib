@@ -248,7 +248,9 @@ namespace FFL {
 			}
 		}
 
-		entry->mCallback->onResponse(NULL, HttpClientAccessManager::Callback::ERROR_CONNECT);
+		if (!entry->mCallback.isEmpty()) {
+			entry->mCallback->onResponse(NULL, HttpClientAccessManager::Callback::ERROR_CONNECT);
+		}
 		FFL_SafeFree(client);
 		return false;
 	}
