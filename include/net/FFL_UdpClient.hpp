@@ -49,6 +49,8 @@ namespace FFL {
 		//  返回错误码  ： FFL_OK表示成功
 		//
 		virtual status_t writeVec(const BufferVec* bufVec, int count, size_t* pWrite);		
+
+		void close();
 	protected:
 		CSocket mSocket;
 	};

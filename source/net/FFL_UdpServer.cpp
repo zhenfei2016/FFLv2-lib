@@ -80,7 +80,7 @@ namespace FFL {
 
 	UdpServerImpl::UdpServerImpl(const char* ip, uint16_t port,
 		UdpServer::Callback* handler,
-		const char* name) {
+		const char* name):mHandler(handler){
 		mServerName= name ? name : "";
 		mIP = ip ? ip :"";
 		mPort = port;
@@ -89,7 +89,7 @@ namespace FFL {
 	}
 	UdpServerImpl::~UdpServerImpl() {
 		FFL_SafeFree(mEventLoop);
-		FFL_SafeFree(mEventLoop);
+		FFL_SafeFree(mEventHandler);
 	}
 	//
 	//  调用。start，stop会触发onStart,onStop的执行
