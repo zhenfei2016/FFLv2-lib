@@ -21,6 +21,7 @@ namespace FFL{
 	public:
 		ByteBuffer();
 		ByteBuffer(uint32_t size);
+		ByteBuffer(const uint8_t* data,uint32_t size);
 		~ByteBuffer();
 		
 		//
@@ -31,7 +32,6 @@ namespace FFL{
 		//  扩大一下内存空间,如果size小于已经申请的则返回以前的大小
 		//
 		uint32_t realloc(uint32_t size);
-		
 
 		uint8_t* data() const;
 		uint32_t size() const;

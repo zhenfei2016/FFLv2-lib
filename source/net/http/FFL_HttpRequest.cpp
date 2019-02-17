@@ -13,10 +13,42 @@
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
 #include <net/http/FFL_HttpClient.hpp>
+#include <FFL_ByteBuffer.hpp>
+#include <FFL_ByteStream.hpp>
 
 namespace FFL {	
-	HttpRequest::HttpRequest(FFL::sp<HttpClient> client):mClient(client)
-		{
+	class SimpleHttpContent : public HttpContent {
+	public:
+		SimpleHttpContent(const uint8_t* data,int32_t size) {
+			mBuffer = new ByteBuffer(data,size);
+		}
+
+		~SimpleHttpContent() {
+			FFL_SafeFree(mBuffer);
+		}
+
+		int32_t getSize() {
+			return mBuffer->getByteStream()->getSize();
+		}
+		int32_t read(uint8_t* data, int32_t* bufSize) {
+			int32_t size = mBuffer->getByteStream()->getSize();
+			if (bufSize) {
+				if (size > *bufSize) {
+					size = *bufSize;
+				} else {
+					*bufSize = size;
+				}
+			}
+
+			mBuffer->getByteStream()->readBytes((int8_t*)data, size);
+			return size;
+		}
+		ByteBuffer* mBuffer;
+	};
+	HttpRequest::HttpRequest() {
+	}
+	HttpRequest::HttpRequest(FFL::sp<HttpClient> client):
+		   mClient(client){
 	}
 	HttpRequest::~HttpRequest() {
 	}
@@ -26,7 +58,6 @@ namespace FFL {
 	FFL::sp<HttpClient> HttpRequest::getHttpClient() {
 		return mClient;
 	}
-
 
 	FFL::sp<HttpResponse> HttpRequest::makeResponse() {
 		FFL::sp<HttpResponse> response = new HttpResponse(mClient);
@@ -48,24 +79,39 @@ namespace FFL {
 		mHeader = header;
 	}
 	//
+	//  设置内容，用于发送端
+	//
+	void HttpRequest::setContent(const uint8_t* data, uint32_t size) {
+		if (data && size > 0) {
+			mContent = new SimpleHttpContent(data,(int32_t) size);
+		}
+		else {
+			mContent = NULL;
+		}
+	}
+	void HttpRequest::setContent(FFL::sp<HttpContent> content) {
+		mContent = content;
+	}
+
+	//
 	//  开始发送请求，
 	//
 	bool HttpRequest::send() {
-		return true;
+		if (writeHeader()) {
+			return writeContent();
+		}
+		return false;		
 	}	
-	//
-	//  读取内容
-	//
-	bool HttpRequest::readContent(char* content, int32_t requestSize, size_t* readed) {
-		return mClient->read(content, requestSize, readed);
-	}
-	
 	//
 	//  请求内容
 	//  header :头内容		
 	//  content:内容
 	//
 	bool HttpRequest::writeHeader() {
+		if (mClient.isEmpty()) {
+			return false;
+		}
+
 		//
 		//  发送的内容长度
 		//
@@ -108,14 +154,54 @@ namespace FFL {
 		headerInfo += "\r\n";
 		return mClient->write(headerInfo.string(), headerInfo.size(), 0);
 	}
-	bool HttpRequest::writeContent(const char* content, int32_t requestSize) {
-		return mClient->write(content, requestSize,0);
+	bool HttpRequest::writeContent() {
+		if (mClient.isEmpty()) {
+			return false;
+		}
+
+		if (mContent.isEmpty()) {
+			return true;
+		}
+
+		uint8_t buf[4096] = {};
+		int32_t bufSize = 4096;
+		int32_t len=mContent->getSize();
+		while(len>0){
+			bufSize = 4096;
+			if (mContent->read(buf, &bufSize) <= 0) {
+				break;
+			}
+
+			if (!mClient->write((const char*)buf, bufSize, 0)) {
+				break;
+			}
+
+			FFL_sleep(5);
+		}
+		
+		return true;
 	}
 	//
 	//  结束应答,关闭这个连接
 	//
 	void HttpRequest::finish() {
-		mClient->close();
+		if (!mClient.isEmpty()) {
+			mClient->close();
+			mClient = NULL;
+		}
+
+		mContent = NULL;
+	}
+
+	//
+	//  读取内容
+	//
+	bool HttpRequest::readContent(uint8_t* content, int32_t requestSize, size_t* readed) {
+		if (mClient.isEmpty()) {
+			return false;
+		}
+
+		return mClient->read((char*)content, requestSize, readed);
 	}
 }
 

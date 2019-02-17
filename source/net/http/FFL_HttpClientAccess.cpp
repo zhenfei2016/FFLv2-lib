@@ -38,7 +38,12 @@ namespace FFL {
 	RequestContext::RequestContext() :mCreateTimeUs(0), mTcpClient(NULL) {
 	}
 	RequestContext::~RequestContext() {
+		if (mTcpClient) {
+			mTcpClient->close();
+			FFL_SafeFree(mTcpClient);
+		}
 
+		mHttpClient = NULL;
 	}
 
 	class HttpRequestThread;
@@ -215,7 +220,7 @@ namespace FFL {
 			else {
 				callback->onResponse(response, HttpClientAccessManager::Callback::ERROR_SUC);
 			}
-		}
+		}		
 		return false;
 	}
 
@@ -226,32 +231,37 @@ namespace FFL {
 		FFL::HttpUrl url;
 		entry->mRequest->getUrl(url);
 
-		TcpClient* client = new TcpClient();
-		if (client->connect(url.mHost.string(), url.mPort, *client) == FFL_OK) {
-			NetFD fd = client->getFd();
-			FFL::sp<HttpClient> httpClient = new HttpClient(client);
-			if (mEventLoop.addFd(fd, this, NULL, httpClient.get())) {
+		
+		FFL::sp<HttpClient> httpClient=entry->mRequest->getHttpClient();
+		if (httpClient.isEmpty()) {
+			TcpClient* client = new TcpClient();
+			if (client->connect(url.mHost.string(), url.mPort, *client) == FFL_OK) {				
+				httpClient = new HttpClient(client);
 				entry->mRequest->setHttpClient(httpClient);
-				if (entry->mRequest->writeHeader()) {
+				entry->mTcpClient = client;
+				entry->mHttpClient = httpClient;
+			}
+		}
+
+		if (!httpClient.isEmpty()) {
+			NetFD fd = entry->mTcpClient->getFd();
+			if (mEventLoop.addFd(fd, this, NULL, httpClient.get())) {
+				if (entry->mRequest->send()) {
 					//
 					// 添加到等待应答的队列
 					//
-					{
-						FFL::CMutex::Autolock l(mPendingLock);
-						entry->mTcpClient = client;
-						entry->mHttpClient = httpClient;
-						mPendingRequstList.push_back(entry);
-					}
+					FFL::CMutex::Autolock l(mPendingLock);
+					mPendingRequstList.push_back(entry);
 					return true;
 				}
 				mEventLoop.removeFd(fd);
 			}
 		}
+		
 
 		if (!entry->mCallback.isEmpty()) {
 			entry->mCallback->onResponse(NULL, HttpClientAccessManager::Callback::ERROR_CONNECT);
-		}
-		FFL_SafeFree(client);
+		}		
 		return false;
 	}
 

@@ -20,15 +20,19 @@ namespace FFL {
 		mStream = new ByteStream();
 		alloc(4096);
 	}
+	ByteBuffer::ByteBuffer(uint32_t size) : mData(0), mSize(0) {
+		mStream = new ByteStream();
+		alloc(size);
+	}
+	ByteBuffer::ByteBuffer(const uint8_t* data, uint32_t size) {
+		mStream = new ByteStream();
+		alloc(size);
+		mStream->writeBytes((const int8_t*)data, size);
+	}
 	ByteBuffer::~ByteBuffer(){
 		FFL_free(mData);		
 		mSize = 0;
 		FFL_SafeFree(mStream);
-	}
-
-	ByteBuffer::ByteBuffer(uint32_t size) :mData(0), mSize(0) {
-		mStream = new ByteStream();
-		alloc(size);
 	}
 	//
 	// 重新申请一下空间

@@ -49,5 +49,9 @@ namespace FFL {
 		mContentLength = len;
 	}
 
+
+	HttpContent::HttpContent(){}
+	HttpContent::~HttpContent(){}
+
 	
 }

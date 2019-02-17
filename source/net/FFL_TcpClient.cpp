@@ -25,8 +25,7 @@ namespace FFL {
     TcpClient::TcpClient(NetFD fd):mPriv(NULL){
 		mSocket.setFd(fd, CSocket::PROTOCOL_TCP);
     }
-    TcpClient::~TcpClient(){
-		close();
+    TcpClient::~TcpClient(){		
     }
 	//
 	// 保存一些用户数据

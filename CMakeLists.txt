@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.4.1)
 
 PROJECT(FFL)
+#SET(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/install) 
 
 INCLUDE(./cmakemode/FFLv2Utils.cmake)
 

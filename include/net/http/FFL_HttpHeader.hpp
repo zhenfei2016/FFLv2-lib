@@ -17,6 +17,7 @@
 
 #include <FFL_Core.h>
 #include <FFL_Dictionary.hpp>
+#include <FFL_RefBase.hpp>
 
 namespace FFL {	
 	//
@@ -45,6 +46,18 @@ namespace FFL {
 	protected:
 		String  mContentType;
 		int32_t mContentLength;		
+	};
+
+	//
+	//  http发送的内容
+	//
+	class FFLIB_API_IMPORT_EXPORT  HttpContent : public RefBase {
+	public:
+		HttpContent();
+		virtual ~HttpContent();
+
+		virtual int32_t getSize() = 0;
+		virtual int32_t read(uint8_t* data, int32_t* bufSize)=0;
 	};
 }
 
