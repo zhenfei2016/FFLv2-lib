@@ -56,8 +56,18 @@ namespace FFL {
 		HttpContent();
 		virtual ~HttpContent();
 
+		//
+		//  内容的长度
+		//
 		virtual int32_t getSize() = 0;
-		virtual int32_t read(uint8_t* data, int32_t* bufSize)=0;
+		//
+		//  读取内容，依次向后读写的
+		//  data:缓冲区
+		//  requestSize:希望多少字节
+		//  suc:返回是否成功了
+		//  函数返回实质上返回的长短
+		//  
+		virtual int32_t read(uint8_t* data, int32_t requestSize,bool* suc)=0;
 	};
 }
 

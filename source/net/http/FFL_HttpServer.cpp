@@ -24,14 +24,6 @@ namespace FFL {
 
 	class HttpServerImpl {		
 		public:
-			class Callback : public RefBase {
-			public:
-				//
-				//  返回false则强制关闭这个连接
-				//
-				virtual bool onHttpQuery(HttpRequest* request) = 0;
-			};
-		public:
 			HttpServerImpl(const char* ip, int32_t port);
 			virtual ~HttpServerImpl();
 		public:		
@@ -51,8 +43,8 @@ namespace FFL {
 			CMutex mApiListLock;
 
 			bool onHttpClientCreate(TcpClient* client, int64_t* aliveTimeUs);
-			void onHttpClientDestroy(TcpClient* client, int reason);
-			bool onHttpClientReceived(TcpClient* client);
+			void onHttpClientDestroy(TcpClient* client, TcpServer::Callback::FD_OPTMODE reason);
+			TcpServer::Callback::FD_OPTMODE onHttpClientReceived(TcpClient* client);
 			//
 			//  处理http请求
 			//
@@ -85,8 +77,8 @@ namespace FFL {
 				//              <0 一直存活， 
 				//
 				virtual bool onClientCreate(TcpClient* client, int64_t* aliveTimeUs);
-				virtual void onClientDestroy(TcpClient* client, int reason);
-				virtual bool onClientReceived(TcpClient* client);
+				virtual void onClientDestroy(TcpClient* client, TcpServer::Callback::FD_OPTMODE reason);
+				virtual TcpServer::Callback::FD_OPTMODE onClientReceived(TcpClient* client);
 
 				HttpServerImpl* mServer;
 			};
@@ -150,7 +142,7 @@ namespace FFL {
 		FFL::sp<HttpClient> mHttpClient;
 	};
 	HttpContext::HttpContext(TcpClient* client):mTcpClient(client){
-		mHttpClient = new HttpClient(client);
+		mHttpClient = new HttpClient (client);
 	}
 	HttpContext::~HttpContext() {				
 		mTcpClient = NULL;
@@ -162,26 +154,30 @@ namespace FFL {
 		client->setUserdata(contex);
 		return true;
 	}
-	void HttpServerImpl::onHttpClientDestroy(TcpClient* client, int reason) {
+	void HttpServerImpl::onHttpClientDestroy(TcpClient* client, TcpServer::Callback::FD_OPTMODE reason) {
 		HttpContext* contex = (HttpContext*)client->getUserdata();
 		client->setUserdata(NULL);
+
+		if (reason == TcpServer::Callback::FD_REMOVE) {
+			//
+			//  需要httpclient管理了
+			//
+			contex->mHttpClient->setAutodelTcpClient(true);
+		}
+
 		FFL_SafeFree(contex);
 	}
-	bool HttpServerImpl::onHttpClientReceived(TcpClient* client) {
+	TcpServer::Callback::FD_OPTMODE HttpServerImpl::onHttpClientReceived(TcpClient* client) {
 		HttpContext* contex = (HttpContext*)client->getUserdata();
 		FFL::sp<HttpRequest> request=contex->mHttpClient->readRequest();
 		if (!request.isEmpty()) {
-			if (!processHttpRequest(request)) {
-				//
-				//  关闭这个连接
-				//
-
-				return false;
+			if (!processHttpRequest(request)) {				
+				return TcpServer::Callback::FD_REMOVE;
 			}
-
-			return true;
+			return TcpServer::Callback::FD_CONTINUE;
 		}	
-		return false;
+
+		return TcpServer::Callback::FD_DESTROY;
 	}
 
 	//
@@ -242,10 +238,11 @@ namespace FFL {
 	bool HttpServerImpl::TcpServerCallback::onClientCreate(TcpClient* client, int64_t* aliveTimeUs) {
 		return mServer->onHttpClientCreate(client, aliveTimeUs);
 	}
-	void HttpServerImpl::TcpServerCallback::onClientDestroy(TcpClient* client, int reason) {
+	void HttpServerImpl::TcpServerCallback::onClientDestroy(TcpClient* client, 
+		TcpServer::Callback::FD_OPTMODE reason) {
 		mServer->onHttpClientDestroy(client,reason);
 	}
-	bool HttpServerImpl::TcpServerCallback::onClientReceived(TcpClient* client) {
+	TcpServer::Callback::FD_OPTMODE HttpServerImpl::TcpServerCallback::onClientReceived(TcpClient* client) {
 		return mServer->onHttpClientReceived(client);
 	}
 

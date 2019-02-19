@@ -32,10 +32,14 @@ namespace FFL{
 		//  扩大一下内存空间,如果size小于已经申请的则返回以前的大小
 		//
 		uint32_t realloc(uint32_t size);
-
+		//
+		//  buffer指针
+		//
 		uint8_t* data() const;
-		uint32_t size() const;
-		
+		//
+		//  buffer大小
+		//
+		uint32_t size() const;		
 		//
 		//  获取这个内存的操作流
 		//

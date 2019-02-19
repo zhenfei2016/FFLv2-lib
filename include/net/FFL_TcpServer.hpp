@@ -24,13 +24,28 @@ namespace FFL {
 	public:
 		class Callback {
 		public:
+			enum FD_OPTMODE {
+				//
+				// 继续数据的读写
+				FD_CONTINUE = 1,
+				//
+				// 结束关闭fd
+				FD_DESTROY = 2,
+				//
+				//  fd事件管理中移除出去，自己进行TcpClient的读写
+				FD_REMOVE = 4,
+			};
+
 			//
 			//  aliveTimeUs:保活时长，如果超过这么长时间还没有数据则干掉这个client
 			//              <0 一直存活， 
 			//
-			virtual bool onClientCreate(TcpClient* client,int64_t* aliveTimeUs) = 0;
-			virtual void onClientDestroy(TcpClient* client, int reason) = 0;
-			virtual bool onClientReceived(TcpClient* client) = 0;
+			virtual bool onClientCreate(TcpClient* fd,int64_t* aliveTimeUs) = 0;
+			virtual void onClientDestroy(TcpClient* fd, FD_OPTMODE mod) = 0;
+			//
+			// 收到网络数据后，返回对这个client的处理方式   
+			//			
+			virtual FD_OPTMODE onClientReceived(TcpClient* fd) = 0;
 
 		};
 	public:

@@ -202,12 +202,12 @@ SET(HEADER_FILES
 	./include/net/http/FFL_HttpHeader.hpp
 	./include/net/http/FFL_HttpParser.hpp
 	./include/net/http/FFL_HttpRequest.hpp
-	./include/net/http/FFL_HttpRequestBuilder.hpp
+	#./include/net/http/FFL_HttpRequestBuilder.hpp
 	./include/net/http/FFL_HttpResponse.hpp
-	./include/net/http/FFL_HttpResponseBuilder.hpp
-	./include/net/http/FFL_HttpResponseFile.hpp
-	./include/net/http/FFL_HttpServer.hpp
-	./include/net/http/FFL_HttpStreamCallback.hpp
+	#./include/net/http/FFL_HttpResponseBuilder.hpp
+	./include/net/http/FFL_HttpTransportBase.hpp	
+	./include/net/http/FFL_HttpFile.hpp
+	./include/net/http/FFL_HttpServer.hpp	
 	./include/net/http/FFL_HttpUrl.hpp
 
    )

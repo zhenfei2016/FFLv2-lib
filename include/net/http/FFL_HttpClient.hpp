@@ -31,21 +31,15 @@ namespace FFL {
 		//
 		FFL::sp<HttpRequest> readRequest();
 		//
-		//  发送一个请求
-		//
-		bool writeRequest(FFL::sp<HttpRequest>& request);
-
-		//
 		//  读取一个应答
 		//
-		FFL::sp<HttpResponse> readResponse();
-		//
-		//  发送一个应答
-		//
-		bool writeResponse(FFL::sp<HttpResponse>& request);
+		FFL::sp<HttpResponse> readResponse();		
 	protected:
 		friend class HttpResponse;
 		friend class HttpRequest;
+		friend class HttpClientContent;
+		friend class HttpTransportBase;
+		friend class HttpServerImpl;
 	   //
 	   //  读取内容，
 	   //
@@ -58,7 +52,12 @@ namespace FFL {
 	   //  关闭这个连接
 	   //
 	   void close();
+	   //
+	   //  设置是否结束时候删除tcpclient,默认不会删除的
+	   //
+	   void setAutodelTcpClient(bool autoDel);
    protected:
+	   bool mAutoDelTcpClient;
 	   TcpClient* mClient;
 	   NetStreamReader mData;
    };  

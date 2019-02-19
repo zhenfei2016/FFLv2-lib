@@ -6,5 +6,6 @@
 #include <net/http/FFL_HttpUrl.hpp>
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
+#include <net/http/FFL_HttpFile.hpp>
 
 #endif

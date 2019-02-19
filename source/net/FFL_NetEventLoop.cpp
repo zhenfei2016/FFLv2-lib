@@ -360,10 +360,10 @@ namespace FFL {
 
 		if (entry->mReadHandlerFree) {
 			entry->mReadHandlerFree(entry->mReadHandler);
-		}
-		memset(entry, 0, sizeof(NetEventLoopImpl::FdEntry));
+		}		
 		mFdNum--;
-		INTERNAL_FFL_LOG_DEBUG("NetEventLoopImpl: remove fdNum=%d", mFdNum+1);
+		INTERNAL_FFL_LOG_INFO("NetEventLoopImpl: removefd=%d fdListNum=%d", entry->mFd, mFdNum+1);
+		memset(entry, 0, sizeof(NetEventLoopImpl::FdEntry));
 		return true;
 	}
 

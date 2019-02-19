@@ -13,7 +13,6 @@
 #include <net/http/FFL_HttpClientAccess.hpp>
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
-#include <net/http/FFL_HttpResponseBuilder.hpp>
 #include <net/http/FFL_HttpParser.hpp>
 #include <net/http/FFL_HttpClient.hpp>
 #include <net/FFL_NetEventLoop.hpp>

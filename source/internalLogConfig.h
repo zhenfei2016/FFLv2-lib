@@ -26,7 +26,12 @@
 #define INTERNAL_FFL_LOG_INFO(format,...) FFL_LogPrint(FFL_LOG_LEVEL_INFO,format,##__VA_ARGS__) 
 #define INTERNAL_FFL_LOG_INFO_TAG(tag,format,...) FFL_LogPrintTag(FFL_LOG_LEVEL_INFO,tag,format,##__VA_ARGS__)
 
+#if 0
 #define INTERNAL_FFL_LOG_DEBUG(format,...)  FFL_LogPrint(FFL_LOG_LEVEL_DEBUG,format,##__VA_ARGS__) 
 #define INTERNAL_FFL_LOG_DEBUG_TAG(tag,format,...)  FFL_LogPrintTag(FFL_LOG_LEVEL_DEBUG,tag,format,##__VA_ARGS__)
+#else
+#define INTERNAL_FFL_LOG_DEBUG(format,...)  
+#define INTERNAL_FFL_LOG_DEBUG_TAG(tag,format,...)  
+#endif
 
 #endif

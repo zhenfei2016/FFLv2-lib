@@ -13,6 +13,6 @@
 #ifndef _FFLIB_FFLv2_NET_H_
 #define _FFLIB_FFLv2_NET_H_
 
-#include <net/base/FFL_Net.h>
+#include <net/FFL_Net.h>
 
 #endif 

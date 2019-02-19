@@ -16,10 +16,11 @@
 #include "internalLogConfig.h"
 
 namespace FFL {
+	const static int KBufferSIZE = 4096 * 2;
 	NetStreamReader::NetStreamReader(CSocket* socket) :mSocket(socket) {
 		mSize = 0;
 		mPosition = 0;
-		mBuffer = new ByteBuffer(4096*2);
+		mBuffer = new ByteBuffer(KBufferSIZE );
 	}
 	NetStreamReader::~NetStreamReader() {
 		FFL_SafeFree(mBuffer);
@@ -35,10 +36,11 @@ namespace FFL {
 	}
 	void NetStreamReader::skip(int32_t length) {
 		mPosition += length;
+		mSize -= length;
 		FFL_ASSERT(mPosition >= 0 && mPosition < mBuffer->size());
 	}
 	//
-	//  socket拉取数据填充
+	//  socket拉取数据填充,  expect:期望的大小
 	//
 	status_t NetStreamReader::pull(int32_t expect) {
 		//
@@ -70,6 +72,7 @@ namespace FFL {
 			return ret;
 		}
 
+		FFL_ASSERT_LOG(((int32_t)readed <= expect), "test buffer size");
 		INTERNAL_FFL_LOG_INFO("read data fd=%d  size=%d", mSocket->getFd(),readed);
 		mSize += readed;
 		return FFL_OK;
@@ -79,29 +82,42 @@ namespace FFL {
 	//
 	int8_t NetStreamReader::read1Bytes(bool* suc) {
 		if (suc) *suc = false;
+
+		FFL_ASSERT_LOG(0, "not implement");
 		return 0;
 	}
 	int16_t NetStreamReader::read2Bytes(bool* suc) {
 		if (suc) *suc = false;
+		FFL_ASSERT_LOG(0, "not implement");
 		return 0;
 	}
 	int32_t NetStreamReader::read3Bytes(bool* suc) {
 		if (suc) *suc = false;
+		FFL_ASSERT_LOG(0, "not implement");
 		return 0;
 	}
 	int32_t NetStreamReader::read4Bytes(bool* suc) {
 		if (suc) *suc = false;
+		FFL_ASSERT_LOG(0, "not implement");
 		return 0;
 	}
 	int64_t NetStreamReader::read8Bytes(bool* suc){
 		if (suc) *suc = false;
+		FFL_ASSERT_LOG(0, "not implement");
 		return 0;
 	}
 
 	bool NetStreamReader::readString(String& val, uint32_t len) {
+		FFL_ASSERT_LOG(0, "not implement");
 		return false;
 	}
 	bool NetStreamReader::readBytes(int8_t* data, uint32_t size) {
+		if (size <= mSize) {
+			memcpy(data, getData() + getPosition(), size);
+			mSize -= size;
+			mPosition += size;
+			return true;
+		}
 		return false;
 	}
 	
@@ -109,12 +125,15 @@ namespace FFL {
 	//  跳过多少个字节
 	//
 	void NetStreamReader::skipRead(int32_t step) {
-
+		if (step <(int32_t) mSize && step>0) {
+			mSize -= step;
+			mPosition += step;
+		}
 	}
 	//
 	//  是否还有这么多可以读的数据
 	//
 	bool NetStreamReader::haveData(uint32_t size) {
-		return true;
+		return mSize>=size;
 	}
 }

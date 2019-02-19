@@ -63,6 +63,9 @@ namespace FFL {
 		//
 		bool haveData(uint32_t size);
 	private:
+		//
+		//  缓冲区，读指针，大小
+		//
 		ByteBuffer* mBuffer;
 		uint32_t mPosition;
 		uint32_t mSize;

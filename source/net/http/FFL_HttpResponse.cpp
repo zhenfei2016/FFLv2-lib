@@ -12,14 +12,13 @@
 */
 
 #include <net/http/FFL_HttpResponse.hpp>
-#include <FFL_ByteBuffer.hpp>
-#include <FFL_ByteStream.hpp>
 #include <net/http/FFL_HttpClient.hpp>
 
 namespace FFL {
 	//const char* JSON_HEADER = "HTTP/1.1 200 OK \r\n"
 	//	"Content-Type: application/json;charset=utf-8\r\n";
-	HttpResponse::HttpResponse(FFL::sp<HttpClient> client): mContentBuffer(NULL){
+	HttpResponse::HttpResponse(FFL::sp<HttpClient> client):
+		   HttpTransportBase(client){
 		mClient=client;
 		mStatusCode = 200;		
 	}
@@ -34,97 +33,23 @@ namespace FFL {
 	void HttpResponse::setStatusCode(int32_t code) {
 		mStatusCode = code;
 	}
-	void HttpResponse::getHeader(HttpHeader& header) {
-		header = mHeader;
-	}
-	void HttpResponse::setHeader(HttpHeader& header) {
-		mHeader = header;
-	}
-	//
-	//  设置内容，用于写
-	//
-	void HttpResponse::setContent(const char* data, size_t size) {
-		mHeader.setContentLength(size);
-		if (!mContentBuffer) {
-			mContentBuffer = new ByteBuffer(size);
-		}
-		mContentBuffer->getByteStream()->writeBytes( (const int8_t*)data, size);
-	}
-	//
-	//  开始发送应答，
-	//  callback:如果发送大批量的数据的回调
-	//  dataSize: 数据流总的大小
-	//
-	bool HttpResponse::send() {
-		FFL::sp<HttpResponse> res=this;
-		return mClient->writeResponse(res);
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-	//  发送，接收高级模式
-	//
-	//
-	//  开始发送请求
-	//  callback:如果发送大批量的数据的回调
-	//  dataSize: 数据流总的大小
-	//				
-	bool HttpResponse::sendStream(HttpStreamCallback* callback) {
-		if (callback == NULL) {
-			return false;
-		}
-		char buf[4096] = {};
-		size_t size = 0;
-		while (true) {
-			if (!callback->onReadData(buf, 4096, &size)) {
-				break;				
-			}
-
-			if (size == 0) {
-				break;
-			}
-
-			if (!writeContent(buf, size)) {
-				return false;
-			}
-		}
-		return true;
-	}
-	bool HttpResponse::recvStream(HttpStreamCallback* callback) {
-		if (callback == NULL) {
-			return false;
-		}
-		char buf[4096] = {};
-		size_t size = 0;
-		while (true) {
-			if (!readContent(buf,4096, &size)) {
-				return false;
-			}
-
-			if (!callback->onWriteData(buf, 4096)) {
-				break;
-			}			
-		}
-		return true;
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//
-	//  读取内容
-	//
-	bool HttpResponse::readContent(char* content, int32_t requestSize, size_t* readed) {
-		return mClient->read(content, requestSize, readed);
-	}	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 	//
 	//  请求内容
 	//  header :头内容		
 	//  content:内容
 	//
-	bool HttpResponse::writeHeader() {
+	bool HttpResponse::writeHeader() {	
 		//
 		//  发送的内容长度
 		//
-		int32_t contentLength = mHeader.getContentLength();		
+		int32_t contentLength = 0;
+		if (!mContent.isEmpty()) {
+			contentLength = mContent->getSize();
+		}
+		else {
+			contentLength = mHeader.getContentLength();
+		}
 		if (contentLength < 0) {
 			contentLength = 0;
 		}
@@ -158,21 +83,5 @@ namespace FFL {
 		headerInfo += "\r\n";		
 		return mClient->write(headerInfo.string(), headerInfo.size(),0);
 	}
-	bool HttpResponse::writeContent() {
-		if (mContentBuffer) {
-			const char* data =(const char*) (mContentBuffer->getByteStream()->getData());
-			size_t dataLen = mContentBuffer->getByteStream()->getSize();
-		    return writeContent(data, dataLen);
-		}
-		return false;			 
-	}
-	bool HttpResponse::writeContent(const char* content, int32_t requestSize) {
-		return mClient->write(content, requestSize, 0);
-	}
-	//
-	//  结束应答,关闭这个连接
-	//
-	void HttpResponse::finish() {
-		mClient->close();
-	}
+	
 }

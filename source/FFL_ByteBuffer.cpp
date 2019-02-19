@@ -24,7 +24,7 @@ namespace FFL {
 		mStream = new ByteStream();
 		alloc(size);
 	}
-	ByteBuffer::ByteBuffer(const uint8_t* data, uint32_t size) {
+	ByteBuffer::ByteBuffer(const uint8_t* data, uint32_t size) : mData(0), mSize(0), mStream(0) {
 		mStream = new ByteStream();
 		alloc(size);
 		mStream->writeBytes((const int8_t*)data, size);
@@ -47,11 +47,12 @@ namespace FFL {
 			INTERNAL_FFL_LOG_ERROR("ByteBuffer::alloc fail");
 			return mSize;
 		}	
+		memset(data, 0, size);
 
 		FFL_free(mData);
 		mData = data;
 		mSize = size;
-
+		
 		mStream->setData(mData, 0, mSize);
 		return size;
 	}
@@ -72,6 +73,7 @@ namespace FFL {
 		if (mSize) {
 			memcpy(data, mData, mSize);
 		}
+		memset(data+ mSize, 0, size-mSize);
 
 		FFL_free(mData);
 		mData = data;

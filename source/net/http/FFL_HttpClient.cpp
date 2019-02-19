@@ -15,14 +15,19 @@
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
 #include <net/http/FFL_HttpParser.hpp>
-#include <net/http/FFL_HttpRequestBuilder.hpp>
-#include <net/http/FFL_HttpResponseBuilder.hpp>
 
 namespace FFL {	
-	HttpClient::HttpClient(TcpClient* client):mClient(client),
+	HttpClient::HttpClient(TcpClient* client):
+		mAutoDelTcpClient(false),
+		mClient(client),
 		mData(&(client->mSocket)){
+		FFL_ASSERT(client!=NULL);
 	}
 	HttpClient::~HttpClient() {
+		if (mAutoDelTcpClient) {
+			close();
+			FFL_SafeFree(mClient);
+		}
 	}
 	//
 	//  读取一个请求
@@ -35,15 +40,7 @@ namespace FFL {
 		}
 		return NULL;
 	}
-	//
-	//  发送一个请求
-	//
-	bool HttpClient::writeRequest(FFL::sp<HttpRequest>& request) {
-		if (!request->writeHeader()) {
-			return false;
-		}		
-		return true;
-	}
+	
 
 	//
 	//  读取一个应答
@@ -56,23 +53,34 @@ namespace FFL {
 		}
 		return NULL;
 	}	
-	//
-	//  发送一个应答
-	//
-	bool HttpClient::writeResponse(FFL::sp<HttpResponse>& response) {
-		if (!response->writeHeader()) {
-			return false;
-		}			
-
-		return response->writeContent();
-	}
+	
 
 	//
 	//  读取内容，
 	//
-	bool HttpClient::read(char* data, int32_t requstSize, size_t* readed){
-		//mData.pull()
-		return true;
+	bool HttpClient::read(char* data, int32_t requstSize, size_t* readed){		
+		if (mData.haveData(requstSize)) {
+			if (readed) {
+				*readed = (int32_t)requstSize;
+			}
+			return mData.readBytes((int8_t*)data, requstSize);			
+		}
+
+		int nTryNum = 5;
+		while (nTryNum >0 && FFL_OK == mData.pull(requstSize)) {
+			if (mData.haveData(requstSize)) {
+				if (readed) {
+					*readed = (int32_t)requstSize;
+				}
+
+				return mData.readBytes((int8_t*)data, requstSize);
+			}else {
+				FFL_LOG_INFO("HttpClient::read requstSize=%d  size=%d", requstSize, mData.getSize());
+			}
+			nTryNum--;
+			FFL_sleep(5);
+		}
+		return false;		
     }
 
 	//
@@ -87,5 +95,11 @@ namespace FFL {
 	//
 	void HttpClient::close() {
 		mClient->close();
+	}
+	//
+	//  设置是否结束时候删除tcpclient,默认不会删除的
+	//
+	void HttpClient::setAutodelTcpClient(bool autoDel) {
+		mAutoDelTcpClient = autoDel;
 	}
 }

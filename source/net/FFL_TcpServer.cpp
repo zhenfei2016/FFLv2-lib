@@ -17,7 +17,8 @@
 #include "internalLogConfig.h"
 
 namespace FFL {
-	const static int64_t kEventLoopTimeout = 5000 * 1000;
+	// us   30s一次
+	const static int64_t kEventLoopTimeout = 30000 * 1000 ;
 #define List std::list
 	class TcpServerImpl{
 	public:
@@ -56,10 +57,10 @@ namespace FFL {
 		class ClientContext :public FFL::RefBase {
 		public:
 			ClientContext(NetFD fd);
-			virtual ~ClientContext() {}
+			virtual ~ClientContext();
 
 			NetFD mFd;
-			TcpClient mClient;
+			TcpClient* mClient;
 			//
 			// 最后一次发送接受的时间点
 			//
@@ -75,9 +76,18 @@ namespace FFL {
 		void addClient(FFL::sp<ClientContext> contex);
 		void removeClient(NetFD fd);
 
+		//
+		//  新连接上一个客户端
+		//
 		bool onClientCreated(ClientContext* context);
-		void onClientDestroyed(ClientContext* client);
-		bool onClientReceived(ClientContext* context);
+		//
+		//  客户端关闭掉了
+		//
+		void onClientDestroyed(ClientContext* client, TcpServer::Callback::FD_OPTMODE mod);
+		//
+		//  有数据可以读了
+		//
+		TcpServer::Callback::FD_OPTMODE onClientReceived(ClientContext* context);
 
 
 		TcpServer::Callback* mHandler;
@@ -207,62 +217,91 @@ namespace FFL {
 		std::list< FFL::sp<ClientContext> >::iterator it = timeoutClients.begin();
 		for (; it != timeoutClients.end(); it++) {
 			FFL::sp<ClientContext> context = *it;
-            onClientDestroyed(context.get());
+            onClientDestroyed(context.get(), TcpServer::Callback::FD_DESTROY);
 		}
 	}
-	TcpServerImpl::ClientContext::ClientContext(NetFD fd) : mFd(fd), mClient(fd) {
+	TcpServerImpl::ClientContext::ClientContext(NetFD fd) : mFd(fd){
 		mLastSendRecvTimeUs = FFL_getNowUs();
 		//
 		// 30秒没有数据就关闭
 		//
 		mTimeoutUs = 30 * 1000 * 1000;
+		mClient = new TcpClient(fd);
 	}
+	TcpServerImpl::ClientContext::~ClientContext() {
+		FFL_SafeFree(mClient);
+	}
+	//
+	//  增加到监控列表
+	//
 	void TcpServerImpl::addClient(FFL::sp<ClientContext> contex) {
 		FFL::CMutex::Autolock l(mCLientsLock);
 		mClients.push_back(contex);
 	}
+
+	//
+	//  移除这个fd，不监控它是否可读
+	//
 	void TcpServerImpl::removeClient(NetFD fd) {
 		FFL::CMutex::Autolock l(mCLientsLock);
 		std::list< FFL::sp<ClientContext> >::iterator it = mClients.begin();
 		for (; it != mClients.end(); it++) {
 			FFL::sp<ClientContext> context = *it;
-			if (context->mFd == fd) {
-				//context->mClient.close();
+			if (context->mFd == fd) {				
 				mClients.erase(it);
 				return;
 			}
-
 		}
 	}
-
+	//
+	//  新连接上一个客户端
+	//
 	bool TcpServerImpl::onClientCreated(ClientContext* context) {		
+		bool ret = false;
 		if (context) {
-			addClient(context);
-			if (mEventLoop->addFd(context->mFd, mEventHandler, NULL, context)) {
-				if (mHandler != NULL) {
-					return mHandler->onClientCreate(&context->mClient,&context->mTimeoutUs);
-				}
+			addClient(context);			
+			if (mHandler != NULL) {
+				ret= mHandler->onClientCreate(context->mClient,&context->mTimeoutUs);
+			}
+
+			if (!mEventLoop->addFd(context->mFd, mEventHandler, NULL, context)) {
+				onClientDestroyed(context, TcpServer::Callback::FD_DESTROY);
 			}
 		}
-		return false;
+		return ret;
 	}
-	void TcpServerImpl::onClientDestroyed(ClientContext* context) {
+	//
+	//  客户端关闭掉了
+	//
+	void TcpServerImpl::onClientDestroyed(ClientContext* context, TcpServer::Callback::FD_OPTMODE mod) {
 		if (context) {
 			mEventLoop->removeFd(context->mFd);
 			if (mHandler != NULL) {
-				mHandler->onClientDestroy(&context->mClient,0);
+				mHandler->onClientDestroy(context->mClient,mod);
 			}
 
-			context->mClient.close();
+			//
+			//是否需要关闭这个连接 ,如果外部需要使用这个句柄怎么处理呢
+			//
+			if (mod == TcpServer::Callback::FD_DESTROY) {
+				context->mClient->close();
+			}else {
+				context->mClient = NULL;
+			}
 			removeClient(context->mFd);
 		}
 	}
-
-	bool TcpServerImpl::onClientReceived(ClientContext* context) {
+	//
+	//  有数据可以读了
+	//
+	TcpServer::Callback::FD_OPTMODE TcpServerImpl::onClientReceived(ClientContext* context) {
 		if (mHandler != NULL) {
-			return mHandler->onClientReceived(&context->mClient);
+			return mHandler->onClientReceived(context->mClient);
 		}
-		return true;
+
+		//
+		//  关闭
+		return TcpServer::Callback::FD_DESTROY;
 	}
 	TcpServerImpl::TcpListenerCb::TcpListenerCb(TcpServerImpl* server) :mServer(server) {
 	}
@@ -280,8 +319,12 @@ namespace FFL {
 	//
 	bool TcpServerImpl::TcpEventHandler::onNetEvent(NetFD fd, bool readable, bool writeable, bool exception, void* priv) {
 		ClientContext* context = (ClientContext*)priv;
-		if (!mServer->onClientReceived(context)) {			
-			mServer->onClientDestroyed(context);
+		TcpServer::Callback::FD_OPTMODE mod = mServer->onClientReceived(context);		
+		//
+		//  是否继续下一次的监控
+		//
+		if(mod!= TcpServer::Callback::FD_CONTINUE){
+			mServer->onClientDestroyed(context, mod);
 			return false;
 		}		
 		return true;

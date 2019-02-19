@@ -18,8 +18,7 @@
 #include <FFL_ByteStream.hpp>
 #include <net/http/FFL_HttpRequest.hpp>
 #include <net/http/FFL_HttpResponse.hpp>
-#include <net/http/FFL_HttpResponseFile.hpp>
-#include <net/http/FFL_HttpResponseBuilder.hpp>
+#include <net/http/FFL_HttpFile.hpp>
 
 namespace FFL {        
 	class HttpServerImpl;
