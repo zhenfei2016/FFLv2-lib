@@ -88,9 +88,9 @@ static int32_t sharedBufferAtomicDec(volatile int32_t* v) {
 #elif ANDROID
 	return  __sync_fetch_and_sub(v, 1);
 #elif MACOSX
-	return OSAtomicDecrement32(v);
+	return OSAtomicDecrement32(v)+1;
 #elif IOS
-	return OSAtomicDecrement32(v);
+	return OSAtomicDecrement32(v)+1;
 #else
 
 #endif

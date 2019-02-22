@@ -106,11 +106,22 @@ private:
         inline ~SharedBuffer() { }
         inline SharedBuffer(const SharedBuffer&);
  
+		
         // 16 bytes. must be sized to preserve correct alingment.        
                 size_t         mSize;
 				uint32_t       mReserved1;
 		mutable volatile int32_t        mRefs;
                 uint32_t       mReserved2;
+
+		
+		//union {
+		//	typedef struct{
+		//		mutable volatile int32_t mRefCount;
+		//		uint32_t  mReserved1;			
+		//		uint32_t  mSize;
+		//	}mInfo;
+		//	uint8_t mBytes[12];
+		//} mHeader;		
 };
 
 // ---------------------------------------------------------------------------

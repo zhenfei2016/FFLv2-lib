@@ -4,8 +4,8 @@
 class HttpCallback : public FFL::HttpClientAccessManager::Callback {
 public:
 	//
-	//  ÍøÂçÓ¦´ð
-	//  errorNo :´íÎóÂë
+	//  ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½
+	//  errorNo :ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//
 	virtual void onResponse(FFL::sp<FFL::HttpResponse> response, int32_t errorNo) {
 		if (!response.isEmpty()) {
@@ -25,7 +25,6 @@ int FFL_main() {
 	FFL_getCurrentProcessPath(exePath, 1023, exeName);
 
 	FFL_socketInit();
-	FFL::HttpRequestBuilder builder;
 	FFL::HttpClientAccessManager clientMgr;
 	clientMgr.start();
 
@@ -33,7 +32,7 @@ int FFL_main() {
 	FFL_LOG_DEBUG("saddsad %d",1);
 
 	{
-		FFL::sp<FFL::HttpRequest>  request = builder.createRequest(NULL);
+		FFL::sp<FFL::HttpRequest>  request = new FFL::HttpRequest(NULL);
 		FFL::HttpUrl url;
 		url.parse(FFL::String("http://127.0.0.1:5000/FFLv2?login"));
 		request->setUrl(url);
@@ -41,7 +40,7 @@ int FFL_main() {
 	}
 
 	{
-		FFL::sp<FFL::HttpRequest>  request = builder.createRequest(NULL);
+		FFL::sp<FFL::HttpRequest>  request = new FFL::HttpRequest(NULL);
 		FFL::HttpUrl url;
 		url.parse(FFL::String("http://127.0.0.1:5000/FFLv2?login&asdasd=asd"));
 		request->setUrl(url);

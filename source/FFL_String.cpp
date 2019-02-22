@@ -600,7 +600,7 @@ namespace FFL {
 		return memcmp(string()+size() - subLength, sub, subLength) == 0;
 	}
 	bool String8::equal(const char* other) {
-		if (other == NULL || other[0] == NULL) {
+		if (other == NULL || other[0] == 0) {
 			return size() == 0;
 		}
 

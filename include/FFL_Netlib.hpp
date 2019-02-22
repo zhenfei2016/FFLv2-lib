@@ -17,7 +17,7 @@
 
 #include <FFL_Netlib.h>
 
-#include <FFL_Lib.hpp>
+#include <FFL_lib.hpp>
 #include <net/FFL_TcpServer.hpp>
 #include <net/FFL_UdpServer.hpp>
 

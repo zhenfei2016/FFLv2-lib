@@ -20,8 +20,6 @@
 
 namespace FFL {
 	class HttpResponse;
-	class HttpResponseBuilder;
-	class HttpRequestBuilder;
 
 	class FFLIB_API_IMPORT_EXPORT HttpRequest : public HttpTransportBase {
 	public:
