@@ -67,6 +67,7 @@ namespace FFL {
 		class EventHandler : public NetEventLoop::Callback {
 		public:
 			EventHandler(UdpServerImpl* server) :mServer(server) {}
+            virtual ~EventHandler(){}
 			//
 			//  返回是否还继续读写
 			//  priv:透传数据

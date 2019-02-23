@@ -84,11 +84,25 @@ namespace FFL {
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	//   跑module循环的线程
 	////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    class ModuleThread::ThreadImpl : public Thread{
+    public:
+        ThreadImpl(ModuleThread* module){
+            mModule=module;
+        }
+        
+        bool threadLoop(){
+            return  mModule->threadLoop();
+        }
+        ModuleThread* mModule;
+    };
+    
 	ModuleThread::ModuleThread(const char* name):mName(NULL), mModule(NULL){
 		if (name) {
 			mName=FFL_strdup(name);
 		}
 		mModuleWaitMs = 0;
+        mThread=new ThreadImpl(this);
 	}
 	ModuleThread::~ModuleThread() {
 		if (mName) {
@@ -108,20 +122,21 @@ namespace FFL {
 		return mName?mName:"";
 	}
 
-	status_t  ModuleThread::run() {
+    
+    status_t  ModuleThread::run() {
 		if (!mModule) {
 			return FFL_ERROR_FAIL;
 		}
-		return Thread::run(mName);
+		return mThread->run(mName);
 	}
 	void  ModuleThread::requestExit() {
 		mCond.signal();
-		Thread::requestExit();
+		mThread->requestExit();
 
 	}
 	status_t ModuleThread::requestExitAndWait() {
 		mCond.signal();
-		return Thread::requestExitAndWait();
+		return mThread->requestExitAndWait();
 	}
 
 	/*  Thread  */
@@ -130,7 +145,7 @@ namespace FFL {
 			mCond.waitRelative(mMutex, mModuleWaitMs);
 		}
 
-		if (exitPending()) {
+		if (mThread->exitPending()) {
 			return false;
 		}
 		

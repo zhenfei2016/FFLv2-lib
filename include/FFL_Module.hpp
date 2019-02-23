@@ -19,7 +19,7 @@ namespace FFL {
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	//   跑module循环的线程
 	////////////////////////////////////////////////////////////////////////////////////////////////////
-	class FFLIB_API_IMPORT_EXPORT ModuleThread : public Thread {
+    class FFLIB_API_IMPORT_EXPORT ModuleThread :public RefBase{
 		friend class Module;
 	public:
 		ModuleThread(const char* name);
@@ -32,13 +32,13 @@ namespace FFL {
 		//  获取线程名称
 		//
 		const char* getName() const;
-    public:
-		/*  Thread  */
-		virtual status_t  run();
+        //
+        //  启动，停止线程
+        //
+        virtual status_t run();
         virtual void     requestExit();
 		virtual status_t requestExitAndWait();
     protected:
-		/*  Thread  */
 		virtual bool threadLoop();
 	private:
 		const char* mName;
@@ -47,6 +47,10 @@ namespace FFL {
 
 		CMutex mMutex;
 		CCondition mCond;
+        
+        class ThreadImpl;
+        friend class ThreadImpl;
+        FFL::sp<Thread> mThread;
 	};
 	template class FFLIB_API_IMPORT_EXPORT FFL::sp<FFL::ModuleThread>;
 

@@ -1,5 +1,5 @@
 
-#include <FFL_NetLib.hpp>
+#include <FFL_Netlib.hpp>
 
 
 FFL::String gLastLog;
