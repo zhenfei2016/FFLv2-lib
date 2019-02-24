@@ -32,8 +32,8 @@ TARGET_LINK_LIBRARIES(httpClient FFL)
 
 
 
-ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
-TARGET_LINK_LIBRARIES(memoryLeak FFL)
+#ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
+#TARGET_LINK_LIBRARIES(memoryLeak FFL)
 
 
 

@@ -201,15 +201,19 @@ SET(HEADER_FILES
 	./include/net/http/FFL_HttpClientAccess.hpp
 	./include/net/http/FFL_HttpHeader.hpp
 	./include/net/http/FFL_HttpParser.hpp
-	./include/net/http/FFL_HttpRequest.hpp
-	#./include/net/http/FFL_HttpRequestBuilder.hpp
-	./include/net/http/FFL_HttpResponse.hpp
-	#./include/net/http/FFL_HttpResponseBuilder.hpp
+	./include/net/http/FFL_HttpRequest.hpp	
+	./include/net/http/FFL_HttpResponse.hpp	
 	./include/net/http/FFL_HttpTransportBase.hpp	
 	./include/net/http/FFL_HttpFile.hpp
 	./include/net/http/FFL_HttpServer.hpp	
 	./include/net/http/FFL_HttpUrl.hpp
 
+   )
+
+   SET(HEADER_WEBSOCKET_FILES 
+#websocket
+    ./include/net/websocket/FFL_WebSocketClient.hpp
+	./include/net/websocket/FFL_WebSocketServer.hpp
    )
 
    
@@ -292,11 +296,16 @@ SET(SOURCE_FILES ${DIR_SRCS} ${SOURCE_FILES})
 AUX_SOURCE_DIRECTORY(./source/net/http/http-parser-2.1 DIR_SRCS)
 SET(SOURCE_FILES ${DIR_SRCS} ${SOURCE_FILES})
 
+AUX_SOURCE_DIRECTORY(./source/net/websocket DIR_SRCS)
+SET(SOURCE_FILES ${DIR_SRCS} ${SOURCE_FILES})
+
+
 SET(LOCAL_SRC_FILES 
   ${SOURCE_FILES}
   ${HEADER_FILES}
   ${HEADER_NET_FILES}
-  ${HEADER_HTTP_FILES})
+  ${HEADER_HTTP_FILES}
+  ${HEADER_WEBSOCKET_FILES})
 
 group_by_dir(${CMAKE_SOURCE_DIR} ${LOCAL_SRC_FILES})
 
@@ -339,5 +348,7 @@ SET(HEADERS
 install(FILES ${HEADERS} DESTINATION include/)
 install(FILES ${HEADER_NET_FILES} DESTINATION include/net/)
 install(FILES ${HEADER_HTTP_FILES} DESTINATION include/net/http/)
+install(FILES ${HEADER_WEBSOCKET_FILES} DESTINATION include/net/websocket/)
+
 
 install(TARGETS FFL DESTINATION lib/)
