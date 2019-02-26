@@ -264,7 +264,7 @@ namespace FFL {
 				ret= mHandler->onClientCreate(context->mClient,&context->mTimeoutUs);
 			}
 
-			if (!mEventLoop->addFd(context->mFd, mEventHandler, NULL, context)) {
+			if (!ret || !mEventLoop->addFd(context->mFd, mEventHandler, NULL, context)) {
 				onClientDestroyed(context, TcpServer::Callback::FD_DESTROY);
 			}
 		}

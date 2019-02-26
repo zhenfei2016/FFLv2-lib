@@ -17,14 +17,25 @@
 namespace FFL {	
 	/////////////////////////////////////////////////////////////////////////
 	HttpRequest::HttpRequest():HttpTransportBase(NULL) {
+		mMethod = POST;
 	}
 	HttpRequest::HttpRequest(FFL::sp<HttpClient> client):
 		HttpTransportBase(client){
+		mMethod = POST;
 	}
 	HttpRequest::~HttpRequest() {
 	}
 	FFL::sp<HttpResponse> HttpRequest::makeResponse() {
 		return new HttpResponse(mClient);
+	}
+	//
+	//  获取设置method
+	//
+	void HttpRequest::setMethod(HTTP_Method med) {
+		mMethod = med;
+	}
+	HTTP_Method HttpRequest::getMethod() {
+		return mMethod;
 	}
 	//
 	//  请求内容
@@ -52,17 +63,30 @@ namespace FFL {
 		String headerInfo;
 		{
 			static const char* format =
-				"POST %s HTTP/1.1\r\n"
-				"%s: %s\r\n"
-				"%s: %d\r\n";
+				"%s %s HTTP/1.1\r\n";
+				//"%s: %s\r\n"
+				//"%s: %d\r\n";
 
 			String type;
 			mHeader.getContentType(type);
 
+			String path;
+			if (mUrl.mPath.isEmpty()){
+				path = "/";
+			}
+			else {
+				path = mUrl.mPath + "?" + mUrl.mQuery;
+			}
+
 			headerInfo = String::format(format, 
-				(mUrl.mPath + "?" + mUrl.mQuery).string(),
+				getMethod()==POST? "POST" : "GET",
+				path.string(),
 				HTTP_KEY_CONTENTYPE, type.string(),
 				HTTP_KEY_CONTENTLEN, contentLength);
+
+			headerInfo = String::format(format,
+				getMethod() == POST ? "POST" : "GET",
+				path.string());
 		}
 
 		int32_t buffCount = 20;

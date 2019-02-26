@@ -34,12 +34,7 @@ namespace FFL {
 		//  读取一个应答
 		//
 		FFL::sp<HttpResponse> readResponse();		
-	protected:
-		friend class HttpResponse;
-		friend class HttpRequest;
-		friend class HttpClientContent;
-		friend class HttpTransportBase;
-		friend class HttpServerImpl;
+
 	   //
 	   //  读取内容，
 	   //
@@ -48,6 +43,12 @@ namespace FFL {
 	   //  写内容
 	   //
 	   bool write(const char* data, int32_t requstSize, size_t* writed);
+   protected:
+	   friend class HttpResponse;
+	   friend class HttpRequest;
+	   friend class HttpClientContent;
+	   friend class HttpTransportBase;
+	   friend class HttpServerImpl;
 	   //
 	   //  关闭这个连接
 	   //

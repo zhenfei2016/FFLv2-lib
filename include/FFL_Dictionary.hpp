@@ -26,7 +26,7 @@ namespace FFL {
 		//  写一条key/value
 		//
 		void setKey(const String& key, const String& value);
-		void setKey(const char* key, const String& value);
+		void setKey(const char* key, const char* value);
 		//
 		// 移除一条
 		//

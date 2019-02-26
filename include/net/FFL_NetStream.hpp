@@ -18,10 +18,12 @@
 
 namespace FFL {
 	class ByteBuffer;
+	class TcpClient;
 
 	class FFLIB_API_IMPORT_EXPORT NetStreamReader : public ByteReader {
 	public:
 		NetStreamReader(CSocket* socket );
+		NetStreamReader(TcpClient* client);
         virtual ~NetStreamReader();
 	public:
 		//

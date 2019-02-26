@@ -21,6 +21,11 @@
 namespace FFL {
 	class HttpResponse;
 
+	enum  HTTP_Method {
+		GET = 0,
+		POST = 1,
+	};
+
 	class FFLIB_API_IMPORT_EXPORT HttpRequest : public HttpTransportBase {
 	public:
 		friend class HttpClient;
@@ -33,11 +38,18 @@ namespace FFL {
 		FFL::sp<HttpResponse> makeResponse();
 	public:
 		//
+		//  获取设置method
+		//
+		void setMethod(HTTP_Method med);
+		HTTP_Method getMethod();
+		//
 		//  请求内容
 		//  header :头内容		
 		//  content:内容
 		//
 		virtual bool writeHeader();
+	protected:
+		HTTP_Method mMethod;
 	};
 }
 

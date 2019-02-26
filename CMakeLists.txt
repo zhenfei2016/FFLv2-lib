@@ -175,6 +175,8 @@ SET(HEADER_FILES
    ./include/FFL_RefWeakimpl.hpp
    ./include/FFL_RefWp.hpp
 
+    
+
    )
 
    SET(HEADER_NET_FILES 
@@ -253,6 +255,12 @@ SET(SOURCE_FILES
   ./source/FFL_SharedBuffer.cpp  
   ./source/FFL_RefBase.cpp
   ./source/FFL_RefWakeimpl.cpp
+
+  ./source/FFL_Sha1.hpp
+  ./source/FFL_Sha1.cpp
+  ./source/FFL_Base64.hpp
+  ./source/FFL_Base64.cpp  
+  
 )
 
 IF(FFLIB_USING_THREAD_WIN32)

@@ -14,6 +14,7 @@
 #define _FFL_TCP_CLIENT_HPP_
 
 #include <net/FFL_NetSocket.hpp>
+#include <FFL_RefBase.hpp>
 
 namespace FFL {
 	class FFLIB_API_IMPORT_EXPORT TcpClient : public IOReader, public IOWriter {
@@ -65,9 +66,13 @@ namespace FFL {
 		
 	protected:
 		friend class HttpClient;
+		friend class WebSocketClient;
+		friend class NetStreamReader;
 		CSocket mSocket;
 		void* mPriv;
 	};	
+
+	
 }
 
 #endif

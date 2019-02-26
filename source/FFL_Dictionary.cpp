@@ -47,7 +47,7 @@ namespace FFL{
 	void Dictionary::setKey(const String& key, const String& value){	
 		mImpl->mDic[key] = value;
 	}
-	void Dictionary::setKey(const char* key, const String& value) {
+	void Dictionary::setKey(const char* key, const char* value) {
 		String k(key);
 		mImpl->mDic[k] = value;
 	}

@@ -72,7 +72,7 @@ namespace FFL {
 	///////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////
 	HttpTransportBase::HttpTransportBase(FFL::sp<HttpClient> client):
-		   mClient(client){
+		   mClient(client){		
 	}
 	HttpTransportBase::~HttpTransportBase() {
 	}

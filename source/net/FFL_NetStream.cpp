@@ -12,6 +12,7 @@
 */
 #include <net/FFL_Net.h>
 #include <net/FFL_NetStream.hpp>
+#include <net/FFL_TcpClient.hpp>
 #include <FFL_ByteBuffer.hpp>
 #include "internalLogConfig.h"
 
@@ -21,6 +22,12 @@ namespace FFL {
 		mSize = 0;
 		mPosition = 0;
 		mBuffer = new ByteBuffer(KBufferSIZE );
+	}
+	NetStreamReader::NetStreamReader(TcpClient* client) {
+		mSocket = &(client->mSocket);
+		mSize = 0;
+		mPosition = 0;
+		mBuffer = new ByteBuffer(KBufferSIZE);
 	}
 	NetStreamReader::~NetStreamReader() {
 		FFL_SafeFree(mBuffer);

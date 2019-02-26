@@ -20,6 +20,7 @@
 #include <net/http/FFL_HttpClient.hpp>
 
 namespace FFL {
+
 	class FFLIB_API_IMPORT_EXPORT HttpTransportBase : public RefBase {
 	public:		
 		HttpTransportBase(FFL::sp<HttpClient> client);
