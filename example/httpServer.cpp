@@ -1,5 +1,20 @@
 
 #include <FFL_Netlib.hpp>
+#include <FFL_Console.h>
+
+volatile int gQuitFlag = 0;
+static void stop(const char* args, void* userdata) {
+	FFL::HttpServer* httpServer = (FFL::HttpServer*) userdata;
+	httpServer->stop();
+	gQuitFlag = 1;
+}
+static CmdOption  myCmdOption[] = {	
+	{ "stop",0,stop,"stop server " },
+	{ 0,0,0,0 }
+};
+int QuitFlag(void* userdata) {
+	return gQuitFlag;
+}
 
 
 FFL::String gLastLog;
@@ -107,42 +122,39 @@ int FFL_main() {
 	gLastLog = "hi:";
 	gLastLog += exePath;
 
-	if (0) {
-		TcpHandler handler;
-		FFL::TcpServer tcpServer("127.0.0.1",5000,&handler);
-		tcpServer.start(NULL);
-		int32_t waitMs = 5000;
-		while (tcpServer.eventLoop(&waitMs)) {
-		}
-	}
-	else {
-		FFL::sp<HttpApiLoginHandelr> handler = new HttpApiLoginHandelr();
-		FFL::HttpServer httpServer("127.0.0.1", 5000);
+	//if (0) {
+	//	TcpHandler handler;
+	//	FFL::TcpServer tcpServer("127.0.0.1",5000,&handler);
+	//	tcpServer.start(NULL);
+	//	int32_t waitMs = 5000;
+	//	while (tcpServer.eventLoop(&waitMs)) {
+	//	}
+	//}
+	//else {
 
-		//
-		//  上传日志接口
-		//
-		FFL::HttpServer::HttpApiKey key;
-		key.mPath = "/fflog";		
-		httpServer.registerApi(key,handler);
-
-		//
-		//  下载日志接口
-		//		
-		FFL::sp<HttGetLogListHandelr> getListHandler = new HttGetLogListHandelr();
-		key.mPath = "/FFLv2";
-		key.mQuery = "getLogList";
-		httpServer.registerApi(key, getListHandler);
-
-		httpServer.start(NULL);
-		int32_t waitMs = 5000;
-		while (httpServer.eventLoop(&waitMs)) {
-		}
-	}
+	FFL::sp<HttpApiLoginHandelr> handler = new HttpApiLoginHandelr();
+	FFL::HttpServer httpServer("127.0.0.1", 5000);
 	
+	//
+	//  上传日志接口
+	//
+	FFL::HttpServer::HttpApiKey key;
+	key.mPath = "/fflog";		
+	httpServer.registerApi(key,handler);
 
+	//
+	//  下载日志接口
+	//		
+	FFL::sp<HttGetLogListHandelr> getListHandler = new HttGetLogListHandelr();
+	key.mPath = "/FFLv2";
+	key.mQuery = "getLogList";
+	httpServer.registerApi(key, getListHandler);
 
-
+	httpServer.start(new FFL::ModuleThread("httpd"));	
+	//
+	//  启动命令行
+	//
+	FFL_consoleEvenLoop(myCmdOption, &httpServer, QuitFlag);
 
 	return 0;
 }

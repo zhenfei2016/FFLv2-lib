@@ -79,10 +79,6 @@ namespace FFL{
 	}
 	//
 	//获取数据到数组中
-	struct Pair {
-		String key;
-		String value;
-	};
 	bool Dictionary::getAll(Pair* pairArray, int32_t* bufSize) {
 		if (pairArray == NULL || (bufSize && *bufSize < getCount())) {
 			if (bufSize) {

@@ -41,3 +41,17 @@ int FFL_isLittleEndian(){
 	}
 	return littleEndian;
 }
+
+/*
+   order:顺序的，还是反序的
+*/
+ void FFL_copyBytes(uint8_t* s, uint8_t* d, uint32_t size, int order) {
+	if (order) {
+		memcpy(d, s, size);
+	}
+	else {
+		for (uint32_t i = 0; i < size; i++) {
+			d[size - i - 1] = s[i];
+		}
+	}
+}

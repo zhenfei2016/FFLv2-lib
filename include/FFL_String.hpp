@@ -140,6 +140,13 @@ namespace FFL {
 
 		bool equal(const char* other);
 		bool equal(const String8& other);
+
+		//
+		//  不区分大小写的比较，你需要确定保存的字符串啊
+		//
+		bool equalIgnoreCase(const char* other);
+		bool equalIgnoreCase(const String8& other);
+		
 		/*
 		* These methods operate on the string as if it were a path name.
 		*/

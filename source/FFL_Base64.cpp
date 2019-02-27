@@ -204,7 +204,7 @@ extern "C" status_t FFL_Base64Encode(const uint8_t * input, size_t len, uint8_t*
 	return FFL_OK;
 }
 extern "C" status_t FFL_Base64Decode(const uint8_t * input, size_t len, uint8_t* output, size_t outBufSize) {
-	if (input == NULL || output == NULL || (len * 8) < (outBufSize * 6)) {
+	if (input == NULL || output == NULL || (len * 8) > (outBufSize * 6)) {
 		return FFL_FAILED;
 	}
 

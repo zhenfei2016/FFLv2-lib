@@ -232,36 +232,17 @@ namespace FFL {
 
 
 	void ByteStream::readBuffer(uint8_t* dst, uint32_t size, bool order) {
-		FFL_ASSERT(mDataSize >= size);
-		//if (mReadPos + size <= getCapacity()) {
-			if (dst) {
-				internalCopyBytes(getData() + mReadPos, dst, size, order);
-			}
-			mReadPos += size;
-		//}else {
-		//	uint8_t s1 = getCapacity() - mReadPos;
-		//	if (dst) {
-		//		internalCopyBytes(getData() + mReadPos, dst, s1, reversal);
-		//		internalCopyBytes(getData(), dst + s1, size - s1, reversal);
-		//	}
-		//	mReadPos = size-s1;
-		//}
+		FFL_ASSERT(mDataSize >= size);		
+		if (dst) {
+			internalCopyBytes(getData() + mReadPos, dst, size, order);
+		}
+		mReadPos += size;
 		mDataSize -= size;
 	}
 	void ByteStream::writeBuffer(uint8_t* src, uint32_t size, bool order) {
-		//
-		// 不使用环形结构 
-		FFL_ASSERT(mWritePos + size <= getCapacity());
-		//if (mWritePos + size <= getCapacity()) {
-			internalCopyBytes(src,getData() + mWritePos, size, order);
-			mWritePos += size;			
-		//}
-		//else {
-		//	uint8_t s1 = getCapacity() - mWritePos;
-		//	internalCopyBytes(src,getData() + mWritePos,s1, order);
-		//	internalCopyBytes(src +s1 ,getData(), size - s1, order);
-		//	mWritePos = size - s1;
-		//}
+		FFL_ASSERT(mWritePos + size <= getCapacity());		
+		internalCopyBytes(src,getData() + mWritePos, size, order);
+		mWritePos += size;			
 		mDataSize += size;
 	}
 }

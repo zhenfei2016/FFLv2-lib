@@ -20,24 +20,19 @@ namespace FFL {
 	WSHandsharkRequest::WSHandsharkRequest(FFL::sp<HttpClient>& client):HttpRequest(client) {
 		mMethod = GET;
 		mVersion = 13;
+		mKey = "w4v7O6xFTi36lq3RNcgctw==";
 	}	
 	WSHandsharkRequest::~WSHandsharkRequest() {
 	}
 	//
 	//  获取设置版本号
-	//
-	void WSHandsharkRequest::setSecVersion(int32_t version) {
-		mVersion = version;
-	}
+	//	
 	int32_t WSHandsharkRequest::getSecVersion() {
 		return mVersion;
 	}
 	//
 	//  获取设置key
-	//
-	void WSHandsharkRequest::setSecKey(String& key) {
-		mKey = key;
-	}
+	//	
 	bool WSHandsharkRequest::getSecKey(String& key) {
 		key = mKey;
 		return true;
@@ -72,15 +67,10 @@ namespace FFL {
 			static const char* format =
 				"%s %s HTTP/1.1\r\n"
 				"Connection: Upgrade\r\n"
-				"Upgrade: websocket\r\n"				
-				"Sec-WebSocket-key: %s\r\n"
-				"Sec-WebSocket-Version: 13\r\n"
-				"User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36\r\n"
-				"Sec-WebSocket-Extensions: permessage - deflate; client_max_window_bits\r\n";
-				
-			String type;
-			mHeader.getContentType(type);
-
+				"Upgrade: websocket\r\n"
+				"Sec-WebSocket-Key: %s\r\n"
+				"Sec-WebSocket-Version: 13\r\n";				
+			
 			String path;
 			if (mUrl.mPath.isEmpty()){
 				path = "/";
@@ -92,7 +82,7 @@ namespace FFL {
 			headerInfo = String::format(format,
 				"GET",
 				path.string(),
-				"hj0eNqbhE/A0GkBXDRrYYw==" );
+				mKey);
 		}
 
 		int32_t buffCount = 20;
@@ -150,20 +140,6 @@ namespace FFL {
 	//	Access - Control - Allow - Headers : content - type
 	//	Sec - WebSocket - Accept : FCKgUr8c7OsDsLFeJTWrJw6WO8Q =
 	bool WSHandsharkResponse::writeHeader() {
-		//
-		//  发送的内容长度
-		//
-		int32_t contentLength = 0;
-		if (!mContent.isEmpty()) {
-			contentLength = mContent->getSize();
-		}
-		else {
-			contentLength = mHeader.getContentLength();
-		}
-		if (contentLength < 0) {
-			contentLength = 0;
-		}
-
 		String headerInfo;
 		{
 			static const char* kFormat = "HTTP/1.1 101 Switching Protocols \r\n"
@@ -174,11 +150,8 @@ namespace FFL {
 				"Access-Control-Allow-Headers: content-type\r\n"
 				"Sec-WebSocket-Accept: %s\r\n";
 
-			String type;
-			mHeader.getContentType(type);
-			headerInfo.appendFormat(kFormat, mStatusCode,
-				HTTP_KEY_CONTENTYPE, type.string(),
-				HTTP_KEY_CONTENTLEN, contentLength);
+			
+			headerInfo.appendFormat(kFormat,mSecAccess.string());
 		}
 
 		int32_t buffCount = 20;
@@ -211,7 +184,7 @@ namespace FFL {
 		FFL::SHA1Final(&context, shalHash);
 
 		uint8_t base64Hash[32] = {};
-		FFL_Base64Decode(shalHash, 20, base64Hash,31);
+		FFL_Base64Encode(shalHash, 20, base64Hash,31);
 
 		mSecAccess =(const char*)base64Hash;
 	}
@@ -266,13 +239,60 @@ namespace FFL {
 		FFL::SHA1Final(&context, shalHash);
 
 		uint8_t base64Hash[32] = {};
-		FFL_Base64Decode(shalHash, 20, base64Hash, 31);
+		FFL_Base64Encode(shalHash, 20, base64Hash, 31);
 			
-		if (accessKey.equal((const char*)base64Hash)) {
+		if (accessKey.equalIgnoreCase((const char*)base64Hash)) {
 			return true;
 		}
 		return false;
 	}
 
+	//
+	//  是否一个有效的握手请求
+	//
+	bool WebSocket_isHandsharkRequest(HttpRequest* request) {
+
+		//"Connection: Upgrade\r\n"
+		//	"Upgrade: websocket\r\n"
+		//	"Sec-WebSocket-key: %s\r\n"
+		//	"Sec-WebSocket-Version: 13\r\n
+
+		FFL::HttpHeader header;
+		request->getHeader(header);
+
+		String value;
+		if (!header.getKey("Connection", value) ||
+			!value.equalIgnoreCase("Upgrade")) {
+			return false;
+		}
+
+
+		if (!header.getKey("Upgrade", value) ||
+			!value.equalIgnoreCase("WebSocket")) {
+			return false;
+		}
+
+		if (!header.getKey("Sec-WebSocket-Version", value) ||
+			!value.equal("13")) {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool WebSocket_getSecWebSocketkey(HttpRequest* request, String& key) {
+		FFL::HttpHeader header;
+		request->getHeader(header);
+
+		Dictionary::Pair pair[20];
+		int32_t size = 20;
+		header.getAll(pair,&size);
+
+		if (!header.getKey("Sec-WebSocket-Key", key)) {
+			return false;
+		}
+
+		return true;
+	}
 }
 

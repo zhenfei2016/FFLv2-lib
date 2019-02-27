@@ -84,34 +84,40 @@ namespace FFL {
 		mSize += readed;
 		return FFL_OK;
 	}
+
+#define ReadNBytes(n,ret)   \
+	if (suc) *suc = false;\
+	if (haveData(n)) { \
+		readBuffer((uint8_t*)&ret, n, 0); \
+		if (suc) *suc = true; } \
+
 	//
 	//  ByteReader 读
 	//
 	int8_t NetStreamReader::read1Bytes(bool* suc) {
-		if (suc) *suc = false;
-
-		FFL_ASSERT_LOG(0, "not implement");
-		return 0;
+		int8_t ret=0;
+		ReadNBytes(1,ret);
+		return ret;
 	}
 	int16_t NetStreamReader::read2Bytes(bool* suc) {
-		if (suc) *suc = false;
-		FFL_ASSERT_LOG(0, "not implement");
-		return 0;
+		int8_t ret = 0;
+		ReadNBytes(2, ret);
+		return ret;
 	}
 	int32_t NetStreamReader::read3Bytes(bool* suc) {
-		if (suc) *suc = false;
-		FFL_ASSERT_LOG(0, "not implement");
-		return 0;
+		int8_t ret = 0;
+		ReadNBytes(3, ret);
+		return ret;
 	}
 	int32_t NetStreamReader::read4Bytes(bool* suc) {
-		if (suc) *suc = false;
-		FFL_ASSERT_LOG(0, "not implement");
-		return 0;
+		int8_t ret = 0;
+		ReadNBytes(4, ret);
+		return ret;
 	}
 	int64_t NetStreamReader::read8Bytes(bool* suc){
-		if (suc) *suc = false;
-		FFL_ASSERT_LOG(0, "not implement");
-		return 0;
+		int8_t ret = 0;
+		ReadNBytes(8, ret);
+		return ret;
 	}
 
 	bool NetStreamReader::readString(String& val, uint32_t len) {
@@ -142,5 +148,13 @@ namespace FFL {
 	//
 	bool NetStreamReader::haveData(uint32_t size) {
 		return mSize>=size;
+	}
+
+	void NetStreamReader::readBuffer(uint8_t* dst, uint32_t size, bool order) {
+		FFL_ASSERT(mSize >= size);
+		if (dst) {
+			FFL_copyBytes(getData() + mPosition, dst, size, order);
+		}
+		mPosition += size;
 	}
 }

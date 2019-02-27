@@ -17,6 +17,7 @@
 #include <FFL_RefBase.hpp>
 #include <net/FFL_TcpClient.hpp>
 #include <net/FFL_NetStream.hpp>
+#include <FFL_ByteStream.hpp>
 
 namespace FFL {		
 	
@@ -31,6 +32,8 @@ namespace FFL {
 		bool connect(const char* host);
 		bool connect(const char* ip,uint16_t port);
 		bool isConnected() const;
+
+		NetFD getFd();
 		//
 		//  关闭连接
 		//
@@ -49,7 +52,15 @@ namespace FFL {
 		//
 		//  发送一帧数据
 		//
-		bool sendFrame(const uint8_t* data,uint32_t len);
+		bool sendFrame(uint8_t opcode,const uint8_t* data,uint32_t len);
+		
+		bool sendText(const char* text);
+		bool sendBinary(const uint8_t* data, uint32_t len);
+		bool sendStream(IOReader* stream);
+
+		bool sendPing();
+		bool sendPong();
+		bool sendBye();
 	private:
 		TcpClient* mClient;
 		NetStreamReader* mStream;

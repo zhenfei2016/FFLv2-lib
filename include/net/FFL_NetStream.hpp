@@ -65,6 +65,8 @@ namespace FFL {
 		//
 		bool haveData(uint32_t size);
 	private:
+		void readBuffer(uint8_t* dst, uint32_t size, bool order);
+	private:
 		//
 		//  缓冲区，读指针，大小
 		//

@@ -16,8 +16,16 @@
 #include <net/http/FFL_HttpResponse.hpp>
 #include <net/FFL_NetEventLoop.hpp>
 #include "FFL_WebSocketHandshark.hpp"
+#include "FFL_WebSocketFrame.hpp"
 
 namespace FFL {
+	static void xorBytes(const uint8_t *in1, uint8_t *out, uint8_t maker[4], int size) {
+		for (int i = 0; i < size; i++) {
+			*out = in1[i] ^ maker[i % 4];
+			out++;
+		}
+	}
+
 	WebSocketClient::WebSocketClient() :
 		mClient(NULL),
 		mStream(NULL),
@@ -54,6 +62,9 @@ namespace FFL {
 	}
 	bool WebSocketClient::isConnected() const {
 		return mIsConnected;
+	}
+	NetFD WebSocketClient::getFd() {
+		return mClient->getFd();
 	}
 	//
 	//  关闭连接
@@ -113,108 +124,6 @@ namespace FFL {
 		return mIsHandShark;
 	}
 
-	class WebsocketFrame {
-	public:
-		WebsocketFrame() {
-			reset();
-		}
-		~WebsocketFrame() {
-		}
-
-		void reset() {
-			FIN = false;
-			mOpcode = 0;
-			mHaveMask = false;
-			mPayloadLen = 0;
-			mMaskey[0] = 0;
-			mMaskey[1] = 0;
-			mMaskey[2] = 0;
-			mMaskey[3] = 0;
-		}
-
-		bool readHeader(NetStreamReader* reader) {
-			bool suc = false;
-			uint8_t b=reader->read1Bytes(&suc);
-			if (!suc) {
-				return false;
-			}
-			FIN =(b & 0x80)!=0;
-			mOpcode = b & 0x0f;
-
-			b = reader->read1Bytes(&suc);
-			if (!suc) {
-				return false;
-			}
-			mHaveMask = (b & 0x80)!=0;
-			uint8_t payloadLenFlag= b & 0x7f;
-			if (payloadLenFlag <= 125) {
-				mPayloadLen = payloadLenFlag;
-			}else if (payloadLenFlag == 126) {
-				mPayloadLen = reader->read2Bytes(&suc);
-			}else if (payloadLenFlag == 127) {
-				mPayloadLen = reader->read8Bytes(&suc);
-			}
-
-			if (mHaveMask) {
-				mMaskey[0] = reader->read1Bytes(&suc);
-				mMaskey[1] = reader->read1Bytes(&suc);
-				mMaskey[2] = reader->read1Bytes(&suc);
-				mMaskey[3] = reader->read1Bytes(&suc);
-			}
-
-			return true;
-		}
-		bool readData(NetStreamReader* reader, uint8_t* buffer, uint32_t* bufferSize) {
-			if (mPayloadLen > *bufferSize) {
-				return false;
-			}
-
-			if (!reader->readBytes((int8_t*)buffer, mPayloadLen)) {
-				*bufferSize = mPayloadLen;
-				return false;
-			}
-
-			return true;
-		}
-
-		//
-		//  服务端到客户端必须不添加掩码
-		//  客户端到服务端必须添加掩码
-		//
-
-		//   
-		//  第1byte
-		//
-		//  这个消息的最后一个数据包  1bit
-		//
-		bool FIN;
-		//
-		//    保留3bit
-		//
-		// 消息类型，4bit
-		// 0x0：中间数据包，0x1：text类型，
-		// 0x2: 二进制类型  0x8：断开连接  
-		// 0x9: ping        0xa:pong 
-		//
-		uint8_t mOpcode;
-
-		//
-		//  第2byte
-		//
-		//
-		//  是否添加掩码了 ,1bit
-		//
-		bool mHaveMask;
-		//
-		//  0-125 1字节，7bit
-		//  126  2字节
-		//  127  8字节 
-		int64_t  mPayloadLen;
-		//
-		//  mask key用于跟数据xor
-		//
-		uint8_t mMaskey[4];
-	};
 
 	//
 	//  接收一帧数据
@@ -248,13 +157,45 @@ namespace FFL {
 	//
 	//  发送一帧数据
 	//
-	bool WebSocketClient::sendFrame(const uint8_t* data, uint32_t len) {
+	bool WebSocketClient::sendFrame(uint8_t opcode,const uint8_t* data, uint32_t len) {
 		if (!isHandshark()) {
 			return false;
 		}
 
+		WebsocketFrame frame;
+		frame.FIN = true;
+		frame.mOpcode = opcode;
+		frame.mHaveMask = true;
+		frame.mPayloadLen = len;
+		frame.writeHeader(mClient);
+		if (len > 0) {
+			//
+		    //  xor
+			//
+			mClient->write((void*)data, len, 0);
+		}
+		return true;
+	}
+	bool WebSocketClient::sendText(const char* text) {		
+		return sendFrame(WebsocketFrame::OPCODE_TEXT, (uint8_t*)text,strlen(text));
+	}
+	bool WebSocketClient::sendBinary(const uint8_t* data, uint32_t len) {
+		return sendFrame(WebsocketFrame::OPCODE_BINARY, data, len);
+	}
+	bool WebSocketClient::sendStream(IOReader* stream) {
+		FFL_ASSERT_LOG(0, "sendStream not implement");
 		return false;
 	}
 
+	bool WebSocketClient::sendPing() {
+		return sendFrame(WebsocketFrame::OPCODE_PING, NULL,0);
+	}
+	bool WebSocketClient::sendPong() {
+		return sendFrame(WebsocketFrame::OPCODE_PONG, NULL, 0);
+	}
+	bool WebSocketClient::sendBye() {
+		return sendFrame(WebsocketFrame::OPCODE_BYE, NULL, 0);
+	}
+	
 	
 }

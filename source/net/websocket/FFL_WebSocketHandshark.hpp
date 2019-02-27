@@ -19,6 +19,7 @@
 
 namespace FFL {	
 	/////////////////////////////////////////////////////////////////////////
+	
 	class WSHandsharkRequest : public HttpRequest{
 	public:
 		WSHandsharkRequest(FFL::sp<HttpClient>& client);
@@ -26,13 +27,11 @@ namespace FFL {
 
 		//
 		//  获取设置版本号
-		//
-		void setSecVersion(int32_t version);
+		//		
 		int32_t getSecVersion();
 		//
 		//  获取设置key
-		//
-		void setSecKey(String& key);
+		//		
 		bool getSecKey(String& key);
 
 		//
@@ -79,6 +78,12 @@ namespace FFL {
 		static bool getSec_WebSocket_Accept(HttpResponse* response,String& key);
 		static bool isHandsharkOk(WSHandsharkRequest* request,HttpResponse* response);
 	};
+
+	//
+	//  是否一个有效的握手请求
+	//
+	bool WebSocket_isHandsharkRequest(HttpRequest* request);
+	bool WebSocket_getSecWebSocketkey(HttpRequest* request,String& key);
 }
 
 #endif

@@ -615,6 +615,39 @@ namespace FFL {
 	bool String8::equal(const String8& other) {
 		return equal(other.string());
 	}
+	bool String8::equalIgnoreCase(const char* other) {
+		if (other == NULL || other[0] == 0) {
+			return size() == 0;
+		}
+
+		size_t otherLength = strlen(other);
+		if (otherLength != size()) {
+			return false;
+		}
+
+		uint8_t* p1 =(uint8_t*)other;
+		uint8_t* p2 = (uint8_t*)string();
+		for(size_t i=0;i<otherLength;i++){
+			if (p1[i] == p2[i]) {
+				continue;
+			}else if (p1[i] > p2[i]) {
+				if (p1[i] - p2[i] == 0x20) {
+					continue;
+				}
+			}else  {
+				if (p2[i] - p1[i] == 0x20) {
+					continue;
+				}
+			}
+			return false;
+		}
+		
+		return true;
+	}
+	bool String8::equalIgnoreCase(const String8& other) {
+		return equalIgnoreCase(other.string());
+	}
+
 	size_t String8::length() const
 	{
 		return SharedBuffer::sizeFromData(mString) - 1;

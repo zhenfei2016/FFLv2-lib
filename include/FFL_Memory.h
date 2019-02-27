@@ -54,6 +54,11 @@ extern "C" {
 	*/
 	FFLIB_API_IMPORT_EXPORT int FFL_isLittleEndian();
 
+	/*
+	   order: 1:顺序的，0:还是反序的  拷贝数据
+	*/
+	FFLIB_API_IMPORT_EXPORT void FFL_copyBytes(uint8_t* s, uint8_t* d, uint32_t size, int order);
+
 	/************************memoryleak相关*********************************************************************/
 	/*
 	 *   打印一下当前还没有释放的内存

@@ -33,6 +33,9 @@ TARGET_LINK_LIBRARIES(httpClient FFL)
 ADD_EXECUTABLE(websocketClient  main.cpp;websocketClient.cpp)
 TARGET_LINK_LIBRARIES(websocketClient FFL)
 
+ADD_EXECUTABLE(websocketServer  main.cpp;websocketServer.cpp)
+TARGET_LINK_LIBRARIES(websocketServer FFL)
+
 
 #ADD_EXECUTABLE(memoryLeak main.cpp;memoryLeak.cpp)
 #TARGET_LINK_LIBRARIES(memoryLeak FFL)
