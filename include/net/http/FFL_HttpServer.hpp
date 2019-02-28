@@ -24,7 +24,7 @@ namespace FFL {
 	class HttpServerImpl;
     class FFLIB_API_IMPORT_EXPORT HttpServer : public Module{
 	public:
-		class Callback: public RefBase {
+		class FFLIB_API_IMPORT_EXPORT Callback: public RefBase {
 		public:
 			virtual ~Callback();
 			//

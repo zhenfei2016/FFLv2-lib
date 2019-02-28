@@ -77,6 +77,7 @@ private:
 	DISABLE_COPY_CONSTRUCTORS(Thread);
 };
 
+template class FFLIB_API_IMPORT_EXPORT FFL::sp<Thread>;
 
 }; 
 

@@ -69,6 +69,7 @@ namespace FFL {
 		//  
 		virtual int32_t read(uint8_t* data, int32_t requestSize,bool* suc)=0;
 	};
+	template class FFLIB_API_IMPORT_EXPORT FFL::sp<HttpContent>;
 }
 
 #endif

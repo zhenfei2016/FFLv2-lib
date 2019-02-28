@@ -94,7 +94,7 @@ private:
 
     weakref_impl* const mRefs;
 };
-
+template class FFLIB_API_IMPORT_EXPORT FFL::sp<RefBase>;
 }; 
 
 #endif 
