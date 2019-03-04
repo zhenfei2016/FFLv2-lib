@@ -82,7 +82,7 @@ namespace FFL {
 			headerInfo = String::format(format,
 				"GET",
 				path.string(),
-				mKey);
+				mKey.string());
 		}
 
 		int32_t buffCount = 20;

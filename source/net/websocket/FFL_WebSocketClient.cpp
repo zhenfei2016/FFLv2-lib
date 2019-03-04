@@ -17,6 +17,7 @@
 #include <net/FFL_NetEventLoop.hpp>
 #include "FFL_WebSocketHandshark.hpp"
 #include "FFL_WebSocketFrame.hpp"
+#include "FFL_WebSocket.hpp"
 
 namespace FFL {
 	static void xorBytes(const uint8_t *in1, uint8_t *out, uint8_t maker[4], int size) {
@@ -75,6 +76,8 @@ namespace FFL {
 			mIsConnected = false;
 			FFL_SafeFree(mClient);
 		}
+
+		FFL_SafeFree(mWebSocket);
 		mIsHandShark = false;
 		FFL_SafeFree(mStream);
 	}
@@ -91,8 +94,7 @@ namespace FFL {
 		//
 		sp<HttpClient> httpClient = new HttpClient(mClient);
 		FFL::HttpHeader header;		
-		header.setKey("Host", mHost.string());		
-		//header.setKey("Origin", host.string());
+		header.setKey("Host", mHost.string());				
 		FFL::sp<WSHandsharkRequest> request = new FFL::WSHandsharkRequest(httpClient);
 		request->setHeader(header);
 		if (!request->send()) {
@@ -117,14 +119,15 @@ namespace FFL {
 		}
 
 		mStream = new NetStreamReader(mClient);
+
+		uint8_t key[4] = {1,2,3,4};
+		mWebSocket = new WebSocket(mClient, mStream, true, key);
 		mIsHandShark = true;		
 		return true;
 	}
 	bool WebSocketClient::isHandshark() const {
 		return mIsHandShark;
-	}
-
-
+	}	
 	//
 	//  接收一帧数据
 	//  buffer: 缓冲区 ， 
@@ -135,67 +138,73 @@ namespace FFL {
 			return false;
 		}
 
-		WebsocketFrame frame;		
-		uint8_t buf[4096] = {};
-		size_t readed = 0;
-		if (!frame.readHeader(mStream)) {
-			return false;
-		}
-
-		//
-		//  服务端下发的数据不进行xor
-		//
-		if (frame.mHaveMask) {
-			return false;
-		}
-
-		if (!frame.readData(mStream, buffer, bufferSize)) {
-			return false;
-		}
-		return true;
+		return mWebSocket->recvFrame(buffer, bufferSize);
 	}
-	//
-	//  发送一帧数据
-	//
-	bool WebSocketClient::sendFrame(uint8_t opcode,const uint8_t* data, uint32_t len) {
+
+	IOReader* WebSocketClient::createInputStream() {
+		if (!isHandshark()) {
+			return NULL;
+		}
+		return mWebSocket->createInputStream();
+	}
+	void WebSocketClient::destroyInputStream(IOReader* reader) {
+		if (!isHandshark()) {
+			return ;
+		}
+		mWebSocket->destroyInputStream(reader);
+	}
+
+
+	bool WebSocketClient::sendText(const char* text) {		
 		if (!isHandshark()) {
 			return false;
 		}
 
-		WebsocketFrame frame;
-		frame.FIN = true;
-		frame.mOpcode = opcode;
-		frame.mHaveMask = true;
-		frame.mPayloadLen = len;
-		frame.writeHeader(mClient);
-		if (len > 0) {
-			//
-		    //  xor
-			//
-			mClient->write((void*)data, len, 0);
-		}
-		return true;
-	}
-	bool WebSocketClient::sendText(const char* text) {		
-		return sendFrame(WebsocketFrame::OPCODE_TEXT, (uint8_t*)text,strlen(text));
+		return mWebSocket->sendText(text);
 	}
 	bool WebSocketClient::sendBinary(const uint8_t* data, uint32_t len) {
-		return sendFrame(WebsocketFrame::OPCODE_BINARY, data, len);
-	}
-	bool WebSocketClient::sendStream(IOReader* stream) {
-		FFL_ASSERT_LOG(0, "sendStream not implement");
-		return false;
-	}
+		if (!isHandshark()) {
+			return false;
+		}
 
+		return mWebSocket->sendBinary(data,len);
+	}
+	//
+	//  读写二进制流
+	//
+	IOWriter* WebSocketClient::createOutputStream(uint32_t size) {		
+		if (!isHandshark()) {
+			return NULL;
+		}
+
+		return mWebSocket->createOutputStream(size);
+	}
+	void WebSocketClient::destroyOutputStream(IOWriter* writer) {
+		if (!isHandshark()) {
+			return ;
+		}
+
+		mWebSocket->destroyOutputStream(writer);
+	}
 	bool WebSocketClient::sendPing() {
-		return sendFrame(WebsocketFrame::OPCODE_PING, NULL,0);
+		if (!isHandshark()) {
+			return false;
+		}
+
+		return mWebSocket->sendPing();
 	}
 	bool WebSocketClient::sendPong() {
-		return sendFrame(WebsocketFrame::OPCODE_PONG, NULL, 0);
+		if (!isHandshark()) {
+			return false;
+		}
+
+		return mWebSocket->sendPong();
 	}
 	bool WebSocketClient::sendBye() {
-		return sendFrame(WebsocketFrame::OPCODE_BYE, NULL, 0);
-	}
-	
-	
+		if (!isHandshark()) {
+			return false;
+		}
+
+		return  mWebSocket->sendBye();
+	}	
 }

@@ -20,9 +20,9 @@ typedef enum  ERROR_NO
 {
 	/*  返回成功  */
 	FFL_OK = 0,
-	FFL_NO_ERROR =FFL_OK ,
+	FFL_NO_ERROR = FFL_OK,
 	FFL_ERROR_SUCCESS = FFL_OK,
-	
+
 	/*  无效参数  */
 	ERROR_INVALID_PARAMS = -1,
 
@@ -32,11 +32,11 @@ typedef enum  ERROR_NO
 	FFL_FAILED = -1,
 
 	/*
-	 * 无效操作 
+	 * 无效操作
 	 */
 	FFL_INVALID_OPERATION = -2,
 	FFL_INVALID_PARAMS = -3,
-	
+
 	/*
 	 * 没实现
 	 */
@@ -45,23 +45,25 @@ typedef enum  ERROR_NO
 	/*
 	 *  函数执行错误，不能block
 	 */
-	FFL_WOULD_BLOCK =-5,
+	FFL_WOULD_BLOCK = -5,
 
 	/*
 	* 未初始化
 	*/
 	FFL_NOT_INITIALIZE = -6,
-	
-	/*  超时  */
-	ERROR_TIME_OUT=-100,
-	
 
-	FFL_MUTEX_TIMEDOUT=-100,
-	FFL_MUTEX_MAXWAIT=~0,
+	FFL_ERROR_EOF = -200,
+
+	/*  超时  */
+	ERROR_TIME_OUT = -100,
+
+
+	FFL_MUTEX_TIMEDOUT = -100,
+	FFL_MUTEX_MAXWAIT = ~0,
 
 
 	/*  pipeline   已经填充了一个buffer */
-	PIPELINE_FILL_BUFFER=1000,
+	PIPELINE_FILL_BUFFER = 1000,
 
 	/*
 	 *  跳过这个buffer
@@ -79,6 +81,8 @@ typedef enum  ERROR_NO
 	FFL_FILE_CLOSE_FAILED,
 	FFL_FILE_WRITE_FAILED,
 	FFL_FILE_READ_FAILED,
+
+	
 
 }ERROR_NO;
 

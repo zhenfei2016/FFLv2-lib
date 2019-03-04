@@ -64,8 +64,9 @@ namespace FFL {
 				return false;
 			}
 
-			if (!reader->readBytes((int8_t*)buffer, mPayloadLen)) {
-				*bufferSize = mPayloadLen;
+			uint32_t readSize = (uint32_t)mPayloadLen;
+			if (!reader->readBytes((int8_t*)buffer, readSize)) {
+				*bufferSize = readSize;
 				return false;
 			}
 

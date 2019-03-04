@@ -27,9 +27,6 @@
 #include "FFL_WebSocketFrame.hpp"
 namespace FFL {
 	#define  kMaxFrameSize  4096
-
-
-
 	class WebSocketAcceptClient : public RefBase {
 	public:
 		WebSocketAcceptClient(TcpClient* client):mClient(client), mStream(client){
@@ -67,7 +64,7 @@ namespace FFL {
 			}
 
 			uint8_t buf[kMaxFrameSize] = {};
-			uint32_t size = frame.mPayloadLen;
+			uint32_t size = (uint32_t)frame.mPayloadLen;
 			int32_t readedSize = 0;
 			if (!recvData(buf, size, &readedSize)) {
 				return false;
@@ -249,9 +246,9 @@ namespace FFL {
 			if (!WebSocket_getSecWebSocketkey(request.get(), key)) {
 				return TcpServer::Callback::FD_DESTROY;
 			}
-
+						
 			FFL::sp<WSHandsharkResponse> response =
-				new WSHandsharkResponse(request->getHttpClient(), key);
+				new WSHandsharkResponse(httpClient, key);
 			response->send();			
 			contex->mHandshake = true;
 			return TcpServer::Callback::FD_CONTINUE;
