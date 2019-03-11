@@ -15,6 +15,7 @@
 
 #include <FFL_lib.h>
 
+#include <FFL_Console.hpp>
 #include <FFL_ByteBuffer.hpp>
 #include <FFL_ByteStream.hpp>
 #include <FFL_String.h>

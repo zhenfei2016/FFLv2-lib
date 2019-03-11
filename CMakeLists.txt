@@ -144,6 +144,7 @@ SET(HEADER_FILES
    ./include/FFL_Log.h
    ./include/FFL_Path.h
    ./include/FFL_Console.h
+   ./include/FFL_Console.hpp
    
    ./include/FFL_Thread.h   
    ./include/FFL_ThreadConstant.h
@@ -234,6 +235,7 @@ SET(SOURCE_FILES
   ./source/FFL_Path.c
   
   ./source/FFL_Console.c
+  ./source/FFL_Console.cpp  
   ./source/getopt/getopt.h
   ./source/getopt/getopt.c
   ./source/getopt/getopt_int.h

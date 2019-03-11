@@ -17,5 +17,6 @@
 #include <FFL_Version.h>
 #include <FFL_Log.h>
 #include <FFL_Path.h>
+#include <FFL_Console.h>
 
 #endif 
