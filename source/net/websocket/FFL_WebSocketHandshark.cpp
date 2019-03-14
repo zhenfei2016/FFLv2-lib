@@ -195,13 +195,13 @@ namespace FFL {
 
 		String value;
 		if (!header.getKey("Connection", value)||
-			!value.equal("Upgrade")) {
+			!value.equalIgnoreCase("Upgrade")) {
 			return false;
 		}
 		
 
 		if (!header.getKey("Upgrade", value)||
-			!value.equal("WebSocket")) {
+			!value.equalIgnoreCase("WebSocket")) {
 			return false;
 		}
 

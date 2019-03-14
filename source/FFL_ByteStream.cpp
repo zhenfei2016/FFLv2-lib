@@ -196,6 +196,14 @@ namespace FFL {
 		}
 		return false;
 	}
+	bool ByteStream::writeString(const char* val, uint32_t len) {
+		uint32_t size = len;
+		if (val && haveSpace(size)) {
+			writeBuffer((uint8_t*)val, size, true);
+			return true;
+		}
+		return false;
+	}
 	bool ByteStream::writeBytes(const int8_t* val, uint32_t size) {
 		if (haveSpace(size)) {
 			writeBuffer((uint8_t*)val, size, true);

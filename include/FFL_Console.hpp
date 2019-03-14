@@ -28,6 +28,15 @@ namespace FFL {
 		//  最多支持100个命令
 		//
 		bool registeCommand(CmdOption* cmdTable,uint32_t size);		
+		//
+		//  打印用法
+		//
+		void dumpUsage();
+		//
+		// 用于透传的用户数据
+		//
+		void setUserdata(void* userdata);
+		void* getUserdata() const;
 	public:
 		//
 		//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
@@ -38,6 +47,7 @@ namespace FFL {
 		virtual bool eventLoop(int32_t* waitTime);	
 	private:		
 		CmdOption* mRegistedCommand;
+		void* mUserData;
 	};
 }
 

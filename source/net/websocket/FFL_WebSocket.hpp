@@ -74,6 +74,7 @@ namespace FFL {
 	protected:
 		TcpClient* mClient;
 		NetStreamReader* mStream;	
+		uint8_t mMarkerKey[4];
 		bool mIsClient;
 	};
 }

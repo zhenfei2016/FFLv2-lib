@@ -70,7 +70,7 @@ namespace FFL {
 		//  pWrite:实质上写了多少数据
 		//  返回错误码  ： FFL_OK表示成功
 		//
-		virtual status_t write(void* buf, size_t count, size_t* pWrite) ;
+		virtual status_t write(const void* buf, size_t count, size_t* pWrite) ;
 		//
 		//  写数据到文件中
 		//  bufVec:缓冲区地址,数组

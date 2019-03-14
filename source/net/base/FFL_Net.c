@@ -179,7 +179,7 @@ SOCKET_STATUS FFL_socketReadFrom(NetFD fd, void* buffer, size_t size, size_t* re
  * 失败返回，FFL_ERROR_SOCKET_XX
  * 成功返回  FFL_ERROR_SUCCESS
  * */
-SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed){
+SOCKET_STATUS FFL_socketWrite(NetFD fd, const  void* buffer, size_t size,size_t* writed){
 	int socketError=0;
 	int nbWrite = send(fd, (char*)buffer, size, 0);
 	if (nbWrite > 0) {
@@ -207,7 +207,7 @@ SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed
 	return FFL_ERROR_SOCKET_WRITE;
 }
 
-SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* writed, const char* destIp, uint16_t destPort) {
+SOCKET_STATUS FFL_socketWriteTo(NetFD fd, const  void* buffer, size_t size, size_t* writed, const char* destIp, uint16_t destPort) {
 	int socketError = 0;
 	int nbWrite=0;
 	struct sockaddr_in destAddr;

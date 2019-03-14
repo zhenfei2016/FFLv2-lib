@@ -100,22 +100,22 @@ namespace FFL {
 		return ret;
 	}
 	int16_t NetStreamReader::read2Bytes(bool* suc) {
-		int8_t ret = 0;
+		int16_t ret = 0;
 		ReadNBytes(2, ret);
 		return ret;
 	}
 	int32_t NetStreamReader::read3Bytes(bool* suc) {
-		int8_t ret = 0;
+		int32_t ret = 0;
 		ReadNBytes(3, ret);
 		return ret;
 	}
 	int32_t NetStreamReader::read4Bytes(bool* suc) {
-		int8_t ret = 0;
+		int32_t ret = 0;
 		ReadNBytes(4, ret);
 		return ret;
 	}
 	int64_t NetStreamReader::read8Bytes(bool* suc){
-		int8_t ret = 0;
+		int64_t ret = 0;
 		ReadNBytes(8, ret);
 		return ret;
 	}

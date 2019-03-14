@@ -17,27 +17,30 @@ namespace FFL {
 
 	HttpSimpleContent::HttpSimpleContent(const uint8_t* data,int32_t size) {
 		mBuffer = new ByteBuffer(data,size);
+		mStream = new ByteStream();
+		mStream->setData(mBuffer->data(), mBuffer->size(), mBuffer->size());
 	}
 
 	HttpSimpleContent::~HttpSimpleContent() {
 		FFL_SafeFree(mBuffer);
+		FFL_SafeFree(mStream);
 	}
 	//
 	//  获取内容大小
 	//
 	int32_t HttpSimpleContent::getSize() {
-		return mBuffer->getByteStream()->getSize();
+		return mStream->getSize();
 	}
 	//
 	//  获取内容
 	//
 	int32_t HttpSimpleContent::read(uint8_t* data, int32_t requestSize, bool* suc) {
-		int32_t size = mBuffer->getByteStream()->getSize();		
+		int32_t size = mStream->getSize();
 		if (size >requestSize) {
 			size = requestSize;
 		} 		
 
-		if (mBuffer->getByteStream()->readBytes((int8_t*)data, size)) {
+		if (mStream->readBytes((int8_t*)data, size)) {
 			if (suc) {
 				*suc = true;
 			}
@@ -49,6 +52,7 @@ namespace FFL {
 		}
 		return size;
 	}
-		
+	
+
 }
 

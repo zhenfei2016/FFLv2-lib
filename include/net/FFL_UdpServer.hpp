@@ -35,6 +35,13 @@ namespace FFL {
 			UdpServer::Callback* handler,
 			      const char* name=NULL);
 		virtual ~UdpServer();
+		//
+		//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
+		//   waitTime:输出参数，下一次执行eventLoop等待的时长
+		//   true  : 继续进行下一次的eventLoop
+		//   false : 不需要继续执行eventloop
+		//
+		virtual bool eventLoop(int32_t* waitTime);
 	protected:
 		//
 		//  调用。start，stop会触发onStart,onStop的执行
@@ -43,14 +50,7 @@ namespace FFL {
 		//  在这些函数中，不要再调用自己的函数，例如：start,stop, isStarted等
 		//
 		virtual bool onStart();
-		virtual void onStop();
-		//
-		//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
-		//   waitTime:输出参数，下一次执行eventLoop等待的时长
-		//   true  : 继续进行下一次的eventLoop
-		//   false : 不需要继续执行eventloop
-		//
-		virtual bool eventLoop(int32_t* waitTime) ;
+		virtual void onStop();	
 	protected:
 		UdpServerImpl* mImpl;
 	};

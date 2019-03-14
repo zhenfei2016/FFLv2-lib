@@ -16,23 +16,22 @@
 #include "internalLogConfig.h"
 
 namespace FFL {
-	ByteBuffer::ByteBuffer():mData(0),mSize(0), mStream(0){
-		mStream = new ByteStream();
-		alloc(4096);
+	static const int32_t kDefaultBufferSize = 4096;
+	ByteBuffer::ByteBuffer():mData(0),mSize(0){		
+		alloc(kDefaultBufferSize);
 	}
-	ByteBuffer::ByteBuffer(uint32_t size) : mData(0), mSize(0) {
-		mStream = new ByteStream();
+	ByteBuffer::ByteBuffer(uint32_t size) : mData(0), mSize(0) {		
 		alloc(size);
 	}
-	ByteBuffer::ByteBuffer(const uint8_t* data, uint32_t size) : mData(0), mSize(0), mStream(0) {
-		mStream = new ByteStream();
+	ByteBuffer::ByteBuffer(const uint8_t* data, uint32_t size) : mData(0), mSize(0) {		
 		alloc(size);
-		mStream->writeBytes((const int8_t*)data, size);
+		if (data && size) {
+			memcpy(mData, data, size);
+		}
 	}
 	ByteBuffer::~ByteBuffer(){
 		FFL_free(mData);		
-		mSize = 0;
-		FFL_SafeFree(mStream);
+		mSize = 0;	
 	}
 	//
 	// 重新申请一下空间
@@ -40,6 +39,9 @@ namespace FFL {
 	uint32_t ByteBuffer::alloc(uint32_t size) {
 		if (size <= mSize) {
 			return mSize;
+		}
+		if (size == 0) {
+			size = 16;
 		}
 
 		uint8_t* data = (uint8_t*)FFL_malloc(size);
@@ -52,8 +54,6 @@ namespace FFL {
 		FFL_free(mData);
 		mData = data;
 		mSize = size;
-		
-		mStream->setData(mData, 0, mSize);
 		return size;
 	}
 	//
@@ -77,9 +77,7 @@ namespace FFL {
 
 		FFL_free(mData);
 		mData = data;
-		mSize = size;
-
-		mStream->setData(mData, 0, mSize);
+		mSize = size;		
 		return size;
 	}
 
@@ -88,11 +86,6 @@ namespace FFL {
 	}
 	uint32_t ByteBuffer::size() const {
 		return mSize;
-	}
-	//
-	//  获取这个内存的操作流
-	//
-	ByteStream* ByteBuffer::getByteStream() {
-		return mStream;
-	}
+	}	
+	
 }

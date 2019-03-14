@@ -27,11 +27,23 @@ namespace FFL {
 		uint8_t* maskKey):
 		mClient(client),		
 		mStream(mStream),
-		mIsClient(isClient)
-		{
+		mIsClient(isClient){
+		//
+		//如果客户端 ,则发送的时候需要使用make进行xor
+		//
+		if (isClient &&maskKey) {
+			mMarkerKey[0] = maskKey[0];
+			mMarkerKey[1] = maskKey[1];
+			mMarkerKey[2] = maskKey[2];
+			mMarkerKey[3] = maskKey[3];
+		} else {
+			mMarkerKey[0] = 4;
+			mMarkerKey[1] = 3;
+			mMarkerKey[2] = 2;
+			mMarkerKey[3] = 1;
+		}
 	}
-	WebSocket::~WebSocket() {
-			
+	WebSocket::~WebSocket() {			
 	}	
 	//
 	//  读frame头信息
@@ -40,7 +52,18 @@ namespace FFL {
 		if (!head.readHeader(mStream)) {
 			return false;
 		}
-		return true;
+
+		if (mIsClient){
+			//
+			//  客户端接收到服务端的数据，应该不是加密的
+			//
+			return !head.mHaveMask;
+		}
+
+		//
+		//  服务端接收客户端的数据式加密的
+		//
+		return head.mHaveMask;
 	}
 	//
 	//  接收一帧数据
@@ -53,15 +76,10 @@ namespace FFL {
 			return false;
 		}
 
+		//
+		//  如果数据过长>4096，则返回false
 		uint8_t buf[4096] = {};
-		size_t readed = 0;		
-		//
-		//  服务端下发的数据不进行xor
-		//
-		if (frame.mHaveMask) {
-			return false;
-		}
-
+		size_t readed = 0;	
 		if (!frame.readData(mStream, buffer, bufferSize)) {
 			return false;
 		}
@@ -71,8 +89,7 @@ namespace FFL {
 	class WebSocketInputStream : public IOReader {
 	public:
 		WebSocketInputStream(NetStreamReader* stream,int64_t size):
-			mStream(stream)
-			{
+			mStream(stream){			
 				mSize=(uint32_t)size;
 		}
 		//
@@ -82,7 +99,7 @@ namespace FFL {
 		//  pReaded:实质上读了多少数据
 		//  返回错误码  ： FFL_OK表示成功
 		//
-		virtual status_t read(uint8_t* buf, size_t count, size_t* pReaded) {
+		 status_t read(uint8_t* buf, size_t count, size_t* pReaded) {
 			if (mSize == mReaded) {
 				return FFL_ERROR_EOF;
 			}
@@ -119,7 +136,7 @@ namespace FFL {
 				mReaded += readedSize;
 				if (pReaded) {
 					*pReaded = readedSize;
-				}
+				}				
 				return (mSize == mReaded) ? FFL_ERROR_EOF : FFL_OK;
 			}
 
@@ -152,16 +169,25 @@ namespace FFL {
 		WebsocketFrame frame;
 		frame.FIN = true;
 		frame.mOpcode = opcode;
-		frame.mHaveMask = true;
+		frame.mHaveMask = mIsClient?true:false;
 		frame.mPayloadLen = len;
 		frame.writeHeader(mClient);
-		if (len > 0) {
-			//
-		    //  xor
-			//
-			
-				mClient->write((void*)data, len, 0);
-			
+		if (len <= 0) {
+			return true;
+		}
+
+		static const int kBlockSize = 4096;
+		if (frame.mHaveMask) {
+			do {
+				uint8_t outbuffer[kBlockSize] = {};
+				uint32_t size = len > kBlockSize ? kBlockSize : len;
+				xorBytes(data, outbuffer, mMarkerKey, size);
+				mClient->write((void*)outbuffer, size, 0);
+				len -= size;
+			} while (len > kBlockSize);
+				
+		} else {
+			mClient->write((void*)data, len, 0);
 		}
 		return true;
 	}

@@ -46,7 +46,7 @@ namespace FFL {
 	//   如果start使用了EventloopThread，则stop会阻塞到线程退出
 	//   否则则仅仅置一下标志
 	//
-	void Module::stop() {
+	bool Module::stop() {
 
 		{
 			CMutex::Autolock l(mLock);
@@ -60,6 +60,17 @@ namespace FFL {
 			}
 		}
 
+		if (!mModuleThread.isEmpty()) {
+			if (FFL_WOULD_BLOCK == mModuleThread->requestExitAndWait()) {
+				return false;
+			}
+		}
+		return true;
+	}
+	//
+	//   等待线程退出
+	//
+	void Module::waitStop() {
 		if (!mModuleThread.isEmpty()) {
 			mModuleThread->requestExitAndWait();
 		}

@@ -29,6 +29,7 @@ namespace FFL{
 		virtual bool write4Bytes(int32_t val) = 0;
 		virtual bool write8Bytes(int64_t val) = 0;
 		virtual bool writeString(const String& val, uint32_t len) = 0;
+		virtual bool writeString(const char* val, uint32_t len) = 0;
 		virtual bool writeBytes(const int8_t* data, uint32_t size) = 0;
 		//
 		//  写的时候跳过几个字节

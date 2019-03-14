@@ -95,8 +95,8 @@ extern "C" {
 	 * 失败返回，FFL_ERROR_SOCKET_XX
 	 * 成功返回  FFL_ERROR_SUCCESS
 	 * */
-	FFLIB_API_IMPORT_EXPORT SOCKET_STATUS FFL_socketWrite(NetFD fd, void* buffer, size_t size,size_t* writed);
-	FFLIB_API_IMPORT_EXPORT SOCKET_STATUS FFL_socketWriteTo(NetFD fd, void* buffer, size_t size, size_t* writed, const char* destIp, uint16_t destPort);
+	FFLIB_API_IMPORT_EXPORT SOCKET_STATUS FFL_socketWrite(NetFD fd, const void* buffer, size_t size,size_t* writed);
+	FFLIB_API_IMPORT_EXPORT SOCKET_STATUS FFL_socketWriteTo(NetFD fd, const  void* buffer, size_t size, size_t* writed, const char* destIp, uint16_t destPort);
 
     /*
 	 * 设置发送，接收超时时间

@@ -72,9 +72,15 @@ namespace FFL {
 		bool start(FFL::sp<ModuleThread> thread) ;
 		//
 		//   如果start使用了EventloopThread，则stop会阻塞到线程退出
+		//   如果在自己线程中等待退出则不会阻塞的
 		//   否则则仅仅置一下标志
+		//   如果在自己线程中调用了stop，则返回false,可以在其他线程调用waitStop
 		//
-		void stop() ;
+		bool stop() ;
+		//
+		//   等待线程退出
+		//
+		void waitStop();
 	public:
 		//
 		//  调用。start，stop会触发onStart,onStop的执行

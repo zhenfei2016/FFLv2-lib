@@ -11,6 +11,7 @@
 *
 */
 
+#include <net/FFL_Net.h>
 #include <net/FFL_UdpClient.hpp>
 
 namespace FFL {
@@ -19,6 +20,13 @@ namespace FFL {
     UdpClient::UdpClient(NetFD fd){
 		mSocket.setFd(fd, CSocket::PROTOCOL_UDP);
     }
+	UdpClient::UdpClient(const char* remoteIp,uint16_t remotePort) {
+		NetFD fd = FFL_socketCreateUdp();		
+		FFL_ASSERT_LOG(fd != INVALID_NetFD,"UdpClient()");
+		
+		mSocket.setFd(fd, CSocket::PROTOCOL_UDP);
+		mSocket.setWriteToAddr(remoteIp, remotePort);
+	}
     UdpClient::~UdpClient(){		
     }
 
@@ -50,7 +58,7 @@ namespace FFL {
 	//  pWrite:实质上写了多少数据
 	//  返回错误码  ： FFL_OK表示成功
 	//
-	status_t UdpClient::write(void* buf, size_t count, size_t* pWrite) {
+	status_t UdpClient::write(const void* buf, size_t count, size_t* pWrite) {
 		return  mSocket.write(buf, count, pWrite);
 	}
 	//

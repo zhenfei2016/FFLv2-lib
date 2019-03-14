@@ -65,11 +65,13 @@ namespace FFL {
 			}
 
 			uint32_t readSize = (uint32_t)mPayloadLen;
-			if (!reader->readBytes((int8_t*)buffer, readSize)) {
-				*bufferSize = readSize;
+			if (!reader->readBytes((int8_t*)buffer, readSize)) {				
 				return false;
 			}
 
+			if (bufferSize) {
+				*bufferSize = readSize;
+			}
 			return true;
 		}
 		bool WebsocketFrame::writeHeader(TcpClient* client) {

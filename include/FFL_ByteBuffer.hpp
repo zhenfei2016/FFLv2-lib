@@ -39,16 +39,10 @@ namespace FFL{
 		//
 		//  buffer大小
 		//
-		uint32_t size() const;		
-		//
-		//  获取这个内存的操作流
-		//
-		ByteStream* getByteStream();
+		uint32_t size() const;			
 	private:
 		uint8_t* mData;
 		uint32_t mSize;
-
-		ByteStream* mStream;
 	};
 }
 

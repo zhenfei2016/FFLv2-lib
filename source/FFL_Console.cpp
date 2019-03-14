@@ -18,7 +18,7 @@ namespace FFL {
 	}
 
 	const static int KMaxCmdArraySize=101;
-	ConsoleLoop::ConsoleLoop(){
+	ConsoleLoop::ConsoleLoop():mUserData(NULL){
 		mRegistedCommand = new CmdOption[KMaxCmdArraySize];
 		memset(mRegistedCommand, 0, sizeof(CmdOption)*KMaxCmdArraySize);
 	}
@@ -60,8 +60,21 @@ namespace FFL {
 		}
 		return true;
 	}
-		
-
+	//
+	//  打印用法
+	//
+	void ConsoleLoop::dumpUsage(){
+		FFL_printUsage(mRegistedCommand);
+	}
+	//
+	// 用于透传的用户数据
+	//
+	void ConsoleLoop::setUserdata(void* userdata) {
+		mUserData = userdata;
+	}
+	void* ConsoleLoop::getUserdata() const {
+		return mUserData;
+	}
 	//
 	//   阻塞的线程中执行的eventloop,返回是否继续进行eventLoop
 	//   waitTime:输出参数，下一次执行eventLoop等待的时长

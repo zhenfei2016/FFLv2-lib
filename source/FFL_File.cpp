@@ -73,7 +73,7 @@ void closeFile(FileHandle* fd) {
 	}
 }
 
-int writeFile(FileHandle* fd,void* data,int32_t size) {
+int writeFile(FileHandle* fd, const  void* data,int32_t size) {
 	if (fd) {
 		DWORD dwWrited = 0;
 		if (::WriteFile(fd->fd, data, size, &dwWrited, NULL)) {
@@ -222,11 +222,11 @@ namespace FFL {
 	//  pWrite:实质上写了多少数据
 	//  返回错误码  ： FFL_OK表示成功
 	//
-	status_t File::write(void* buf, size_t count, size_t* pWrite){
+	status_t File::write(const void* buf, size_t count, size_t* pWrite){
 		int ret = FFL_OK;
 
 		int nWrited;
-		if ((nWrited = writeFile((FileHandle*)mFd, buf, count)) < 0) {
+		if ((nWrited = writeFile((FileHandle*)mFd, (void*)buf, count)) < 0) {
 			ret = FFL_FILE_WRITE_FAILED;
 			return ret;
 		}

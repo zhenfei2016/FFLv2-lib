@@ -129,18 +129,15 @@ static CmdOption  gCmdOption[] = {
 
 static void help(const char* args, void* userdata) {
 	int32_t i = 0;
-	CmdOption* opts =(CmdOption*) userdata;
-	printf("--------------------user usage-----------------------------------------\n");
+	CmdOption* opts =(CmdOption*) userdata;	
     while(opts->mName){
-		printf("%s  :%s \n", opts->mName, opts->nHelp? opts->nHelp:"");
+		printf("(user func) %s  :%s \n", opts->mName, opts->nHelp? opts->nHelp:"");
 		opts++;
-	}
-
-	printf("--------------------sys usage-----------------------------------------\n");
+	}	
 	i = 0;
 	opts = gCmdOption;
 	while (opts->mName) {
-		printf("%s  :%s \n", opts->mName, opts->nHelp ? opts->nHelp : "");
+		printf("(sys  func) %s  :%s \n", opts->mName, opts->nHelp ? opts->nHelp : "");
 		opts++;
 	}
 	printf("----------------------------------------------------------------------\n");
@@ -196,7 +193,9 @@ void FFL_consoleEvenLoop(CmdOption* opts,void* userdata,
 				gCmdOption,
 				FFL_ARRAY_ELEMS(gCmdOption),
 				opts) < 0){
-				printf("unknown command: %s \n", cmd + 2);
+
+				*pCmdLine = 0;
+				printf("\"%s\"  Not an command. \n", cmd + 2);
 			}		
 		}
 

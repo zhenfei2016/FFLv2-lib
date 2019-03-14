@@ -194,6 +194,7 @@ namespace FFL {
 			NetEventLoopImpl::FdEntry* entry = findFdEntry(fd);
 			return processRemoveFd(entry);
 		}
+
 		EventPacket* packet = new EventPacket();
 		packet->mEventIndex = mEventNextId++;
 		packet->mCommandAdd = false;
@@ -354,17 +355,18 @@ namespace FFL {
 	//  移除这个句柄的处理handler
 	//
 	bool NetEventLoopImpl::processRemoveFd(NetEventLoopImpl::FdEntry* entry) {
-		if (!entry) {
-			return false;
-		}
-
-		if (entry->mReadHandlerFree) {
-			entry->mReadHandlerFree(entry->mReadHandler);
-		}		
-		mFdNum--;
-		INTERNAL_FFL_LOG_INFO("NetEventLoopImpl: removefd=%d fdListNum=%d", entry->mFd, mFdNum+1);
-		memset(entry, 0, sizeof(NetEventLoopImpl::FdEntry));
-		return true;
+	    bool ret=false;
+		if (entry) {
+            if (entry->mReadHandlerFree) {
+                entry->mReadHandlerFree(entry->mReadHandler);
+            }
+            mFdNum--;
+            INTERNAL_FFL_LOG_INFO("NetEventLoopImpl: removefd=%d fdListNum=%d", entry->mFd,
+                                  mFdNum + 1);
+            memset(entry, 0, sizeof(NetEventLoopImpl::FdEntry));
+            ret=true;
+        }
+		return ret;
 	}
 
 	//
@@ -419,7 +421,7 @@ namespace FFL {
 		return NULL;
 	}
 
-	
+
 	//
 	//  返回是否还继续读写
 	//
@@ -444,11 +446,11 @@ namespace FFL {
 			return true;
 		}
 
+        NetEventLoopImpl::FdEntry* entry=NULL;
 		if (packet->mCommandAdd) {		
 			processAddFd(packet->fd, packet->readHandler, packet->readHandlerFree, packet->priv);
-		}
-		if (packet->mCommandRemove) {
-			NetEventLoopImpl::FdEntry* entry = findFdEntry(fd);
+		}else if (packet->mCommandRemove) {
+			entry = findFdEntry(packet->fd);
 			processRemoveFd(entry);
 		}
 

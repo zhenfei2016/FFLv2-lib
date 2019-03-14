@@ -32,11 +32,11 @@
 */
 #define FFL_VERSION_MAJOR  3
 #define FFL_VERSION_MINOR  0
-#define FFL_VERSION_MICRO  0
+#define FFL_VERSION_MICRO  190315
 /*
 *  字符串类型版本号 0.1.1
 */
-#define FFLLIB_VERSION_STRING  "3.0.0"
+#define FFLLIB_VERSION_STRING  "3.0.190315"
 
 /*
    整形的版本号  ，版本号分2段，每段8字节的(0-255)

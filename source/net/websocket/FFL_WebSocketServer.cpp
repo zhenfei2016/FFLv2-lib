@@ -25,122 +25,52 @@
 #include <list>
 #include "FFL_WebSocketHandshark.hpp"
 #include "FFL_WebSocketFrame.hpp"
+#include "FFL_WebSocket.hpp"
 namespace FFL {
 	#define  kMaxFrameSize  4096
 	class WebSocketAcceptClient : public RefBase {
 	public:
 		WebSocketAcceptClient(TcpClient* client):mClient(client), mStream(client){
+			mWebSocket = new WebSocket(client,&mStream,false,NULL);
 		}
-
-		void xorBytes(const uint8_t *in1, uint8_t *out,uint8_t maker[4],  int size) {
-			for (int i = 0; i < size; i++) {
-				*out = in1[i] ^ maker[i%4];				
-				out++;
-			}
-		}
+		~WebSocketAcceptClient(){
+			FFL_SafeFree(mWebSocket);
+         }
 		//
 		//  接收一帧数据
 		//  buffer: 缓冲区 ， 
 		//  bufferSize：这个输入缓冲区的大小。 当成功接收数据的情况下返回接收的数据大小
 		//
-		bool recvFrame(uint8_t* data, uint32_t requstSize,int32_t*  readed) {
+		bool recvFrame(uint8_t* data, uint32_t requstSize, uint32_t*  readed) {
 			WebsocketFrame frame;
-			if (!frame.readHeader(&mStream)) {
+			if (!mWebSocket->recvFrameHead(frame)) {
 				return false;
 			}
-
+			
 			if (frame.mOpcode == WebsocketFrame::OPCODE_BYE) {
-				sendClose();
+				mWebSocket->sendBye();
 				return false;
 			}
 
 			if (frame.mOpcode == WebsocketFrame::OPCODE_PING) {
-				sendPong();
+				mWebSocket->sendPong();
 				return true;
-			}
-
-			if (!frame.mHaveMask || frame.mPayloadLen > kMaxFrameSize) {
+			}			
+			
+			if (!frame.readData(&mStream, data,(uint32_t*) readed)) {
 				return false;
 			}
 
-			uint8_t buf[kMaxFrameSize] = {};
-			uint32_t size = (uint32_t)frame.mPayloadLen;
-			int32_t readedSize = 0;
-			if (!recvData(buf, size, &readedSize)) {
-				return false;
-			}
-
-			xorBytes(buf, data,frame.mMaskey, readedSize);
-			if (readed) {
-				*readed = readedSize;
-			}
 			return true;
 		}
-		//
-		//  发送一帧数据
-		//
+
 		bool sendFrame(const uint8_t* data, uint32_t len) {
-			WebsocketFrame frame;
-			frame.FIN = true;
-			frame.mOpcode = WebsocketFrame::OPCODE_TEXT;
-			frame.mHaveMask = false;
-			frame.mPayloadLen = len;
-			frame.writeHeader(mClient);
-
-			mClient->write((void*)data, len, 0);
-			return false;
-		}
-	protected:
-		bool recvData(uint8_t* data, uint32_t requstSize, int32_t*  readed) {
-			int nTryNum = 5;
-			while (nTryNum > 0) {
-				if (mStream.haveData(requstSize)) {
-					if (readed) {
-						*readed = (int32_t)requstSize;
-					}
-					return mStream.readBytes((int8_t*)data, requstSize);
-				}
-				else {
-					if (FFL_OK != mStream.pull(requstSize)) {
-						break;
-					}
-					continue;
-				}
-				nTryNum--;
-				FFL_sleep(5);
-			}
-			return false;
-		}		
-
-		void sendClose() {
-			WebsocketFrame frame;
-			frame.FIN = true;
-			frame.mOpcode = WebsocketFrame::OPCODE_BYE;
-			frame.mHaveMask = false;
-			frame.mPayloadLen = 0;
-			frame.writeHeader(mClient);
-		}
-
-		void sendPing() {
-			WebsocketFrame frame;
-			frame.FIN = true;
-			frame.mOpcode = WebsocketFrame::OPCODE_PING;
-			frame.mHaveMask = false;
-			frame.mPayloadLen = 0;
-			frame.writeHeader(mClient);
-		}
-
-		void sendPong() {
-			WebsocketFrame frame;
-			frame.FIN = true;
-			frame.mOpcode = WebsocketFrame::OPCODE_PONG;
-			frame.mHaveMask = false;
-			frame.mPayloadLen = 0;
-			frame.writeHeader(mClient);
+			return mWebSocket->sendFrame(WebsocketFrame::OPCODE_TEXT,data, len);
 		}
 	private:
 		TcpClient* mClient;
 		NetStreamReader mStream;
+		WebSocket* mWebSocket;
 	};
 
 	//
@@ -257,14 +187,16 @@ namespace FFL {
 		//  读数据
 		//
 		uint8_t buffer[4095] = {};
-		int32_t readedSize = 0;
+		uint32_t readedSize = 4095;
 		if (!contex->mWebsocket->recvFrame(buffer,4096, &readedSize)) {
 			return TcpServer::Callback::FD_DESTROY;
 		}
 		
-		if (readedSize > 0) {
-			contex->mWebsocket->sendFrame(buffer, readedSize);
-		}
+		//if (readedSize > 0) {
+		//	//
+		//	//  回复  echo模式
+		//	contex->mWebsocket->sendFrame(buffer, readedSize);
+		//}
 
 		return TcpServer::Callback::FD_CONTINUE;		
 	}

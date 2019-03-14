@@ -36,13 +36,13 @@ namespace FFL{
 	public:
 		//
 		//  设置数据，bytestream将在这个数据集上进行操作
-		//  data :缓冲起始位置
-		//  size: 缓冲中当前有效数据大小
+		//  data :缓冲起始位置,在这个指针位置开始读写的，内部不会拷贝数据的
+		//  validSize: 缓冲中当前有效数据大小,可以进行读的数据，也就是写指针当前的位置
 		//  capacity:缓冲容量
 		//  memEndian:默认本系统字节序
 		//
-		virtual void setData(uint8_t* data, uint32_t size, uint32_t capacity);
-		virtual void setData(uint8_t* data, uint32_t size, uint32_t capacity, int memEndian);
+		virtual void setData(uint8_t* data, uint32_t validSize, uint32_t capacity);
+		virtual void setData(uint8_t* data, uint32_t validSize, uint32_t capacity, int memEndian);
 	protected:
 		//
 		//  是否buffer指向的数据跟系统的字节序一致
@@ -74,11 +74,11 @@ namespace FFL{
 		//
 		//  ByteReader 读
 		//
-		int8_t read1Bytes(bool* suc);
-		int16_t read2Bytes(bool* suc);
-		int32_t read3Bytes(bool* suc);
-		int32_t read4Bytes(bool* suc);
-		int64_t read8Bytes(bool* suc);
+		int8_t read1Bytes(bool* suc = NULL);
+		int16_t read2Bytes(bool* suc = NULL);
+		int32_t read3Bytes(bool* suc = NULL);
+		int32_t read4Bytes(bool* suc = NULL);
+		int64_t read8Bytes(bool* suc = NULL);
 		bool readString(String& val, uint32_t len);
 		bool readBytes(int8_t* val, uint32_t size);
 		//
@@ -98,6 +98,7 @@ namespace FFL{
 		bool write4Bytes(int32_t val);
 		bool write8Bytes(int64_t val);
 		bool writeString(const String& val, uint32_t len);
+		bool writeString(const char* val, uint32_t len);
 		bool writeBytes(const int8_t* val, uint32_t size);
 		//
 		//  跳过多少个空位置

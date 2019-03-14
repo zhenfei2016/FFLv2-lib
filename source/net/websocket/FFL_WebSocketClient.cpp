@@ -31,7 +31,8 @@ namespace FFL {
 		mClient(NULL),
 		mStream(NULL),
 		mIsConnected(false),
-		mIsHandShark(false) {
+		mIsHandShark(false),
+		mWebSocket(NULL){
 	}
 	WebSocketClient::~WebSocketClient() {	
 		close();		

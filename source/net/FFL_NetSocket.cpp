@@ -136,7 +136,7 @@ namespace FFL {
 	//  pWrite:实质上写了多少数据
 	//  返回错误码  ： FFL_OK表示成功
 	//
-	status_t CSocket::write(void* buf, size_t count, size_t* pWrite) {
+	status_t CSocket::write(const void* buf, size_t count, size_t* pWrite) {
 		if (mProto == PROTOCOL_TCP) {
 			return FFL_socketWrite(mFd, buf, count, pWrite);
 		}

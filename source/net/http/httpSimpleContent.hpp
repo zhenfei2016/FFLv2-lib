@@ -29,8 +29,10 @@ namespace FFL {
 		//  获取内容
 		//
 		int32_t read(uint8_t* data, int32_t requestSize, bool* suc);
+	
 	protected:
 		ByteBuffer* mBuffer;
+		ByteStream* mStream;
 	};			
 }
 #endif 
